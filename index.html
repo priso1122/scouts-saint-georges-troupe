@@ -129,6 +129,82 @@
         }
 
         /* ==========================================================================
+           TOP NAVIGATION BAR & DROPDOWN (THREE DOTS)
+           ========================================================================== */
+        .dashboard-nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(27, 67, 50, 0.1);
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(127, 85, 57, 0.2);
+            position: relative;
+        }
+
+        .dashboard-nav-bar h3 {
+            color: var(--dark-green);
+            font-size: 1.1rem;
+        }
+
+        .menu-container {
+            position: relative;
+        }
+
+        .menu-btn {
+            background: var(--green);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .menu-btn:hover {
+            background: var(--dark-green);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            right: 0;
+            top: 45px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            width: 200px;
+            display: none;
+            z-index: 1000;
+            border: 1px solid #ddd;
+            overflow: hidden;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 12px 16px;
+            color: var(--dark-brown);
+            cursor: pointer;
+            font-weight: 600;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background: var(--beige);
+            color: var(--green);
+        }
+
+        /* ==========================================================================
            FORMS & BUTTONS
            ========================================================================== */
         .form-group {
@@ -388,99 +464,119 @@
 
         <!-- ADMIN DASHBOARD (FULL AUTHORITY) -->
         <main id="admin-dashboard" class="card hidden">
-            <h2 style="color: var(--dark-green); margin-bottom: 5px;">Admin Control Panel</h2>
-            <p style="margin-bottom: 20px; font-size: 0.9rem; color: var(--brown);">Full structural and content management authority. Synced globally.</p>
-            
-            <!-- PATROUILLE CREATION -->
-            <div class="section-box">
-                <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">⛺ Create Patrouille</h3>
-                <div id="patrol-msg" class="success-message">Patrouille created successfully!</div>
-                <div id="patrol-err" class="error-message">Please enter a patrouille name.</div>
-                <div class="form-group" style="margin-bottom: 10px;">
-                    <input type="text" id="new-patrol-name" class="form-control" placeholder="e.g., Al Nisr (Eagles)" autocomplete="off" />
+            <!-- TOP NAV BAR WITH THREE DOTS MENU -->
+            <div class="dashboard-nav-bar">
+                <h3 id="admin-panel-title">Admin Control Panel</h3>
+                <div class="menu-container">
+                    <button class="menu-btn" id="admin-menu-toggle">⋮</button>
+                    <div class="dropdown-menu" id="admin-dropdown">
+                        <div class="dropdown-item" onclick="switchAdminSection('admin-section-management')">⚙️ Management</div>
+                        <div class="dropdown-item" onclick="switchAdminSection('admin-section-activities')">📅 Activities</div>
+                        <div class="dropdown-item" onclick="switchAdminSection('admin-section-memories')">🖼️ Memories</div>
+                        <div class="dropdown-item" onclick="switchAdminSection('admin-section-ideas')">💡 Ideas Review</div>
+                    </div>
                 </div>
-                <button id="create-patrol-btn" class="btn btn-outline" style="margin-bottom: 0;">Add Patrouille</button>
             </div>
 
-            <!-- MEMBER ACCOUNT CREATION -->
-            <div class="section-box">
-                <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">👤 Create Member Account</h3>
-                <div id="admin-msg" class="success-message">Account created successfully!</div>
-                <div id="admin-err" class="error-message">Please fill out all fields and select a patrouille.</div>
-
-                <div class="form-group">
-                    <label>Username</label>
-                    <input type="text" id="new-member-user" class="form-control" placeholder="Username" autocomplete="off" />
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="text" id="new-member-pass" class="form-control" placeholder="Password" autocomplete="off" />
-                </div>
-                <div class="form-group">
-                    <label>Role</label>
-                    <select id="new-member-role" class="form-control">
-                        <option value="Member">Member</option>
-                        <option value="Cp">Cp</option>
-                        <option value="Admin">Admin</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Patrouille</label>
-                    <select id="new-member-patrol" class="form-control">
-                        <option value="" disabled selected>Select a Patrouille</option>
-                    </select>
-                </div>
-
-                <button id="create-member-btn" class="btn">Create Account</button>
+            <!-- SUB-SECTION 1: MANAGEMENT (Patrols & Accounts) -->
+            <div id="admin-section-management" class="admin-tab-content">
+                <p style="margin-bottom: 20px; font-size: 0.9rem; color: var(--brown);">Full structural and member account authority.</p>
                 
-                <div style="margin-top: 15px;">
-                    <label style="font-weight: 700; color: var(--dark-brown); margin-bottom: 8px; display: block;">Registered Accounts:</label>
-                    <div id="members-list-container" class="list-container">Loading accounts...</div>
+                <div class="section-box">
+                    <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">⛺ Create Patrouille</h3>
+                    <div id="patrol-msg" class="success-message">Patrouille created successfully!</div>
+                    <div id="patrol-err" class="error-message">Please enter a patrouille name.</div>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <input type="text" id="new-patrol-name" class="form-control" placeholder="e.g., Al Nisr (Eagles)" autocomplete="off" />
+                    </div>
+                    <button id="create-patrol-btn" class="btn btn-outline" style="margin-bottom: 0;">Add Patrouille</button>
+                </div>
+
+                <div class="section-box">
+                    <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">👤 Create Member Account</h3>
+                    <div id="admin-msg" class="success-message">Account created successfully!</div>
+                    <div id="admin-err" class="error-message">Please fill out all fields and select a patrouille.</div>
+
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="new-member-user" class="form-control" placeholder="Username" autocomplete="off" />
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="text" id="new-member-pass" class="form-control" placeholder="Password" autocomplete="off" />
+                    </div>
+                    <div class="form-group">
+                        <label>Role</label>
+                        <select id="new-member-role" class="form-control">
+                            <option value="Member">Member</option>
+                            <option value="Cp">Cp</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Patrouille</label>
+                        <select id="new-member-patrol" class="form-control">
+                            <option value="" disabled selected>Select a Patrouille</option>
+                        </select>
+                    </div>
+
+                    <button id="create-member-btn" class="btn">Create Account</button>
+                    
+                    <div style="margin-top: 15px;">
+                        <label style="font-weight: 700; color: var(--dark-brown); margin-bottom: 8px; display: block;">Registered Accounts:</label>
+                        <div id="members-list-container" class="list-container">Loading accounts...</div>
+                    </div>
                 </div>
             </div>
 
-            <!-- CALENDAR OF ACTIVITIES MANAGEMENT -->
-            <div class="section-box">
-                <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">📅 Calendar of Activities</h3>
-                <div id="activity-msg" class="success-message">Activity published!</div>
-                <div id="activity-err" class="error-message">Please fill in title and date.</div>
-                <div class="form-group">
-                    <label>Activity Title</label>
-                    <input type="text" id="activity-title" class="form-control" placeholder="e.g., Campfire Night" autocomplete="off" />
-                </div>
-                <div class="form-group">
-                    <label>Date & Time</label>
-                    <input type="datetime-local" id="activity-date" class="form-control" />
-                </div>
-                <button id="add-activity-btn" class="btn btn-outline" style="margin-bottom: 0;">Add Activity</button>
-                
-                <div style="margin-top: 15px;">
-                    <label style="font-weight: 700; color: var(--dark-brown); margin-bottom: 8px; display: block;">Scheduled Activities:</label>
-                    <div id="admin-activities-list" class="list-container">Loading activities...</div>
-                </div>
-            </div>
-
-            <!-- PICTURES MANAGEMENT -->
-            <div class="section-box">
-                <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">🖼️ Gallery Pictures</h3>
-                <div id="photo-msg" class="success-message">Picture added successfully!</div>
-                <div id="photo-err" class="error-message">Please provide a valid image URL.</div>
-                <div class="form-group">
-                    <label>Image URL</label>
-                    <input type="url" id="photo-url" class="form-control" placeholder="https://example.com/image.jpg" autocomplete="off" />
-                </div>
-                <button id="add-photo-btn" class="btn btn-outline" style="margin-bottom: 0;">Add Picture</button>
-                
-                <div style="margin-top: 15px;">
-                    <label style="font-weight: 700; color: var(--dark-brown); margin-bottom: 8px; display: block;">Manage Gallery:</label>
-                    <div id="admin-gallery-grid" class="gallery-grid">Loading gallery...</div>
+            <!-- SUB-SECTION 2: ACTIVITIES -->
+            <div id="admin-section-activities" class="admin-tab-content hidden">
+                <div class="section-box">
+                    <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">📅 Calendar of Activities</h3>
+                    <div id="activity-msg" class="success-message">Activity published!</div>
+                    <div id="activity-err" class="error-message">Please fill in title and date.</div>
+                    <div class="form-group">
+                        <label>Activity Title</label>
+                        <input type="text" id="activity-title" class="form-control" placeholder="e.g., Campfire Night" autocomplete="off" />
+                    </div>
+                    <div class="form-group">
+                        <label>Date & Time</label>
+                        <input type="datetime-local" id="activity-date" class="form-control" />
+                    </div>
+                    <button id="add-activity-btn" class="btn btn-outline" style="margin-bottom: 0;">Add Activity</button>
+                    
+                    <div style="margin-top: 15px;">
+                        <label style="font-weight: 700; color: var(--dark-brown); margin-bottom: 8px; display: block;">Scheduled Activities:</label>
+                        <div id="admin-activities-list" class="list-container">Loading activities...</div>
+                    </div>
                 </div>
             </div>
 
-            <!-- IDEAS / SUGGESTIONS REVIEW -->
-            <div class="section-box" style="margin-bottom: 0;">
-                <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">💡 Ideas & Suggestions Review</h3>
-                <div id="admin-ideas-list" class="list-container" style="margin-bottom: 0;">Loading suggestions...</div>
+            <!-- SUB-SECTION 3: MEMORIES (GALLERY) -->
+            <div id="admin-section-memories" class="admin-tab-content hidden">
+                <div class="section-box">
+                    <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">🖼️ Memories (Gallery)</h3>
+                    <div id="photo-msg" class="success-message">Picture added successfully!</div>
+                    <div id="photo-err" class="error-message">Please select an image from your device.</div>
+                    <div class="form-group">
+                        <label>Select Picture from Device / Gallery</label>
+                        <input type="file" id="photo-file" class="form-control" accept="image/*" />
+                    </div>
+                    <button id="add-photo-btn" class="btn btn-outline" style="margin-bottom: 0;">Upload Picture</button>
+                    
+                    <div style="margin-top: 15px;">
+                        <label style="font-weight: 700; color: var(--dark-brown); margin-bottom: 8px; display: block;">Manage Gallery:</label>
+                        <div id="admin-gallery-grid" class="gallery-grid">Loading gallery...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-SECTION 4: IDEAS REVIEW -->
+            <div id="admin-section-ideas" class="admin-tab-content hidden">
+                <div class="section-box" style="margin-bottom: 0;">
+                    <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">💡 Ideas & Suggestions Review</h3>
+                    <div id="admin-ideas-list" class="list-container" style="margin-bottom: 0;">Loading suggestions...</div>
+                </div>
             </div>
 
             <button id="admin-logout-btn" class="btn btn-outline" style="margin-top: 25px;">Logout</button>
@@ -488,34 +584,60 @@
 
         <!-- SHARED HUB DASHBOARD (FOR CP & MEMBERS - VIEWERS ONLY) -->
         <main id="viewer-dashboard" class="card hidden">
-            <h2 style="color: var(--dark-green); margin-bottom: 5px;" id="viewer-title">Member Dashboard</h2>
-            <div class="welcome-box">
-                Welcome, <span id="logged-viewer-name" style="color: var(--green);"></span>!
-                <br><small style="color: var(--brown); font-size: 0.85rem;" id="logged-viewer-role-text"></small>
-                <br><small style="color: var(--dark-brown); font-size: 0.85rem;" id="logged-viewer-patrol-text"></small>
-            </div>
-
-            <!-- PUBLIC CALENDAR VIEW -->
-            <div class="section-box">
-                <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">📅 Calendar of Activities</h3>
-                <div id="viewer-activities-list" class="list-container" style="margin-bottom: 0;">Loading activities...</div>
-            </div>
-
-            <!-- PUBLIC GALLERY VIEW -->
-            <div class="section-box">
-                <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">🖼️ Scout Gallery</h3>
-                <div id="viewer-gallery-grid" class="gallery-grid" style="margin-bottom: 0;">Loading gallery...</div>
-            </div>
-
-            <!-- SUGGEST AN IDEA SECTION -->
-            <div class="section-box" style="margin-bottom: 0;">
-                <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">💡 Suggest an Idea</h3>
-                <div id="idea-msg" class="success-message">Suggestion sent to admins!</div>
-                <div id="idea-err" class="error-message">Please enter your suggestion text.</div>
-                <div class="form-group">
-                    <textarea id="idea-text" class="form-control" rows="3" placeholder="Share your idea for future activities or improvements..."></textarea>
+            <!-- TOP NAV BAR WITH THREE DOTS MENU -->
+            <div class="dashboard-nav-bar">
+                <div>
+                    <h3 id="viewer-title">Member Portal</h3>
+                    <small style="color: var(--brown); font-size: 0.8rem;" id="viewer-subtitle"></small>
                 </div>
-                <button id="submit-idea-btn" class="btn btn-outline" style="margin-bottom: 0;">Submit Idea</button>
+                <div class="menu-container">
+                    <button class="menu-btn" id="viewer-menu-toggle">⋮</button>
+                    <div class="dropdown-menu" id="viewer-dropdown">
+                        <div class="dropdown-item" onclick="switchViewerSection('viewer-section-welcome')">🏠 Home / Welcome</div>
+                        <div class="dropdown-item" onclick="switchViewerSection('viewer-section-activities')">📅 Activities</div>
+                        <div class="dropdown-item" onclick="switchViewerSection('viewer-section-memories')">🖼️ Memories</div>
+                        <div class="dropdown-item" onclick="switchViewerSection('viewer-section-ideas')">💡 Suggest an Idea</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEWER SUB-SECTION 1: WELCOME HOME -->
+            <div id="viewer-section-welcome" class="viewer-tab-content">
+                <div class="welcome-box">
+                    Welcome, <span id="logged-viewer-name" style="color: var(--green);"></span>!
+                    <br><small style="color: var(--brown); font-size: 0.85rem;" id="logged-viewer-role-text"></small>
+                    <br><small style="color: var(--dark-brown); font-size: 0.85rem;" id="logged-viewer-patrol-text"></small>
+                </div>
+                <p style="text-align: center; color: var(--brown); font-size: 0.95rem;">Use the top-right menu (⋮) to navigate through Activities, Memories, and Ideas.</p>
+            </div>
+
+            <!-- VIEWER SUB-SECTION 2: ACTIVITIES -->
+            <div id="viewer-section-activities" class="viewer-tab-content hidden">
+                <div class="section-box" style="margin-bottom: 0;">
+                    <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">📅 Calendar of Activities</h3>
+                    <div id="viewer-activities-list" class="list-container" style="margin-bottom: 0;">Loading activities...</div>
+                </div>
+            </div>
+
+            <!-- VIEWER SUB-SECTION 3: MEMORIES -->
+            <div id="viewer-section-memories" class="viewer-tab-content hidden">
+                <div class="section-box" style="margin-bottom: 0;">
+                    <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">🖼️ Scout Memories Gallery</h3>
+                    <div id="viewer-gallery-grid" class="gallery-grid" style="margin-bottom: 0;">Loading gallery...</div>
+                </div>
+            </div>
+
+            <!-- VIEWER SUB-SECTION 4: IDEAS -->
+            <div id="viewer-section-ideas" class="viewer-tab-content hidden">
+                <div class="section-box" style="margin-bottom: 0;">
+                    <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">💡 Suggest an Idea</h3>
+                    <div id="idea-msg" class="success-message">Suggestion sent to admins!</div>
+                    <div id="idea-err" class="error-message">Please enter your suggestion text.</div>
+                    <div class="form-group">
+                        <textarea id="idea-text" class="form-control" rows="3" placeholder="Share your idea for future activities or improvements..."></textarea>
+                    </div>
+                    <button id="submit-idea-btn" class="btn btn-outline" style="margin-bottom: 0;">Submit Idea</button>
+                </div>
             </div>
 
             <button id="viewer-logout-btn" class="btn btn-outline" style="margin-top: 25px;">Logout</button>
@@ -564,6 +686,39 @@
         // Navigation bindings
         document.getElementById('goto-login').addEventListener('click', () => switchScreen('login'));
         document.getElementById('login-back-btn').addEventListener('click', () => switchScreen('home'));
+
+        // Three dots menu toggle handlers
+        const adminMenuToggle = document.getElementById('admin-menu-toggle');
+        const adminDropdown = document.getElementById('admin-dropdown');
+        adminMenuToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            adminDropdown.classList.toggle('show');
+        });
+
+        const viewerMenuToggle = document.getElementById('viewer-menu-toggle');
+        const viewerDropdown = document.getElementById('viewer-dropdown');
+        viewerMenuToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            viewerDropdown.classList.toggle('show');
+        });
+
+        window.addEventListener('click', () => {
+            adminDropdown.classList.remove('show');
+            viewerDropdown.classList.remove('show');
+        });
+
+        // Tab Switchers for Menus
+        window.switchAdminSection = function(sectionId) {
+            document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(sectionId).classList.remove('hidden');
+            adminDropdown.classList.remove('show');
+        };
+
+        window.switchViewerSection = function(sectionId) {
+            document.querySelectorAll('.viewer-tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(sectionId).classList.remove('hidden');
+            viewerDropdown.classList.remove('show');
+        };
 
         // Initialize Firebase
         try {
@@ -672,8 +827,8 @@
                 let adminHtml = "";
                 let viewerHtml = "";
                 if (snapshot.empty) {
-                    adminHtml = "<div style='grid-column: 1/-1; text-align:center; padding:20px; color:#777;'>No pictures in gallery.</div>";
-                    viewerHtml = "<div style='grid-column: 1/-1; text-align:center; padding:20px; color:#777;'>No pictures in gallery.</div>";
+                    adminHtml = "<div style='grid-column: 1/-1; text-align:center; padding:20px; color:#777;'>No memories in gallery.</div>";
+                    viewerHtml = "<div style='grid-column: 1/-1; text-align:center; padding:20px; color:#777;'>No memories in gallery.</div>";
                 } else {
                     snapshot.forEach((docSnap) => {
                         const data = docSnap.data();
@@ -681,13 +836,13 @@
                         
                         adminHtml += `
                             <div class='gallery-item'>
-                                <img src="${data.url}" alt="Gallery Photo" />
+                                <img src="${data.url}" alt="Memory Photo" />
                                 <button class="btn btn-danger" onclick="deleteItem('gallery', '${pId}')">X</button>
                             </div>`;
                         
                         viewerHtml += `
                             <div class='gallery-item'>
-                                <img src="${data.url}" alt="Gallery Photo" />
+                                <img src="${data.url}" alt="Memory Photo" />
                             </div>`;
                     });
                 }
@@ -736,6 +891,7 @@
                 switchScreen('adminDashboard');
             } else if (session.role === 'Cp' || session.role === 'Member') {
                 document.getElementById('viewer-title').innerText = `${session.role} Portal`;
+                document.getElementById('viewer-subtitle').innerText = session.patrol ? `Patrouille: ${session.patrol}` : '';
                 document.getElementById('logged-viewer-name').innerText = session.username;
                 document.getElementById('logged-viewer-role-text').innerText = `Role: ${session.role}`;
                 document.getElementById('logged-viewer-patrol-text').innerText = `Patrouille: ${session.patrol || 'Unassigned'}`;
@@ -766,6 +922,7 @@
                     switchScreen('adminDashboard');
                 } else {
                     document.getElementById('viewer-title').innerText = `${role} Portal`;
+                    document.getElementById('viewer-subtitle').innerText = patrol ? `Patrouille: ${patrol}` : '';
                     document.getElementById('logged-viewer-name').innerText = u;
                     document.getElementById('logged-viewer-role-text').innerText = `Role: ${role}`;
                     document.getElementById('logged-viewer-patrol-text').innerText = `Patrouille: ${patrol}`;
@@ -872,31 +1029,36 @@
             }
         });
 
-        // Admin Add Picture Handler
-        const photoUrlIn = document.getElementById('photo-url');
+        // Admin Upload Picture from Device Handler (Base64 conversion)
+        const photoFileIn = document.getElementById('photo-file');
         const photoMsg = document.getElementById('photo-msg');
         const photoErr = document.getElementById('photo-err');
 
         document.getElementById('add-photo-btn').addEventListener('click', async () => {
-            const url = photoUrlIn.value.trim();
             photoMsg.style.display = 'none';
             photoErr.style.display = 'none';
 
-            if (!url) {
+            const file = photoFileIn.files[0];
+            if (!file) {
                 photoErr.style.display = 'block';
                 return;
             }
 
-            try {
-                const docId = "photo_" + Date.now();
-                await setDoc(doc(db, "gallery", docId), { url });
-                photoMsg.style.display = 'block';
-                photoUrlIn.value = '';
-            } catch (err) {
-                console.error("Error adding photo:", err);
-                photoErr.innerText = "Failed to add picture.";
-                photoErr.style.display = 'block';
-            }
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const base64String = e.target.result;
+                try {
+                    const docId = "photo_" + Date.now();
+                    await setDoc(doc(db, "gallery", docId), { url: base64String });
+                    photoMsg.style.display = 'block';
+                    photoFileIn.value = '';
+                } catch (err) {
+                    console.error("Error uploading photo:", err);
+                    photoErr.innerText = "Failed to upload picture.";
+                    photoErr.style.display = 'block';
+                }
+            };
+            reader.readAsDataURL(file);
         });
 
         // Viewer Submit Idea Handler

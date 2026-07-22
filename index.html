@@ -86,7 +86,7 @@
            ========================================================================== */
         .container {
             width: 100%;
-            max-width: 520px;
+            max-width: 700px;
             margin: auto;
             z-index: 10;
             animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
@@ -125,6 +125,7 @@
             box-shadow: var(--shadow);
             border-top: 6px solid var(--green);
             border-bottom: 4px solid var(--gold);
+            margin-bottom: 20px;
         }
 
         /* ==========================================================================
@@ -195,6 +196,21 @@
             color: white;
         }
 
+        .btn-danger {
+            background: #d62828;
+            color: white;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            width: auto;
+            box-shadow: none;
+            margin-bottom: 0;
+        }
+
+        .btn-danger:hover {
+            background: #b71c1c;
+            transform: none;
+        }
+
         .error-message {
             color: #d62828;
             font-size: 0.9rem;
@@ -215,18 +231,18 @@
 
         .hidden { display: none !important; }
 
-        .member-list {
+        .list-container {
             background: #fff;
             border-radius: 8px;
             padding: 12px;
-            max-height: 150px;
+            max-height: 200px;
             overflow-y: auto;
             border: 1px solid #ddd;
             margin-bottom: 20px;
         }
 
-        .member-item {
-            padding: 8px;
+        .list-item {
+            padding: 10px;
             border-bottom: 1px solid #eee;
             font-size: 0.95rem;
             color: var(--dark-green);
@@ -235,7 +251,7 @@
             align-items: center;
         }
 
-        .member-item:last-child { border-bottom: none; }
+        .list-item:last-child { border-bottom: none; }
 
         .badges-container {
             display: flex;
@@ -271,6 +287,50 @@
             font-weight: 600;
             margin-bottom: 20px;
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+            max-height: 250px;
+            overflow-y: auto;
+            background: #fff;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 6px;
+            overflow: hidden;
+            height: 110px;
+            background: #eee;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-item button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+        }
+
+        .section-box {
+            background: rgba(255,255,255,0.6);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(127,85,57,0.2);
         }
 
         .divider {
@@ -326,80 +386,146 @@
             <button id="login-back-btn" class="btn btn-outline">Back</button>
         </main>
 
-        <!-- ADMIN/CP DASHBOARD -->
+        <!-- ADMIN DASHBOARD (FULL AUTHORITY) -->
         <main id="admin-dashboard" class="card hidden">
-            <h2 id="dashboard-title" style="color: var(--dark-green); margin-bottom: 15px;">Dashboard</h2>
-            <p style="margin-bottom: 15px; font-size: 0.9rem; color: var(--brown);">Manage Patrouilles and Member Accounts. Everything synchronizes instantly across devices.</p>
+            <h2 style="color: var(--dark-green); margin-bottom: 5px;">Admin Control Panel</h2>
+            <p style="margin-bottom: 20px; font-size: 0.9rem; color: var(--brown);">Full structural and content management authority. Synced globally.</p>
             
-            <!-- SECTION 1: CREATE PATROUILLE -->
-            <div style="background: rgba(255,255,255,0.5); padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid rgba(127,85,57,0.2);">
-                <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">⛺ Create New Patrouille</h3>
+            <!-- PATROUILLE CREATION -->
+            <div class="section-box">
+                <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">⛺ Create Patrouille</h3>
                 <div id="patrol-msg" class="success-message">Patrouille created successfully!</div>
                 <div id="patrol-err" class="error-message">Please enter a patrouille name.</div>
                 <div class="form-group" style="margin-bottom: 10px;">
-                    <input type="text" id="new-patrol-name" class="form-control" placeholder="e.g., The Eagles (Al Nisr)" autocomplete="off" />
+                    <input type="text" id="new-patrol-name" class="form-control" placeholder="e.g., Al Nisr (Eagles)" autocomplete="off" />
                 </div>
                 <button id="create-patrol-btn" class="btn btn-outline" style="margin-bottom: 0;">Add Patrouille</button>
             </div>
 
-            <hr class="divider">
+            <!-- MEMBER ACCOUNT CREATION -->
+            <div class="section-box">
+                <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">👤 Create Member Account</h3>
+                <div id="admin-msg" class="success-message">Account created successfully!</div>
+                <div id="admin-err" class="error-message">Please fill out all fields and select a patrouille.</div>
 
-            <!-- SECTION 2: CREATE MEMBER ACCOUNT -->
-            <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">👤 Create Member Account</h3>
-            <div id="admin-msg" class="success-message">Account created successfully!</div>
-            <div id="admin-err" class="error-message">Please fill out all fields and assign a patrouille.</div>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="new-member-user" class="form-control" placeholder="Username" autocomplete="off" />
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="text" id="new-member-pass" class="form-control" placeholder="Password" autocomplete="off" />
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="new-member-role" class="form-control">
+                        <option value="Member">Member</option>
+                        <option value="Cp">Cp</option>
+                        <option value="Admin">Admin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Patrouille</label>
+                    <select id="new-member-patrol" class="form-control">
+                        <option value="" disabled selected>Select a Patrouille</option>
+                    </select>
+                </div>
 
-            <div class="form-group">
-                <label>New Account Username</label>
-                <input type="text" id="new-member-user" class="form-control" placeholder="Username" autocomplete="off" />
-            </div>
-            <div class="form-group">
-                <label>New Account Password</label>
-                <input type="text" id="new-member-pass" class="form-control" placeholder="Password" autocomplete="off" />
-            </div>
-            <div class="form-group">
-                <label>Role</label>
-                <select id="new-member-role" class="form-control">
-                    <option value="Member">Member</option>
-                    <option value="Cp">Cp</option>
-                    <option value="Admin">Admin</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Patrouille</label>
-                <select id="new-member-patrol" class="form-control">
-                    <option value="" disabled selected>Select a Patrouille</option>
-                </select>
-            </div>
-
-            <button id="create-member-btn" class="btn">Create Account</button>
-            
-            <div style="margin-top: 20px;">
-                <label style="font-weight: 700; color: var(--dark-brown); margin-bottom: 8px; display: block;">All Accounts List:</label>
-                <div id="members-list-container" class="member-list">
-                    Loading accounts...
+                <button id="create-member-btn" class="btn">Create Account</button>
+                
+                <div style="margin-top: 15px;">
+                    <label style="font-weight: 700; color: var(--dark-brown); margin-bottom: 8px; display: block;">Registered Accounts:</label>
+                    <div id="members-list-container" class="list-container">Loading accounts...</div>
                 </div>
             </div>
 
-            <button id="admin-logout-btn" class="btn btn-outline" style="margin-top: 15px;">Logout</button>
+            <!-- CALENDAR OF ACTIVITIES MANAGEMENT -->
+            <div class="section-box">
+                <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">📅 Calendar of Activities</h3>
+                <div id="activity-msg" class="success-message">Activity published!</div>
+                <div id="activity-err" class="error-message">Please fill in title and date.</div>
+                <div class="form-group">
+                    <label>Activity Title</label>
+                    <input type="text" id="activity-title" class="form-control" placeholder="e.g., Campfire Night" autocomplete="off" />
+                </div>
+                <div class="form-group">
+                    <label>Date & Time</label>
+                    <input type="datetime-local" id="activity-date" class="form-control" />
+                </div>
+                <button id="add-activity-btn" class="btn btn-outline" style="margin-bottom: 0;">Add Activity</button>
+                
+                <div style="margin-top: 15px;">
+                    <label style="font-weight: 700; color: var(--dark-brown); margin-bottom: 8px; display: block;">Scheduled Activities:</label>
+                    <div id="admin-activities-list" class="list-container">Loading activities...</div>
+                </div>
+            </div>
+
+            <!-- PICTURES MANAGEMENT -->
+            <div class="section-box">
+                <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">🖼️ Gallery Pictures</h3>
+                <div id="photo-msg" class="success-message">Picture added successfully!</div>
+                <div id="photo-err" class="error-message">Please provide a valid image URL.</div>
+                <div class="form-group">
+                    <label>Image URL</label>
+                    <input type="url" id="photo-url" class="form-control" placeholder="https://example.com/image.jpg" autocomplete="off" />
+                </div>
+                <button id="add-photo-btn" class="btn btn-outline" style="margin-bottom: 0;">Add Picture</button>
+                
+                <div style="margin-top: 15px;">
+                    <label style="font-weight: 700; color: var(--dark-brown); margin-bottom: 8px; display: block;">Manage Gallery:</label>
+                    <div id="admin-gallery-grid" class="gallery-grid">Loading gallery...</div>
+                </div>
+            </div>
+
+            <!-- IDEAS / SUGGESTIONS REVIEW -->
+            <div class="section-box" style="margin-bottom: 0;">
+                <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">💡 Ideas & Suggestions Review</h3>
+                <div id="admin-ideas-list" class="list-container" style="margin-bottom: 0;">Loading suggestions...</div>
+            </div>
+
+            <button id="admin-logout-btn" class="btn btn-outline" style="margin-top: 25px;">Logout</button>
         </main>
 
-        <!-- STANDARD MEMBER DASHBOARD -->
-        <main id="member-dashboard" class="card hidden">
-            <h2 style="color: var(--dark-green); margin-bottom: 20px;">Member Dashboard</h2>
+        <!-- SHARED HUB DASHBOARD (FOR CP & MEMBERS - VIEWERS ONLY) -->
+        <main id="viewer-dashboard" class="card hidden">
+            <h2 style="color: var(--dark-green); margin-bottom: 5px;" id="viewer-title">Member Dashboard</h2>
             <div class="welcome-box">
-                Welcome to Scout Saint Georges Mieh w Mieh, <span id="logged-member-name" style="color: var(--green);"></span>!
-                <br><small style="color: var(--brown); font-size: 0.85rem;" id="logged-member-role-text"></small>
-                <br><small style="color: var(--dark-brown); font-size: 0.85rem;" id="logged-member-patrol-text"></small>
+                Welcome, <span id="logged-viewer-name" style="color: var(--green);"></span>!
+                <br><small style="color: var(--brown); font-size: 0.85rem;" id="logged-viewer-role-text"></small>
+                <br><small style="color: var(--dark-brown); font-size: 0.85rem;" id="logged-viewer-patrol-text"></small>
             </div>
-            <button id="member-logout-btn" class="btn btn-outline">Logout</button>
+
+            <!-- PUBLIC CALENDAR VIEW -->
+            <div class="section-box">
+                <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">📅 Calendar of Activities</h3>
+                <div id="viewer-activities-list" class="list-container" style="margin-bottom: 0;">Loading activities...</div>
+            </div>
+
+            <!-- PUBLIC GALLERY VIEW -->
+            <div class="section-box">
+                <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">🖼️ Scout Gallery</h3>
+                <div id="viewer-gallery-grid" class="gallery-grid" style="margin-bottom: 0;">Loading gallery...</div>
+            </div>
+
+            <!-- SUGGEST AN IDEA SECTION -->
+            <div class="section-box" style="margin-bottom: 0;">
+                <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">💡 Suggest an Idea</h3>
+                <div id="idea-msg" class="success-message">Suggestion sent to admins!</div>
+                <div id="idea-err" class="error-message">Please enter your suggestion text.</div>
+                <div class="form-group">
+                    <textarea id="idea-text" class="form-control" rows="3" placeholder="Share your idea for future activities or improvements..."></textarea>
+                </div>
+                <button id="submit-idea-btn" class="btn btn-outline" style="margin-bottom: 0;">Submit Idea</button>
+            </div>
+
+            <button id="viewer-logout-btn" class="btn btn-outline" style="margin-top: 25px;">Logout</button>
         </main>
     </div>
 
     <!-- FIREBASE & APP LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-        import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCqLoLICq9kbpMsaD58F6U4cwbiMygGrmU",
@@ -421,14 +547,13 @@
 
         let db = null;
         let usersCache = {};
-        let patrolsCache = [];
 
         // UI Screens
         const screens = {
             home: document.getElementById('home-screen'),
             login: document.getElementById('login-screen'),
             adminDashboard: document.getElementById('admin-dashboard'),
-            memberDashboard: document.getElementById('member-dashboard')
+            viewerDashboard: document.getElementById('viewer-dashboard')
         };
 
         function switchScreen(screenName) {
@@ -446,40 +571,19 @@
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 
-                // Ensure default hardcoded root admin account exists in Firestore
+                // Ensure default hardcoded admin account exists in Firestore
                 setDoc(doc(db, "members", "chef"), { password: "chef", role: "Admin", patrol: "Staff" }, { merge: true });
 
-                initPatrolsListener();
                 initUsersListener();
+                initPatrolsListener();
+                initActivitiesListener();
+                initGalleryListener();
+                initIdeasListener();
             } else {
                 alert("Please add your Firebase configuration variables in index.html");
             }
         } catch (err) {
             console.error("Firebase init error:", err);
-        }
-
-        // Realtime Patrouilles Synchronization
-        function initPatrolsListener() {
-            const colRef = collection(db, "patrols");
-            onSnapshot(colRef, (snapshot) => {
-                patrolsCache = [];
-                let selectHtml = `<option value="" disabled selected>Select a Patrouille</option>`;
-                
-                // Always include Staff option for leaders/admins
-                patrolsCache.push("Staff");
-                selectHtml += `<option value="Staff">Staff (Leadership)</option>`;
-
-                snapshot.forEach((docSnap) => {
-                    const pName = docSnap.id;
-                    if (pName !== "Staff") {
-                        patrolsCache.push(pName);
-                        selectHtml += `<option value="${pName}">${pName}</option>`;
-                    }
-                });
-                document.getElementById('new-member-patrol').innerHTML = selectHtml;
-            }, (error) => {
-                console.error("Error fetching patrols:", error);
-            });
         }
 
         // Realtime Users Synchronization
@@ -489,7 +593,7 @@
                 usersCache = {};
                 let html = "";
                 if (snapshot.empty) {
-                    html = "<div class='member-item'>No accounts created yet.</div>";
+                    html = "<div class='list-item'>No accounts created yet.</div>";
                 } else {
                     snapshot.forEach((docSnap) => {
                         const data = docSnap.data();
@@ -499,7 +603,7 @@
                             patrol: data.patrol || 'Unassigned'
                         };
                         html += `
-                            <div class='member-item'>
+                            <div class='list-item'>
                                 <span>👤 <strong>${docSnap.id}</strong></span> 
                                 <div class="badges-container">
                                     <span class="patrouille-badge">⛺ ${data.patrol || 'Unassigned'}</span>
@@ -509,24 +613,133 @@
                     });
                 }
                 document.getElementById('members-list-container').innerHTML = html;
-            }, (error) => {
-                console.error("Error fetching users:", error);
-                document.getElementById('members-list-container').innerHTML = "<div class='member-item'>Error loading accounts. Check rules.</div>";
             });
         }
+
+        // Realtime Patrouilles Synchronization
+        function initPatrolsListener() {
+            const colRef = collection(db, "patrols");
+            onSnapshot(colRef, (snapshot) => {
+                let selectHtml = `<option value="" disabled selected>Select a Patrouille</option>`;
+                selectHtml += `<option value="Staff">Staff (Leadership)</option>`;
+
+                snapshot.forEach((docSnap) => {
+                    const pName = docSnap.id;
+                    if (pName !== "Staff") {
+                        selectHtml += `<option value="${pName}">${pName}</option>`;
+                    }
+                });
+                document.getElementById('new-member-patrol').innerHTML = selectHtml;
+            });
+        }
+
+        // Realtime Activities Synchronization
+        function initActivitiesListener() {
+            const colRef = collection(db, "activities");
+            onSnapshot(colRef, (snapshot) => {
+                let adminHtml = "";
+                let viewerHtml = "";
+                if (snapshot.empty) {
+                    adminHtml = "<div class='list-item'>No scheduled activities found.</div>";
+                    viewerHtml = "<div class='list-item'>No scheduled activities found.</div>";
+                } else {
+                    snapshot.forEach((docSnap) => {
+                        const data = docSnap.data();
+                        const actId = docSnap.id;
+                        const dateFormatted = data.date ? new Date(data.date).toLocaleString() : '';
+                        
+                        adminHtml += `
+                            <div class='list-item'>
+                                <div><strong>${data.title}</strong><br><small style="color:var(--brown);">${dateFormatted}</small></div>
+                                <button class="btn btn-danger" onclick="deleteItem('activities', '${actId}')">Delete</button>
+                            </div>`;
+                        
+                        viewerHtml += `
+                            <div class='list-item'>
+                                <div><strong>${data.title}</strong><br><small style="color:var(--brown);">${dateFormatted}</small></div>
+                            </div>`;
+                    });
+                }
+                document.getElementById('admin-activities-list').innerHTML = adminHtml;
+                document.getElementById('viewer-activities-list').innerHTML = viewerHtml;
+            });
+        }
+
+        // Realtime Gallery Synchronization
+        function initGalleryListener() {
+            const colRef = collection(db, "gallery");
+            onSnapshot(colRef, (snapshot) => {
+                let adminHtml = "";
+                let viewerHtml = "";
+                if (snapshot.empty) {
+                    adminHtml = "<div style='grid-column: 1/-1; text-align:center; padding:20px; color:#777;'>No pictures in gallery.</div>";
+                    viewerHtml = "<div style='grid-column: 1/-1; text-align:center; padding:20px; color:#777;'>No pictures in gallery.</div>";
+                } else {
+                    snapshot.forEach((docSnap) => {
+                        const data = docSnap.data();
+                        const pId = docSnap.id;
+                        
+                        adminHtml += `
+                            <div class='gallery-item'>
+                                <img src="${data.url}" alt="Gallery Photo" />
+                                <button class="btn btn-danger" onclick="deleteItem('gallery', '${pId}')">X</button>
+                            </div>`;
+                        
+                        viewerHtml += `
+                            <div class='gallery-item'>
+                                <img src="${data.url}" alt="Gallery Photo" />
+                            </div>`;
+                    });
+                }
+                document.getElementById('admin-gallery-grid').innerHTML = adminHtml;
+                document.getElementById('viewer-gallery-grid').innerHTML = viewerHtml;
+            });
+        }
+
+        // Realtime Ideas Synchronization
+        function initIdeasListener() {
+            const colRef = collection(db, "ideas");
+            onSnapshot(colRef, (snapshot) => {
+                let html = "";
+                if (snapshot.empty) {
+                    html = "<div class='list-item'>No suggestions submitted yet.</div>";
+                } else {
+                    snapshot.forEach((docSnap) => {
+                        const data = docSnap.data();
+                        const ideaId = docSnap.id;
+                        html += `
+                            <div class='list-item'>
+                                <div><strong>${data.author}:</strong> ${data.text}<br><small style="color:var(--brown);">${data.timestamp}</small></div>
+                                <button class="btn btn-danger" onclick="deleteItem('ideas', '${ideaId}')">Delete</button>
+                            </div>`;
+                    });
+                }
+                document.getElementById('admin-ideas-list').innerHTML = html;
+            });
+        }
+
+        // Global Delete helper for Admin inline buttons
+        window.deleteItem = async function(collectionName, docId) {
+            try {
+                await deleteDoc(doc(db, collectionName, docId));
+            } catch (err) {
+                console.error("Error deleting item:", err);
+                alert("Failed to delete item. Check permissions.");
+            }
+        };
 
         // Persistent Session Check on load
         const savedSession = localStorage.getItem('scoutSession');
         if (savedSession) {
             const session = JSON.parse(savedSession);
-            if (session.role === 'Admin' || session.role === 'Cp') {
-                document.getElementById('dashboard-title').innerText = `${session.role} Dashboard`;
+            if (session.role === 'Admin') {
                 switchScreen('adminDashboard');
-            } else if (session.role === 'Member') {
-                document.getElementById('logged-member-name').innerText = session.username;
-                document.getElementById('logged-member-role-text').innerText = `Role: Member`;
-                document.getElementById('logged-member-patrol-text').innerText = `Patrouille: ${session.patrol || 'Unassigned'}`;
-                switchScreen('memberDashboard');
+            } else if (session.role === 'Cp' || session.role === 'Member') {
+                document.getElementById('viewer-title').innerText = `${session.role} Portal`;
+                document.getElementById('logged-viewer-name').innerText = session.username;
+                document.getElementById('logged-viewer-role-text').innerText = `Role: ${session.role}`;
+                document.getElementById('logged-viewer-patrol-text').innerText = `Patrouille: ${session.patrol || 'Unassigned'}`;
+                switchScreen('viewerDashboard');
             }
         }
 
@@ -549,14 +762,14 @@
                 loginUserIn.value = '';
                 loginPassIn.value = '';
 
-                if (role === 'Admin' || role === 'Cp') {
-                    document.getElementById('dashboard-title').innerText = `${role} Dashboard`;
+                if (role === 'Admin') {
                     switchScreen('adminDashboard');
                 } else {
-                    document.getElementById('logged-member-name').innerText = u;
-                    document.getElementById('logged-member-role-text').innerText = `Role: ${role}`;
-                    document.getElementById('logged-member-patrol-text').innerText = `Patrouille: ${patrol}`;
-                    switchScreen('memberDashboard');
+                    document.getElementById('viewer-title').innerText = `${role} Portal`;
+                    document.getElementById('logged-viewer-name').innerText = u;
+                    document.getElementById('logged-viewer-role-text').innerText = `Role: ${role}`;
+                    document.getElementById('logged-viewer-patrol-text').innerText = `Patrouille: ${patrol}`;
+                    switchScreen('viewerDashboard');
                 }
             } else {
                 loginErr.style.display = 'block';
@@ -592,7 +805,7 @@
             }
         });
 
-        // Admin/Cp Create Account Handler
+        // Admin Create Account Handler
         const newUserIn = document.getElementById('new-member-user');
         const newPassIn = document.getElementById('new-member-pass');
         const newRoleIn = document.getElementById('new-member-role');
@@ -629,13 +842,104 @@
             }
         });
 
+        // Admin Add Activity Handler
+        const actTitleIn = document.getElementById('activity-title');
+        const actDateIn = document.getElementById('activity-date');
+        const actMsg = document.getElementById('activity-msg');
+        const actErr = document.getElementById('activity-err');
+
+        document.getElementById('add-activity-btn').addEventListener('click', async () => {
+            const title = actTitleIn.value.trim();
+            const date = actDateIn.value;
+            actMsg.style.display = 'none';
+            actErr.style.display = 'none';
+
+            if (!title || !date) {
+                actErr.style.display = 'block';
+                return;
+            }
+
+            try {
+                const docId = "act_" + Date.now();
+                await setDoc(doc(db, "activities", docId), { title, date });
+                actMsg.style.display = 'block';
+                actTitleIn.value = '';
+                actDateIn.value = '';
+            } catch (err) {
+                console.error("Error adding activity:", err);
+                actErr.innerText = "Failed to add activity.";
+                actErr.style.display = 'block';
+            }
+        });
+
+        // Admin Add Picture Handler
+        const photoUrlIn = document.getElementById('photo-url');
+        const photoMsg = document.getElementById('photo-msg');
+        const photoErr = document.getElementById('photo-err');
+
+        document.getElementById('add-photo-btn').addEventListener('click', async () => {
+            const url = photoUrlIn.value.trim();
+            photoMsg.style.display = 'none';
+            photoErr.style.display = 'none';
+
+            if (!url) {
+                photoErr.style.display = 'block';
+                return;
+            }
+
+            try {
+                const docId = "photo_" + Date.now();
+                await setDoc(doc(db, "gallery", docId), { url });
+                photoMsg.style.display = 'block';
+                photoUrlIn.value = '';
+            } catch (err) {
+                console.error("Error adding photo:", err);
+                photoErr.innerText = "Failed to add picture.";
+                photoErr.style.display = 'block';
+            }
+        });
+
+        // Viewer Submit Idea Handler
+        const ideaTextIn = document.getElementById('idea-text');
+        const ideaMsg = document.getElementById('idea-msg');
+        const ideaErr = document.getElementById('idea-err');
+
+        document.getElementById('submit-idea-btn').addEventListener('click', async () => {
+            const text = ideaTextIn.value.trim();
+            ideaMsg.style.display = 'none';
+            ideaErr.style.display = 'none';
+
+            if (!text) {
+                ideaErr.style.display = 'block';
+                return;
+            }
+
+            const sessionData = JSON.parse(localStorage.getItem('scoutSession') || '{}');
+            const author = sessionData.username || 'Anonymous';
+
+            try {
+                const docId = "idea_" + Date.now();
+                await setDoc(doc(db, "ideas", docId), {
+                    text,
+                    author,
+                    timestamp: new Date().toLocaleString()
+                });
+                ideaMsg.style.display = 'block';
+                ideaTextIn.value = '';
+            } catch (err) {
+                console.error("Error submitting idea:", err);
+                ideaErr.innerText = "Failed to submit idea.";
+                ideaErr.style.display = 'block';
+            }
+        });
+
         // Logout Handlers
         document.getElementById('admin-logout-btn').addEventListener('click', () => {
             localStorage.removeItem('scoutSession');
             switchScreen('home');
         });
 
-        document.getElementById('member-logout-btn').addEventListener('click', () => {
+        document.getElementById('viewer-logout-btn').addEventListener('click', () => {
             localStorage.removeItem('scoutSession');
             switchScreen('home');
         });

@@ -87,7 +87,6 @@
             transform: scale(1.05);
         }
 
-        /* Hide broken image icon when src is empty */
         img[src=""], img:not([src]) {
             opacity: 0;
         }
@@ -187,6 +186,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            margin-bottom: 10px;
         }
 
         .btn:hover {
@@ -199,11 +199,40 @@
             transform: translateY(0);
         }
 
+        .btn-secondary {
+            background: var(--brown);
+        }
+
+        .btn-secondary:hover {
+            background: var(--dark-brown);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--dark-brown);
+            border: 2px solid var(--brown);
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            background: var(--brown);
+            color: white;
+        }
+
+        .error-message {
+            color: #d62828;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 15px;
+            display: none;
+        }
+
         /* ==========================================================================
            REALTIME DISPLAY AREA
            ========================================================================== */
         .status-container {
-            margin-top: 28px;
+            margin-top: 15px;
             padding-top: 20px;
             border-top: 2px dashed rgba(127, 85, 57, 0.3);
         }
@@ -237,6 +266,15 @@
             font-size: 0.8rem;
             color: #777;
             text-align: right;
+        }
+
+        .mt-3 {
+            margin-top: 20px;
+        }
+
+        /* Utility for hiding views */
+        .hidden {
+            display: none !important;
         }
 
         /* ==========================================================================
@@ -287,18 +325,51 @@
             <p>Realtime Database Test</p>
         </header>
 
-        <main class="card">
+        <!-- PUBLIC VIEWER SCREEN -->
+        <main id="public-screen" class="card">
+            <div class="status-container" style="border-top: none; padding-top: 0; margin-top: 0;">
+                <h2>Latest message:</h2>
+                <div id="public-message-display" class="message-box">Connecting to Firebase...</div>
+                <small id="public-updated-at" class="timestamp"></small>
+            </div>
+            <button id="show-login-btn" class="btn btn-outline mt-3">Admin Login</button>
+        </main>
+
+        <!-- LOGIN SCREEN -->
+        <main id="login-screen" class="card hidden">
+            <h2 style="color: var(--dark-green); margin-bottom: 20px; text-align: center;">Admin Login</h2>
+            
+            <div id="login-error" class="error-message">Invalid Username or Password.</div>
+
             <div class="form-group">
-                <label for="message-input">Message</label>
+                <label for="username-input">Username</label>
+                <input type="text" id="username-input" class="form-control" placeholder="Enter username" autocomplete="off" />
+            </div>
+
+            <div class="form-group">
+                <label for="password-input">Password</label>
+                <input type="password" id="password-input" class="form-control" placeholder="Enter password" />
+            </div>
+
+            <button id="login-btn" class="btn">Login</button>
+            <button id="cancel-btn" class="btn btn-outline">Cancel</button>
+        </main>
+
+        <!-- ADMIN DASHBOARD SCREEN -->
+        <main id="admin-screen" class="card hidden">
+            <h2 style="color: var(--dark-green); margin-bottom: 20px;">Admin Dashboard</h2>
+            <div class="form-group">
+                <label for="message-input">Update Message</label>
                 <input type="text" id="message-input" class="form-control" placeholder="Type a test message..." autocomplete="off" />
             </div>
 
-            <button id="save-btn" class="btn">Save</button>
+            <button id="save-btn" class="btn">Save Message</button>
+            <button id="logout-btn" class="btn btn-outline">Logout</button>
 
             <div class="status-container">
-                <h2>Latest message:</h2>
-                <div id="message-display" class="message-box">Connecting to Firebase...</div>
-                <small id="updated-at" class="timestamp"></small>
+                <h2>Live View:</h2>
+                <div id="admin-message-display" class="message-box">Connecting to Firebase...</div>
+                <small id="admin-updated-at" class="timestamp"></small>
             </div>
         </main>
     </div>
@@ -339,12 +410,81 @@
         }
 
         // ==========================================================================
+        // UI & NAVIGATION LOGIC (WITH PERSISTENT LOGIN CHECK)
+        // ==========================================================================
+        const publicScreen = document.getElementById('public-screen');
+        const loginScreen = document.getElementById('login-screen');
+        const adminScreen = document.getElementById('admin-screen');
+
+        const showLoginBtn = document.getElementById('show-login-btn');
+        const cancelBtn = document.getElementById('cancel-btn');
+        const loginBtn = document.getElementById('login-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        const usernameInput = document.getElementById('username-input');
+        const passwordInput = document.getElementById('password-input');
+        const loginError = document.getElementById('login-error');
+
+        // Check if admin was previously logged in on this device
+        if (localStorage.getItem('scoutAdminLoggedIn') === 'true') {
+            publicScreen.classList.add('hidden');
+            adminScreen.classList.remove('hidden');
+        }
+
+        // Navigation functions
+        showLoginBtn.addEventListener('click', () => {
+            publicScreen.classList.add('hidden');
+            loginScreen.classList.remove('hidden');
+            usernameInput.focus();
+        });
+
+        cancelBtn.addEventListener('click', () => {
+            loginScreen.classList.add('hidden');
+            publicScreen.classList.remove('hidden');
+            loginError.style.display = 'none';
+            usernameInput.value = '';
+            passwordInput.value = '';
+        });
+
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('scoutAdminLoggedIn');
+            adminScreen.classList.add('hidden');
+            publicScreen.classList.remove('hidden');
+            usernameInput.value = '';
+            passwordInput.value = '';
+        });
+
+        // Authentication logic
+        function attemptLogin() {
+            if (usernameInput.value === 'chef' && passwordInput.value === 'chef') {
+                localStorage.setItem('scoutAdminLoggedIn', 'true');
+                loginError.style.display = 'none';
+                loginScreen.classList.add('hidden');
+                adminScreen.classList.remove('hidden');
+                usernameInput.value = '';
+                passwordInput.value = '';
+            } else {
+                loginError.style.display = 'block';
+            }
+        }
+
+        loginBtn.addEventListener('click', attemptLogin);
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') attemptLogin();
+        });
+
+        // ==========================================================================
         // FIREBASE & REALTIME SYNC
         // ==========================================================================
         let db = null;
 
-        const displayEl = document.getElementById('message-display');
-        const timestampEl = document.getElementById('updated-at');
+        // Elements to update
+        const publicDisplayEl = document.getElementById('public-message-display');
+        const publicTimestampEl = document.getElementById('public-updated-at');
+        
+        const adminDisplayEl = document.getElementById('admin-message-display');
+        const adminTimestampEl = document.getElementById('admin-updated-at');
+        
         const inputEl = document.getElementById('message-input');
         const saveBtn = document.getElementById('save-btn');
 
@@ -354,11 +494,15 @@
                 db = getFirestore(app);
                 initRealtimeListener();
             } else {
-                displayEl.innerText = "Please paste your Firebase configuration at the top of index.html.";
+                const msg = "Please paste your Firebase configuration at the top of index.html.";
+                publicDisplayEl.innerText = msg;
+                adminDisplayEl.innerText = msg;
             }
         } catch (err) {
             console.error("Firebase initialization failed:", err);
-            displayEl.innerText = "Error initializing Firebase. Check configuration.";
+            const msg = "Error initializing Firebase. Check configuration.";
+            publicDisplayEl.innerText = msg;
+            adminDisplayEl.innerText = msg;
         }
 
         // Realtime Listener using onSnapshot()
@@ -368,20 +512,26 @@
             onSnapshot(docRef, (snapshot) => {
                 if (snapshot.exists()) {
                     const data = snapshot.data();
-                    displayEl.innerText = data.message || "(No message provided)";
+                    const text = data.message || "(No message provided)";
+                    const time = data.updatedAt ? `Last updated: ${data.updatedAt}` : "";
                     
-                    if (data.updatedAt) {
-                        timestampEl.innerText = `Last updated: ${data.updatedAt}`;
-                    } else {
-                        timestampEl.innerText = "";
-                    }
+                    publicDisplayEl.innerText = text;
+                    adminDisplayEl.innerText = text;
+
+                    publicTimestampEl.innerText = time;
+                    adminTimestampEl.innerText = time;
                 } else {
-                    displayEl.innerText = "No message saved yet. Type a message above and click Save.";
-                    timestampEl.innerText = "";
+                    const text = "No message saved yet.";
+                    publicDisplayEl.innerText = text;
+                    adminDisplayEl.innerText = text;
+                    publicTimestampEl.innerText = "";
+                    adminTimestampEl.innerText = "";
                 }
             }, (error) => {
                 console.error("Firestore error:", error);
-                displayEl.innerText = "Error loading realtime updates. Check Firestore rules.";
+                const msg = "Error loading realtime updates. Check Firestore rules.";
+                publicDisplayEl.innerText = msg;
+                adminDisplayEl.innerText = msg;
             });
         }
 
@@ -417,11 +567,11 @@
                 alert("Could not save message. Make sure Firestore rules allow writes.");
             } finally {
                 saveBtn.disabled = false;
-                saveBtn.innerText = "Save";
+                saveBtn.innerText = "Save Message";
             }
         }
 
-        // Event Listeners
+        // Event Listeners for Saving
         saveBtn.addEventListener('click', handleSave);
         inputEl.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') handleSave();

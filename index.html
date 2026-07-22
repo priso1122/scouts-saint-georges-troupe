@@ -3,663 +3,337 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MIDADE Mieh w Mieh</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <title>Troupe Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Modern CSS Variables */
+        /* Base & Theme */
         :root {
-            --primary: #005bb5; --secondary: #003f7a; --bg-light: #f8f9fa; --bg-card: #ffffff;
-            --text-dark: #333333; --text-light: #ffffff; --glass-bg: rgba(255, 255, 255, 0.95);
-            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --primary: #2d6a4f; /* Scout Green */
+            --secondary: #1b4332;
+            --bg-light: #f4fdf4;
+            --text-dark: #333;
+            --white: #fff;
+            --transition: all 0.3s ease;
         }
-        body.pink-theme {
-            --primary: #d81b60; --secondary: #ad1457; --bg-light: #fce4ec;
-        }
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Poppins', sans-serif; background: var(--bg-light); color: var(--text-dark); overflow-x: hidden; transition: var(--transition); }
-        
-        /* Arabic RTL Support */
-        body[dir="rtl"] { font-family: 'Cairo', sans-serif; }
-        
-        /* Floating Controls */
-        .controls-panel { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 12px; z-index: 1000; }
-        body[dir="rtl"] .controls-panel { right: auto; left: 20px; }
-        
-        .btn-float { 
-            width: 50px; height: 50px; border-radius: 50%; border: none; background: var(--primary); color: white; 
-            font-size: 1.2rem; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: var(--transition); 
-        }
-        .btn-float:hover { transform: translateY(-5px) scale(1.05); }
 
-        /* Navigation */
-        header { 
-            background: var(--glass-bg); backdrop-filter: blur(10px); position: fixed; width: 100%; top: 0; 
-            z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; 
-            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
-        }
-        .logo-wrap { display: flex; align-items: center; gap: 15px; }
-        .logo-wrap img { height: 55px; }
-        .logo-text h1 { font-size: 1.3rem; color: var(--primary); font-weight: 700; }
-        .logo-text p { font-size: 0.7rem; color: #666; text-transform: uppercase; letter-spacing: 1px; }
-        
-        .header-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; }
-        .lang-select { padding: 8px 12px; border-radius: 20px; border: 1px solid var(--primary); outline: none; cursor: pointer; font-family: inherit; min-height: 44px;}
-        .user-badge { background: var(--primary); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; display: none; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg-light); color: var(--text-dark); overflow-x: hidden; }
 
-        /* Hero */
-        .hero { 
-            margin-top: 85px; padding: 120px 20px; text-align: center; color: white;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+        /* Navbar */
+        header {
+            background: var(--primary);
+            color: var(--white);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-        .hero h2 { font-size: 2.8rem; margin-bottom: 15px; text-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-        .hero p { font-size: 1.2rem; max-width: 700px; margin: 0 auto; opacity: 0.9; }
+        header h1 { font-size: 1.5rem; }
+        
+        .user-controls { display: flex; align-items: center; gap: 10px; }
+        .badge { background: #ffd166; color: #333; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; display: none; }
 
-        /* Layout Grids */
-        .section-title { text-align: center; margin: 60px 0 40px; font-size: 2.2rem; color: var(--primary); padding: 0 20px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; padding: 0 5%; max-width: 1400px; margin: 0 auto 60px; }
-        
-        /* Cards */
-        .card { 
-            background: var(--bg-card); border-radius: 20px; padding: 25px; text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-bottom: 5px solid var(--primary);
-            transition: var(--transition); position: relative; overflow: hidden;
-        }
-        .card:hover { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(0,0,0,0.1); }
-        .card h3 { font-size: 1.5rem; color: var(--primary); margin-bottom: 10px; }
-        .card .badge { display: inline-block; background: #ffc107; color: #000; padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; margin-bottom: 15px; }
-        
         /* Buttons */
-        .btn { 
-            background: var(--primary); color: white; border: none; padding: 12px 25px; 
-            border-radius: 25px; font-size: 1rem; cursor: pointer; transition: var(--transition); 
-            font-weight: 600; font-family: inherit; margin-top: 15px; min-height: 44px; display: inline-block;
+        .btn {
+            background: var(--white); color: var(--primary); border: none; padding: 10px 20px;
+            border-radius: 25px; font-weight: 600; cursor: pointer; transition: var(--transition);
+            min-height: 44px; display: inline-flex; align-items: center; justify-content: center;
         }
-        .btn:hover { background: var(--secondary); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-        .btn-danger { background: #dc3545; } .btn-danger:hover { background: #b02a37; }
-        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
-        .btn-outline:hover { background: var(--primary); color: white; }
+        .btn:hover { background: #e9ecef; }
+        .btn-primary { background: var(--primary); color: var(--white); }
+        .btn-primary:hover { background: var(--secondary); }
+        .btn-danger { background: #ef476f; color: var(--white); }
+        .btn-danger:hover { background: #d90429; }
 
-        /* Modals */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: var(--bg-card); width: 100%; max-width: 1000px; border-radius: 25px; padding: 30px; max-height: 90vh; overflow-y: auto; position: relative; animation: slideUp 0.4s ease; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+        /* Layout */
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .section-title { margin-bottom: 20px; color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 5px; display: inline-block; }
         
-        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 2rem; cursor: pointer; color: #888; transition: 0.2s; line-height: 1; }
-        body[dir="rtl"] .close-btn { right: auto; left: 20px; }
-        .close-btn:hover { color: #111; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .card {
+            background: var(--white); border-radius: 15px; padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: var(--transition);
+            border-top: 5px solid var(--primary);
+        }
+        .card h3 { color: var(--primary); margin-bottom: 10px; }
 
-        /* Gallery Grid */
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; }
-        .gallery-grid img { width: 100%; height: 150px; object-fit: cover; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: var(--transition); }
-        .gallery-grid img:hover { transform: scale(1.05); }
+        /* Modals & Forms */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: var(--white); width: 100%; max-width: 600px; border-radius: 20px; padding: 30px; position: relative; max-height: 90vh; overflow-y: auto; }
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; color: #666; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; font-weight: 600; color: #555; }
+        .form-group input, .form-group select {
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 1rem; min-height: 44px;
+        }
 
-        /* Admin Forms & Dashboards */
-        .admin-box { max-width: 400px; margin: 0 auto; text-align: center; }
-        .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; text-align: left; }
-        body[dir="rtl"] .form-group { text-align: right; }
-        .form-group input, .form-group select { padding: 12px; border-radius: 10px; border: 1px solid #ccc; font-family: inherit; font-size: 1rem; min-height: 44px; width: 100%; }
-        
-        .admin-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; }
-        .admin-panel-section { background: #f4f7f6; padding: 20px; border-radius: 15px; }
-        
-        .member-list-item { display: flex; justify-content: space-between; align-items: center; background: white; padding: 10px; border-radius: 8px; margin-bottom: 8px; font-size: 0.9rem; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        
-        /* Utils */
-        .hidden { display: none !important; }
-        .admin-only { display: none; }
-        body.is-admin .admin-only { display: inline-block; }
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .admin-only, .chef-only { display: none; }
+        body.is-dev .admin-only { display: block; }
+        body.is-chef .chef-only { display: block; }
 
         /* Mobile Optimization */
         @media (max-width: 768px) {
-            header { flex-direction: column; padding: 15px; gap: 15px; }
-            .hero { margin-top: 140px; padding: 80px 15px 40px; clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%); }
-            .hero h2 { font-size: 2rem; }
-            .grid { grid-template-columns: 1fr; padding: 0 15px; }
-            .modal-content { padding: 20px; width: 95%; }
-            .controls-panel { bottom: 15px; right: 15px; gap: 10px; }
-            .btn-float { width: 45px; height: 45px; font-size: 1rem; }
-            .gallery-grid img { height: 120px; }
+            header { flex-direction: column; gap: 15px; padding: 15px; text-align: center; }
+            .container { margin: 20px auto; }
+            .modal-content { padding: 20px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Floating Controls -->
-    <div class="controls-panel">
-        <button class="btn-float" id="btnTheme" title="Change Theme">🎨</button>
-        <button class="btn-float" id="btnAdmin" title="Dashboard">🔒</button>
-    </div>
-
-    <!-- Header -->
     <header>
-        <div class="logo-wrap">
-            <img src="https://via.placeholder.com/55" alt="MIDADE">
-            <div class="logo-text">
-                <h1 data-i18n="app_title">MIDADE Mieh w Mieh</h1>
-                <p data-i18n="app_subtitle">Mouvement International</p>
-            </div>
-        </div>
-        <div class="header-controls">
-            <span id="activeUserBadge" class="user-badge"></span>
-            <select id="langSelect" class="lang-select">
-                <option value="en">English</option>
-                <option value="fr">Français</option>
-                <option value="ar">العربية</option>
-            </select>
-            <button class="btn btn-danger admin-only" id="btnLogout" style="margin-top:0; padding: 8px 15px;">Logout</button>
+        <h1>⛺ Troupe Dashboard</h1>
+        <div class="user-controls">
+            <span id="activeUserBadge" class="badge"></span>
+            <button class="btn btn-danger hidden" id="btnLogout">Logout</button>
+            <button class="btn" id="btnLoginBtn">Login</button>
+            <button class="btn admin-only chef-only" id="btnDashboard">Manage Troupe</button>
         </div>
     </header>
 
-    <!-- Hero -->
-    <section class="hero">
-        <h2 data-i18n="hero_title">Welcome to MIDADE</h2>
-        <p data-i18n="hero_desc">Empowering children through faith, friendship, and unforgettable memories.</p>
-    </section>
-
-    <!-- Dynamic Main Groups -->
-    <h2 class="section-title" data-i18n="title_groups">Our Patrouilles</h2>
-    <div id="loaderGroups" class="loader"></div>
-    <div id="groupsGrid" class="grid"></div>
-
-    <!-- Dynamic Colonie -->
-    <h2 class="section-title" data-i18n="title_colonie">Summer Colonie</h2>
-    <div id="loaderColonie" class="loader"></div>
-    <div id="colonieGrid" class="grid"></div>
-
-    <!-- Modals -->
-    <div id="modalGallery" class="modal">
-        <div class="modal-content">
-            <span class="close-btn modal-close">&times;</span>
-            <h2 id="galleryTitle" style="color: var(--primary); margin-bottom: 10px;">Album</h2>
-            <div id="galleryLoader" class="loader hidden"></div>
-            <div id="galleryGrid" class="gallery-grid"></div>
+    <div class="container">
+        <h2 class="section-title">Our Patrouilles</h2>
+        <div id="patrouilleGrid" class="grid">
+            <!-- Populated via JS -->
         </div>
     </div>
 
-    <!-- Dashboard / Login Modal -->
-    <div id="modalAdmin" class="modal">
+    <!-- Login Modal -->
+    <div id="modalLogin" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <span class="close-btn" onclick="closeModals()">&times;</span>
+            <h2 style="margin-bottom: 20px; color: var(--primary);">Login</h2>
+            <div class="form-group"><input type="text" id="loginUser" placeholder="Username"></div>
+            <div class="form-group"><input type="password" id="loginPass" placeholder="Password"></div>
+            <button class="btn btn-primary" id="btnSubmitLogin" style="width: 100%;">Login</button>
+            <p id="loginError" style="color: red; margin-top: 10px; display: none;">Invalid credentials.</p>
+        </div>
+    </div>
+
+    <!-- Dashboard Modal -->
+    <div id="modalDashboard" class="modal">
         <div class="modal-content">
-            <span class="close-btn modal-close">&times;</span>
+            <span class="close-btn" onclick="closeModals()">&times;</span>
+            <h2 style="margin-bottom: 20px; color: var(--primary);">Management Dashboard</h2>
             
-            <div id="adminLoginScreen" class="admin-box">
-                <h2 style="margin-bottom: 20px;" data-i18n="admin_login">Login to Dashboard</h2>
-                <div class="form-group"><input type="text" id="adminUser" placeholder="Username"></div>
-                <div class="form-group"><input type="password" id="adminPass" placeholder="Password"></div>
-                <button class="btn" id="btnLoginSubmit" style="width: 100%;">Login</button>
-                <p id="loginError" style="color: red; margin-top: 10px;" class="hidden">Access Denied. Check credentials.</p>
-            </div>
-
-            <div id="adminDashboardScreen" class="hidden">
-                <h2 style="margin-bottom: 10px; text-align:center;" data-i18n="admin_panel">Dashboard</h2>
-                <p style="text-align:center; color: #666; margin-bottom: 20px;">Role: <span id="dashUserRole" style="font-weight:bold; color:var(--primary);"></span></p>
-                
-                <div class="admin-dashboard">
-                    <!-- Photo Upload -->
-                    <div class="admin-panel-section">
-                        <h3>Upload Picture</h3>
-                        <p style="font-size: 0.8rem; color:#666; margin-bottom:15px;">Add photos to a Patrouille album.</p>
-                        <div class="form-group">
-                            <label>Select Patrouille</label>
-                            <select id="uploadTargetGroup"></select>
-                        </div>
-                        <div class="form-group">
-                            <label>Choose File</label>
-                            <input type="file" id="uploadFile" accept="image/*">
-                        </div>
-                        <button class="btn" id="btnUploadSubmit" style="width:100%;">Upload Image</button>
-                        <p id="uploadStatus" style="margin-top: 10px; font-weight:bold; text-align: center;"></p>
-                    </div>
-
-                    <!-- Manage Patrouilles -->
-                    <div class="admin-panel-section">
-                        <h3>Manage Patrouilles</h3>
-                        <p style="font-size: 0.8rem; color:#666; margin-bottom:15px;">Create, Edit, or Delete groups live.</p>
-                        <div style="background: #fff; padding: 15px; border-radius:10px;">
-                            <div class="form-group"><input type="text" id="newGroupName" placeholder="Patrouille Name"></div>
-                            <div class="form-group"><input type="text" id="newGroupBadge" placeholder="Details (e.g., Ages 15-16)"></div>
-                            <div class="form-group">
-                                <select id="newGroupType">
-                                    <option value="regular">Main Patrouille</option>
-                                    <option value="colonie">Summer Colonie</option>
-                                </select>
-                            </div>
-                            <button class="btn btn-outline" id="btnCreateGroup" style="width:100%">Create Patrouille</button>
-                        </div>
-                    </div>
-
-                    <!-- Manage Members (NEW FEATURE) -->
-                    <div class="admin-panel-section">
-                        <h3>Manage Members</h3>
-                        <p style="font-size: 0.8rem; color:#666; margin-bottom:15px;">Add users and assign roles/patrouilles.</p>
-                        <div style="background: #fff; padding: 15px; border-radius:10px; margin-bottom:15px;">
-                            <div class="form-group"><input type="text" id="newMemberName" placeholder="Username"></div>
-                            <div class="form-group"><input type="password" id="newMemberPass" placeholder="Password"></div>
-                            <div class="form-group">
-                                <select id="newMemberRole">
-                                    <option value="member">Member (View Only)</option>
-                                    <option value="chef">Chef (Manage Group)</option>
-                                    <option value="dev">Dev (Full Access)</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <select id="newMemberPatrouille">
-                                    <option value="">-- Assign Patrouille --</option>
-                                </select>
-                            </div>
-                            <button class="btn btn-outline" id="btnCreateMember" style="width:100%">Create Account</button>
-                        </div>
-                        <div id="membersListContainer" style="max-height: 150px; overflow-y: auto;">
-                            <!-- Members injected here -->
-                        </div>
-                    </div>
+            <!-- Add Patrouille (Dev Only) -->
+            <div class="admin-only" style="background: var(--bg-light); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                <h3>Create Patrouille</h3>
+                <div class="form-group">
+                    <input type="text" id="newPatrouilleName" placeholder="Patrouille Name (e.g., Lions)">
                 </div>
+                <button class="btn btn-primary" id="btnCreatePatrouille">Save Patrouille</button>
             </div>
-        </div>
-    </div>
 
-    <!-- Edit Modal -->
-    <div id="modalEdit" class="modal" style="z-index: 3000;">
-        <div class="modal-content" style="max-width: 400px; text-align:center;">
-            <span class="close-btn modal-close">&times;</span>
-            <h3 style="margin-bottom:15px;">Edit Patrouille</h3>
-            <div class="form-group"><input type="text" id="editGroupName" placeholder="New Name"></div>
-            <div class="form-group"><input type="text" id="editGroupBadge" placeholder="New Badge/Date"></div>
-            <input type="hidden" id="editGroupId">
-            <button class="btn" id="btnSaveEdit" style="width: 100%;">Save Changes</button>
+            <!-- Add Member (Chef & Dev) -->
+            <div class="chef-only admin-only" style="background: var(--bg-light); padding: 15px; border-radius: 10px;">
+                <h3>Create Member Account</h3>
+                <div class="form-group"><input type="text" id="newMemberName" placeholder="Username"></div>
+                <div class="form-group"><input type="password" id="newMemberPass" placeholder="Password"></div>
+                
+                <div class="form-group">
+                    <select id="newMemberRole">
+                        <option value="member">Member</option>
+                        <option value="chef">Chef</option>
+                        <option value="dev" class="admin-only">Developer</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <select id="newMemberPatrouille">
+                        <option value="">-- Assign to Patrouille --</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" id="btnCreateMember">Create Account</button>
+            </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // Your provided Firebase configuration
+        // Provided New Configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyC92mwScr08PHQBa9P65PsJLe4dMm58IO8",
-            authDomain: "midade-website.firebaseapp.com",
-            projectId: "midade-website",
-            storageBucket: "midade-website.firebasestorage.app",
-            messagingSenderId: "50742520540",
-            appId: "1:50742520540:web:471125a0da58699ea32219"
+            apiKey: "AIzaSyCe1J8DlrKqoDEovm56uOpkT_kmU8epBrc",
+            authDomain: "troupe-6ff5d.firebaseapp.com",
+            projectId: "troupe-6ff5d",
+            storageBucket: "troupe-6ff5d.firebasestorage.app",
+            messagingSenderId: "159243785679",
+            appId: "1:159243785679:web:1c4d1c028f8b356f936eba",
+            measurementId: "G-C4T3WMRFGK"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        let globalGroups = [];
-        let globalMembers = [];
-        let currentLang = localStorage.getItem('midade_lang') || 'en';
+        let patrouilles = [];
+        let members = [];
         
-        // Active User Session Control (Persists across refresh)
-        let activeUser = JSON.parse(localStorage.getItem('midade_currentUser')) || null;
-        
-        const dictionary = {
-            en: {
-                app_title: "MIDADE Mieh w Mieh", app_subtitle: "International Movement of Apostolate of Children",
-                hero_title: "Welcome to MIDADE", hero_desc: "Empowering children through faith, friendship, and unforgettable memories.",
-                title_groups: "Our Patrouilles", title_colonie: "Summer Colonie", btn_view: "View Album", 
-                admin_login: "Login", admin_panel: "Dashboard"
-            },
-            fr: {
-                app_title: "MIDADE Mieh w Mieh", app_subtitle: "Mouvement International d'Apostolat des Enfants",
-                hero_title: "Bienvenue au MIDADE", hero_desc: "Autonomiser les enfants par la foi, l'amitié et des souvenirs inoubliables.",
-                title_groups: "Nos Patrouilles", title_colonie: "Colonie d'été", btn_view: "Voir l'album",
-                admin_login: "Connexion", admin_panel: "Tableau de Bord"
-            },
-            ar: {
-                app_title: "ميداد مية ومية", app_subtitle: "الحركة الدولية لرسالة الأطفال",
-                hero_title: "مرحباً بكم في ميداد", hero_desc: "تمكين الأطفال من خلال الإيمان والصداقة وذكريات لا تُنسى.",
-                title_groups: "مجموعاتنا", title_colonie: "المخيم الصيفي", btn_view: "عرض الصور",
-                admin_login: "دخول", admin_panel: "لوحة التحكم"
-            }
-        };
+        // PERSISTENCE MECHANIC: Load user from LocalStorage
+        let activeUser = JSON.parse(localStorage.getItem('troupe_session')) || null;
 
-        function applyLanguage(lang) {
-            currentLang = lang;
-            localStorage.setItem('midade_lang', lang);
-            document.body.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
-            document.getElementById('langSelect').value = lang;
-            
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (dictionary[lang][key]) el.textContent = dictionary[lang][key];
-            });
-            renderDOMGroups();
-        }
+        // --- Core Functions ---
 
-        function toggleTheme() {
-            document.body.classList.toggle('pink-theme');
-            localStorage.setItem('midade_theme', document.body.classList.contains('pink-theme') ? 'pink' : 'blue');
-        }
-
-        // Updated Auth Checker (Relies on LocalStorage Session)
-        function checkAuthState() {
-            const badge = document.getElementById('activeUserBadge');
-            if (activeUser && (activeUser.role === 'dev' || activeUser.role === 'chef')) {
-                document.body.classList.add('is-admin');
-                document.getElementById('adminLoginScreen').classList.add('hidden');
-                document.getElementById('adminDashboardScreen').classList.remove('hidden');
-                
-                badge.style.display = 'block';
-                badge.textContent = `Hi, ${activeUser.name} (${activeUser.role.toUpperCase()})`;
-                document.getElementById('dashUserRole').textContent = activeUser.role.toUpperCase();
-            } else if (activeUser && activeUser.role === 'member') {
-                document.body.classList.remove('is-admin');
-                badge.style.display = 'block';
-                badge.textContent = `Hi, ${activeUser.name}`;
-            } else {
-                document.body.classList.remove('is-admin');
-                document.getElementById('adminLoginScreen').classList.remove('hidden');
-                document.getElementById('adminDashboardScreen').classList.add('hidden');
-                badge.style.display = 'none';
-            }
-            renderDOMGroups();
-        }
-
-        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-        function closeAllModals() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
-
-        async function fetchAllData() {
+        async function fetchDatabase() {
             try {
-                // Fetch Groups
-                const snap = await getDocs(collection(db, "midade_groups_v2"));
-                globalGroups = [];
-                snap.forEach(doc => { globalGroups.push({ id: doc.id, ...doc.data() }); });
-                
-                // Fetch Members
-                const memberSnap = await getDocs(collection(db, "midade_users"));
-                globalMembers = [];
-                memberSnap.forEach(doc => { globalMembers.push({ id: doc.id, ...doc.data() }); });
-                
-                // Bootstrap a Dev account if DB is entirely empty
-                if (globalMembers.length === 0) {
-                    await addDoc(collection(db, "midade_users"), { name: "admin", pass: "midade2026", role: "dev", patrouilleId: "" });
-                    await seedInitialDatabase(); 
+                // Get Patrouilles
+                const pSnap = await getDocs(collection(db, "troupe_patrouilles"));
+                patrouilles = [];
+                pSnap.forEach(doc => patrouilles.push({ id: doc.id, ...doc.data() }));
+
+                // Get Users/Members
+                const uSnap = await getDocs(collection(db, "troupe_users"));
+                members = [];
+                uSnap.forEach(doc => members.push({ id: doc.id, ...doc.data() }));
+
+                // Auto-create Master Dev if DB is empty
+                if(members.length === 0) {
+                    await addDoc(collection(db, "troupe_users"), { name: "admin", pass: "admin123", role: "dev", patrouilleId: "" });
+                    fetchDatabase();
+                    return;
                 }
 
-                renderDOMGroups();
+                renderUI();
                 populateDropdowns();
-                renderMembersList();
             } catch (err) {
                 console.error("Firebase Read Error:", err);
-                alert("Database connection failed. Check console for details.");
             }
         }
 
-        function renderDOMGroups() {
-            const grpGrid = document.getElementById('groupsGrid');
-            const colGrid = document.getElementById('colonieGrid');
-            
-            document.getElementById('loaderGroups').classList.add('hidden');
-            document.getElementById('loaderColonie').classList.add('hidden');
-            
-            grpGrid.innerHTML = ''; colGrid.innerHTML = '';
+        function checkAuthState() {
+            const badge = document.getElementById('activeUserBadge');
+            const btnLogin = document.getElementById('btnLoginBtn');
+            const btnLogout = document.getElementById('btnLogout');
+            const body = document.body;
 
-            const isManager = activeUser && (activeUser.role === 'dev' || activeUser.role === 'chef');
-            const btnText = dictionary[currentLang].btn_view;
+            // Reset classes
+            body.classList.remove('is-dev', 'is-chef');
 
-            globalGroups.forEach(g => {
-                // Only show controls if user is Dev, OR if they are a Chef assigned to this specific group
-                const canManage = activeUser && (activeUser.role === 'dev' || (activeUser.role === 'chef' && activeUser.patrouilleId === g.id));
-                
-                const adminControls = canManage ? `
-                    <div style="margin-top:15px; display:flex; gap:10px; justify-content:center;">
-                        <button class="btn btn-outline" style="padding:8px; font-size:0.8rem; min-height:36px;" data-edit="${g.id}">Edit</button>
-                        <button class="btn btn-danger" style="padding:8px; font-size:0.8rem; min-height:36px;" data-delete="${g.id}">Delete</button>
-                    </div>
-                ` : '';
+            if (activeUser) {
+                btnLogin.style.display = 'none';
+                btnLogout.style.display = 'inline-flex';
+                badge.style.display = 'inline-block';
+                badge.innerText = `${activeUser.name} (${activeUser.role})`;
 
-                const cardHTML = `
-                    <div class="card">
-                        <h3>${g.name}</h3>
-                        <span class="badge">${g.badge}</span><br>
-                        <button class="btn view-album-btn" data-id="${g.id}" data-name="${g.name}">${btnText}</button>
-                        ${adminControls}
-                    </div>
-                `;
-
-                if (g.type === 'regular') grpGrid.innerHTML += cardHTML;
-                else colGrid.innerHTML += cardHTML;
-            });
-
-            attachCardListeners();
+                if (activeUser.role === 'dev') body.classList.add('is-dev');
+                if (activeUser.role === 'chef' || activeUser.role === 'dev') body.classList.add('is-chef');
+            } else {
+                btnLogin.style.display = 'inline-flex';
+                btnLogout.style.display = 'none';
+                badge.style.display = 'none';
+            }
         }
 
-        function renderMembersList() {
-            const container = document.getElementById('membersListContainer');
-            container.innerHTML = '';
-            globalMembers.forEach(m => {
-                // Ensure password is not shown, just name and role
-                const groupName = globalGroups.find(g => g.id === m.patrouilleId)?.name || 'None';
-                container.innerHTML += `
-                    <div class="member-list-item">
-                        <div>
-                            <strong>${m.name}</strong> <span style="color:#888; font-size:0.8rem;">(${m.role})</span><br>
-                            <small>Patrouille: ${groupName}</small>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function attachCardListeners() {
-            document.querySelectorAll('.view-album-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => loadAlbumImages(e.target.dataset.id, e.target.dataset.name));
-            });
-            document.querySelectorAll('[data-edit]').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const group = globalGroups.find(g => g.id === e.target.dataset.edit);
-                    document.getElementById('editGroupName').value = group.name;
-                    document.getElementById('editGroupBadge').value = group.badge;
-                    document.getElementById('editGroupId').value = group.id;
-                    openModal('modalEdit');
-                });
-            });
-            document.querySelectorAll('[data-delete]').forEach(btn => {
-                btn.addEventListener('click', async (e) => {
-                    if(confirm("Are you sure you want to completely delete this group?")) {
-                        await deleteDoc(doc(db, "midade_groups_v2", e.target.dataset.delete));
-                        fetchAllData();
-                    }
-                });
-            });
-        }
-
-        async function loadAlbumImages(groupId, groupName) {
-            document.getElementById('galleryTitle').innerText = groupName;
-            const grid = document.getElementById('galleryGrid');
-            const loader = document.getElementById('galleryLoader');
-            
+        function renderUI() {
+            checkAuthState();
+            const grid = document.getElementById('patrouilleGrid');
             grid.innerHTML = '';
-            loader.classList.remove('hidden');
-            openModal('modalGallery');
 
-            try {
-                const q = query(collection(db, "midade_photos"), where("groupId", "==", groupId));
-                const snap = await getDocs(q);
-                loader.classList.add('hidden');
+            patrouilles.forEach(p => {
+                // Find how many members are in this patrouille
+                const count = members.filter(m => m.patrouilleId === p.id).length;
                 
-                if (snap.empty) {
-                    grid.innerHTML = '<p style="grid-column:1/-1; text-align:center;">No pictures uploaded yet.</p>';
-                } else {
-                    snap.forEach(d => {
-                        grid.innerHTML += `<img src="${d.data().url}" loading="lazy">`;
-                    });
-                }
-            } catch (err) {
-                console.error(err);
-                grid.innerHTML = '<p style="color:red;">Failed to load photos.</p>';
-            }
+                grid.innerHTML += `
+                    <div class="card">
+                        <h3>${p.name}</h3>
+                        <p style="color: #666; font-size: 0.9rem;">Members: ${count}</p>
+                    </div>
+                `;
+            });
         }
 
         function populateDropdowns() {
-            const selectGroup = document.getElementById('uploadTargetGroup');
-            const selectPatrouille = document.getElementById('newMemberPatrouille');
-            
-            let options = '<option value="">-- Choose Patrouille --</option>';
-            globalGroups.forEach(g => {
-                options += `<option value="${g.id}">${g.name} (${g.badge})</option>`;
+            const select = document.getElementById('newMemberPatrouille');
+            select.innerHTML = '<option value="">-- Assign to Patrouille --</option>';
+            patrouilles.forEach(p => {
+                select.innerHTML += `<option value="${p.id}">${p.name}</option>`;
             });
-
-            selectGroup.innerHTML = options;
-            selectPatrouille.innerHTML = options;
         }
 
-        async function createNewGroup() {
-            const name = document.getElementById('newGroupName').value;
-            const badge = document.getElementById('newGroupBadge').value;
-            const type = document.getElementById('newGroupType').value;
-            
-            if(!name || !badge) return alert("Please fill all fields");
+        // --- Database Writes ---
 
-            document.getElementById('btnCreateGroup').innerText = "Creating...";
-            await addDoc(collection(db, "midade_groups_v2"), { name, badge, type });
-            
-            document.getElementById('newGroupName').value = '';
-            document.getElementById('newGroupBadge').value = '';
-            document.getElementById('btnCreateGroup').innerText = "Create Patrouille";
-            
-            fetchAllData();
+        async function createPatrouille() {
+            const name = document.getElementById('newPatrouilleName').value.trim();
+            if (!name) return alert("Enter a name");
+
+            document.getElementById('btnCreatePatrouille').innerText = "Saving...";
+            await addDoc(collection(db, "troupe_patrouilles"), { name });
+            document.getElementById('newPatrouilleName').value = '';
+            document.getElementById('btnCreatePatrouille').innerText = "Save Patrouille";
+            fetchDatabase();
         }
 
-        // New Logic: Create a Member account saving to Firestore
-        async function createNewMember() {
+        async function createMember() {
             const name = document.getElementById('newMemberName').value.trim();
             const pass = document.getElementById('newMemberPass').value.trim();
             const role = document.getElementById('newMemberRole').value;
             const patrouilleId = document.getElementById('newMemberPatrouille').value;
-            
-            if(!name || !pass) return alert("Please provide a username and password");
-            if(role === 'chef' && !patrouilleId) return alert("Please assign a Patrouille for the Chef");
+
+            if (!name || !pass) return alert("Username and Password required");
+            if (role === 'chef' && !patrouilleId) return alert("Chefs must be assigned a Patrouille");
 
             document.getElementById('btnCreateMember').innerText = "Saving...";
+            await addDoc(collection(db, "troupe_users"), { name, pass, role, patrouilleId });
             
-            try {
-                await addDoc(collection(db, "midade_users"), { 
-                    name, 
-                    pass, 
-                    role, 
-                    patrouilleId 
-                });
+            document.getElementById('newMemberName').value = '';
+            document.getElementById('newMemberPass').value = '';
+            document.getElementById('btnCreateMember').innerText = "Create Account";
+            fetchDatabase();
+            alert("Member created successfully!");
+        }
+
+        // --- Auth Logic ---
+
+        function handleLogin() {
+            const u = document.getElementById('loginUser').value;
+            const p = document.getElementById('loginPass').value;
+            
+            const match = members.find(m => m.name === u && m.pass === p);
+            
+            if (match) {
+                // Save to LocalStorage so it survives refresh
+                activeUser = { name: match.name, role: match.role, patrouilleId: match.patrouilleId };
+                localStorage.setItem('troupe_session', JSON.stringify(activeUser));
                 
-                document.getElementById('newMemberName').value = '';
-                document.getElementById('newMemberPass').value = '';
-                document.getElementById('newMemberPatrouille').value = '';
-                document.getElementById('btnCreateMember').innerText = "Create Account";
-                
-                fetchAllData(); // Refresh UI lists
-            } catch (err) {
-                console.error(err);
-                alert("Failed to save member.");
+                document.getElementById('loginError').style.display = 'none';
+                closeModals();
+                renderUI();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
             }
         }
 
-        async function saveGroupEdit() {
-            const id = document.getElementById('editGroupId').value;
-            const name = document.getElementById('editGroupName').value;
-            const badge = document.getElementById('editGroupBadge').value;
-            
-            await updateDoc(doc(db, "midade_groups_v2", id), { name, badge });
-            closeAllModals();
-            fetchAllData();
+        function handleLogout() {
+            activeUser = null;
+            localStorage.removeItem('troupe_session');
+            renderUI();
         }
 
-        function handleImageUpload() {
-            const fileInput = document.getElementById('uploadFile');
-            const file = fileInput.files[0];
-            const groupId = document.getElementById('uploadTargetGroup').value;
-            const statusText = document.getElementById('uploadStatus');
-
-            if(!file || !groupId) return alert("Select a patrouille and a file.");
-
-            document.getElementById('btnUploadSubmit').innerText = "Processing...";
-            statusText.style.color = "orange";
-            statusText.innerText = "Converting and saving image...";
-
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                const base64Data = e.target.result;
-                try {
-                    await addDoc(collection(db, "midade_photos"), {
-                        groupId: groupId,
-                        url: base64Data,
-                        timestamp: Date.now()
-                    });
-
-                    statusText.style.color = "green";
-                    statusText.innerText = "Success! Photo live for everyone.";
-                    fileInput.value = '';
-                } catch (err) {
-                    console.error(err);
-                    statusText.style.color = "red";
-                    statusText.innerText = "Error: Document likely too large for Firebase Base64 limits.";
-                }
-                document.getElementById('btnUploadSubmit').innerText = "Upload Image";
-            };
-            reader.readAsDataURL(file);
+        // --- Utilities ---
+        window.closeModals = function() {
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            if (localStorage.getItem('midade_theme') === 'pink') document.body.classList.add('pink-theme');
-            applyLanguage(currentLang);
-            checkAuthState(); // Will auto-login if localStorage holds the active user[cite: 2]
-            fetchAllData();
+            fetchDatabase();
 
-            document.getElementById('langSelect').addEventListener('change', (e) => applyLanguage(e.target.value));
-            document.getElementById('btnTheme').addEventListener('click', toggleTheme);
-            document.getElementById('btnAdmin').addEventListener('click', () => openModal('modalAdmin'));
+            // Modal Triggers
+            document.getElementById('btnLoginBtn').addEventListener('click', () => document.getElementById('modalLogin').style.display = 'flex');
+            document.getElementById('btnDashboard').addEventListener('click', () => document.getElementById('modalDashboard').style.display = 'flex');
             
-            document.querySelectorAll('.modal-close').forEach(btn => {
-                btn.addEventListener('click', closeAllModals);
-            });
-            window.addEventListener('click', (e) => {
-                if(e.target.classList.contains('modal')) closeAllModals();
-            });
-
-            // Handling DB Driven Login 
-            document.getElementById('btnLoginSubmit').addEventListener('click', () => {
-                const u = document.getElementById('adminUser').value;
-                const p = document.getElementById('adminPass').value;
-                
-                // Search Firestore members for match
-                const match = globalMembers.find(m => m.name === u && m.pass === p);
-                
-                if(match) {
-                    // Safe logic: Saves JSON representation of activeUser to LocalStorage to survive Refresh[cite: 2]
-                    activeUser = { name: match.name, role: match.role, patrouilleId: match.patrouilleId };
-                    localStorage.setItem('midade_currentUser', JSON.stringify(activeUser));
-                    
-                    document.getElementById('loginError').classList.add('hidden');
-                    checkAuthState();
-                } else {
-                    document.getElementById('loginError').classList.remove('hidden');
-                }
-            });
-            
-            document.getElementById('btnLogout').addEventListener('click', () => {
-                activeUser = null;
-                localStorage.removeItem('midade_currentUser');
-                checkAuthState();
-            });
-
-            document.getElementById('btnCreateGroup').addEventListener('click', createNewGroup);
-            document.getElementById('btnCreateMember').addEventListener('click', createNewMember);
-            document.getElementById('btnSaveEdit').addEventListener('click', saveGroupEdit);
-            document.getElementById('btnUploadSubmit').addEventListener('click', handleImageUpload);
+            // Actions
+            document.getElementById('btnSubmitLogin').addEventListener('click', handleLogin);
+            document.getElementById('btnLogout').addEventListener('click', handleLogout);
+            document.getElementById('btnCreatePatrouille').addEventListener('click', createPatrouille);
+            document.getElementById('btnCreateMember').addEventListener('click', createMember);
         });
 
-        async function seedInitialDatabase() {
-            const defaults = [
-                { type: 'regular', name: 'Patrouille 1', badge: 'Ages 3 - 7' },
-                { type: 'regular', name: 'Patrouille 2', badge: 'Ages 7 - 8' }
-            ];
-            for (let d of defaults) { await addDoc(collection(db, "midade_groups_v2"), d); }
-            fetchAllData();
-        }
     </script>
 </body>
 </html>

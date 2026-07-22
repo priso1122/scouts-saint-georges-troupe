@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scout Saint Georges Mieh w Mieh</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-red: #D32F2F;
+            --primary-green: #388E3C;
+            --primary-blue: #1976D2;
+            --dark-blue: #0D47A1;
+            --bg-light: #F4F7F6;
+            --text-dark: #1F2937;
+            --text-muted: #6B7280;
+            --white: #FFFFFF;
+            --shadow: 0 10px 25px rgba(0,0,0,0.1);
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; scroll-behavior: smooth; }
+        body { background-color: var(--bg-light); color: var(--text-dark); overflow-x: hidden; }
+
+        h1, h2, h3 { font-weight: 700; margin-bottom: 15px; color: var(--text-dark); }
+        .text-center { text-align: center; }
+        .hidden { display: none !important; }
+        
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 1rem; transition: var(--transition); display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
+        .btn-primary { background: var(--primary-blue); color: var(--white); box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3); }
+        .btn-primary:hover { background: var(--dark-blue); transform: translateY(-2px); }
+        .btn-red { background: var(--primary-red); color: var(--white); }
+        .btn-green { background: var(--primary-green); color: var(--white); }
+        .btn-outline { background: transparent; border: 2px solid var(--white); color: var(--white); }
+        .btn-outline:hover { background: var(--white); color: var(--text-dark); }
+        
+        .card { background: var(--white); padding: 25px; border-radius: var(--border-radius); box-shadow: var(--shadow); margin-bottom: 20px; transition: var(--transition); }
+        .card:hover { box-shadow: 0 15px 30px rgba(0,0,0,0.15); }
+        
+        .badge { padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; }
+        .badge-scout { background: var(--primary-blue); }
+        .badge-leader { background: var(--primary-green); }
+        .badge-admin { background: var(--primary-red); }
+        .badge-cp { background: #FF8F00; }
+
+        input, select, textarea { width: 100%; padding: 12px 15px; border: 2px solid #E5E7EB; border-radius: 8px; margin-bottom: 15px; font-family: inherit; transition: var(--transition); }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary-blue); }
+
+        /* Welcome Page */
+        #welcome-page { width: 100%; min-height: 100vh; display: flex; flex-direction: column; }
+        .hero { position: relative; min-height: 100vh; width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: var(--white); background: linear-gradient(135deg, #0D47A1 0%, #1976D2 100%); background-size: cover; background-position: center; padding: 60px 20px; }
+        .hero-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: 1; }
+        .hero-content { position: relative; z-index: 2; max-width: 900px; padding: 20px; }
+        .hero h1 { font-size: 3.5rem; font-weight: 900; margin-bottom: 15px; color: var(--white); text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 3px 6px rgba(0,0,0,0.5); }
+        .hero p { font-size: 1.3rem; font-weight: 500; margin-bottom: 35px; color: #E5E7EB; }
+
+        .public-section { padding: 80px 20px; background: var(--bg-light); text-align: center; }
+        .public-section h2 { font-size: 2.5rem; margin-bottom: 15px; color: var(--dark-blue); }
+        .patrol-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 40px auto 0 auto; text-align: left; }
+        
+        .patrol-card { background: var(--white); border-radius: var(--border-radius); overflow: hidden; box-shadow: var(--shadow); transition: var(--transition); cursor: pointer; }
+        .patrol-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+        .patrol-card-header { padding: 25px; background: var(--dark-blue); color: var(--white); display: flex; align-items: center; gap: 15px; }
+        .patrol-card-body { padding: 25px; }
+
+        /* Login & Modals */
+        #login-modal, .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(5px); }
+        .login-box, .modal-content { background: var(--white); padding: 40px; border-radius: var(--border-radius); box-shadow: 0 25px 50px rgba(0,0,0,0.25); width: 100%; max-width: 480px; position: relative; }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
+
+        /* App Layout */
+        #app-layout { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
+        .sidebar { width: 280px; background: var(--dark-blue); color: var(--white); display: flex; flex-direction: column; box-shadow: 4px 0 15px rgba(0,0,0,0.1); z-index: 100; }
+        .sidebar-header { padding: 25px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sidebar-header h3 { font-size: 1.1rem; color: white; margin: 0; }
+        .nav-links { flex: 1; padding: 20px 0; overflow-y: auto; }
+        .nav-item { padding: 15px 25px; display: flex; align-items: center; gap: 15px; color: rgba(255,255,255,0.7); text-decoration: none; font-weight: 600; cursor: pointer; transition: var(--transition); }
+        .nav-item i { width: 20px; text-align: center; font-size: 1.2rem; }
+        .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.1); color: var(--white); border-left: 4px solid var(--white); }
+        .user-profile-nav { padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center; background: rgba(0,0,0,0.2); }
+
+        .main-content { flex: 1; overflow-y: auto; padding: 40px; background: var(--bg-light); }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
+
+        /* Tables & Lists */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; border-radius: 8px; overflow: hidden; box-shadow: var(--shadow); }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #E5E7EB; }
+        th { background: var(--bg-light); font-weight: 700; color: var(--dark-blue); }
+
+        footer { background: var(--dark-blue); color: var(--white); padding: 30px 20px; text-align: center; }
+
+        @media (max-width: 900px) {
+            .hero h1 { font-size: 2.2rem; }
+            #app-layout { flex-direction: column; }
+            .sidebar { width: 100%; flex-direction: row; justify-content: space-between; align-items: center; padding: 10px 20px; }
+            .sidebar-header { border: none; padding: 0; }
+            .nav-links { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--dark-blue); display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; }
+            .nav-item { padding: 10px; flex-direction: column; gap: 3px; font-size: 0.65rem; border: none !important; }
+            .nav-item i { font-size: 1.2rem; }
+            .user-profile-nav { display: none; }
+            .main-content { padding: 20px; padding-bottom: 100px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================== -->
+    <!-- PUBLIC WELCOME PAGE                            -->
+    <!-- ============================================== -->
+    <div id="welcome-page">
+        <section class="hero" id="hero-section">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h1 id="hero-title-text">Scout Saint Georges Mieh w Mieh</h1>
+                <p id="hero-welcome-text">Plateforme numérique officielle et exclusive de la Troupe. Prêts pour l'aventure, unis dans le scoutisme.</p>
+                <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="showLoginModal()" style="font-size: 1.1rem; padding: 14px 28px;">
+                        <i class="fas fa-sign-in-alt"></i> Espace Membre / Admin
+                    </button>
+                    <a href="#patrouilles-section" class="btn btn-outline" style="font-size: 1.1rem; padding: 14px 28px;">Explorer les Patrouilles</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="patrouilles-section" class="public-section">
+            <h2>Patrouilles Publiques</h2>
+            <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto; font-size: 1.1rem; margin-bottom: 30px;">
+                Découvrez les patrouilles de notre troupe. Tout commence ici.
+            </p>
+            <div id="public-patrols-container" class="patrol-grid">
+                <!-- Starts completely empty -->
+            </div>
+        </section>
+        
+        <footer>
+            <p>&copy; 2026 Scout Saint Georges Mieh w Mieh • Tous droits réservés.</p>
+        </footer>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="hidden">
+        <div class="login-box">
+            <i class="fas fa-times close-modal" onclick="hideModal('login-modal')"></i>
+            <h2 style="color: var(--dark-blue); margin-bottom: 5px;">Connexion Troupe</h2>
+            <p style="margin-bottom: 25px; color: var(--text-muted);">Accès Administrateur, CP ou Membre.</p>
+            <form id="login-form">
+                <input type="text" id="login-username" placeholder="Nom d'utilisateur (ex: admin)" required>
+                <input type="password" id="login-password" placeholder="Mot de passe" required>
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 14px;">Se Connecter</button>
+            </form>
+            <p id="login-error" style="color: var(--primary-red); margin-top: 15px; font-weight: 600; font-size: 0.9rem;"></p>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- PRIVATE TROUPE PLATFORM APP                    -->
+    <!-- ============================================== -->
+    <div id="app-layout" class="hidden">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h3>St Georges Mieh w Mieh</h3>
+            </div>
+            <div class="nav-links">
+                <div class="nav-item active" data-target="dashboard"><i class="fas fa-home"></i> Dashboard</div>
+                <div class="nav-item" data-target="calendar"><i class="fas fa-calendar-alt"></i> Calendrier</div>
+                <div class="nav-item" data-target="patrols"><i class="fas fa-shield-alt"></i> Patrouilles</div>
+                <div class="nav-item" data-target="ideas"><i class="fas fa-lightbulb"></i> Boîte à Idées</div>
+                <div class="nav-item" data-target="memories"><i class="fas fa-images"></i> Souvenirs</div>
+                <!-- Dynamic Patrouille Button for CP or assigned members -->
+                <div id="nav-dynamic-patrol-item" class="nav-item hidden" data-target="dynamic-patrol-area"><i class="fas fa-flag"></i> <span id="nav-dynamic-patrol-name">Ma Patrouille</span></div>
+                <div id="nav-admin-link" class="nav-item hidden" data-target="admin-panel" style="color: #FFCDD2;"><i class="fas fa-cogs"></i> Panneau Admin</div>
+            </div>
+            <div class="user-profile-nav">
+                <div id="user-info-name" style="font-weight: 700; font-size: 1rem;">Nom</div>
+                <div id="user-info-role" class="badge" style="margin-top: 5px;">Rôle</div>
+                <button id="logout-btn" class="btn btn-outline" style="margin-top: 15px; width: 100%; justify-content: center; padding: 8px; font-size: 0.85rem;">Déconnexion</button>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <!-- DASHBOARD VIEW -->
+            <section id="view-dashboard" class="view-section">
+                <h1>Quartier Général de la Troupe</h1>
+                <p class="text-muted" style="margin-bottom: 30px;">Bienvenue sur l'espace privé de la Troupe Saint Georges Mieh w Mieh.</p>
+                <div class="dashboard-grid" id="dashboard-content-grid">
+                    <div class="card">
+                        <h3><i class="fas fa-calendar-check"></i> Activités à venir</h3>
+                        <p class="text-muted" id="dash-activity-state">Aucune activité pour le moment.</p>
+                    </div>
+                    <div class="card">
+                        <h3><i class="fas fa-bullhorn"></i> Annonces</h3>
+                        <p class="text-muted" id="dash-announcement-state">Aucune annonce pour le moment.</p>
+                    </div>
+                    <div class="card">
+                        <h3><i class="fas fa-images"></i> Derniers Souvenirs</h3>
+                        <p class="text-muted" id="dash-memory-state">Aucun souvenir publié pour le moment.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CALENDAR VIEW -->
+            <section id="view-calendar" class="view-section hidden">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
+                    <div>
+                        <h1>Calendrier des Activités</h1>
+                        <p class="text-muted">Événements généraux et de patrouilles.</p>
+                    </div>
+                    <button id="btn-add-event" class="btn btn-primary hidden" onclick="openModal('modal-create-event')"><i class="fas fa-plus"></i> Créer un Événement</button>
+                </div>
+                <div id="calendar-container" class="dashboard-grid">
+                    <p class="text-muted">Aucun événement planifié.</p>
+                </div>
+            </section>
+
+            <!-- PATROULS VIEW -->
+            <section id="view-patrols" class="view-section hidden">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
+                    <div>
+                        <h1>Patrouilles de la Troupe</h1>
+                        <p class="text-muted">Explorez les équipes de la troupe.</p>
+                    </div>
+                </div>
+                <div id="app-patrols-grid" class="dashboard-grid">
+                    <p class="text-muted">Aucune patrouille enregistrée pour le moment.</p>
+                </div>
+            </section>
+
+            <!-- SINGLE PATROL DETAIL VIEW -->
+            <section id="view-patrol-detail" class="view-section hidden">
+                <button class="btn btn-outline" onclick="switchView('patrols')" style="color: var(--dark-blue); border-color: var(--dark-blue); margin-bottom: 20px;"><i class="fas fa-arrow-left"></i> Retour aux Patrouilles</button>
+                <div id="patrol-detail-content"></div>
+            </section>
+
+            <!-- DYNAMIC PATROUILLE CP AREA -->
+            <section id="view-dynamic-patrol-area" class="view-section hidden">
+                <div id="cp-area-header" style="margin-bottom: 25px;">
+                    <h1 id="cp-area-title">Espace Patrouille</h1>
+                    <p class="text-muted">Espace de gestion et d'activités de votre patrouille.</p>
+                </div>
+                <div id="cp-management-controls" class="card hidden" style="border-left: 6px solid #FF8F00; margin-bottom: 25px;">
+                    <h3 style="color: #FF8F00;"><i class="fas fa-tools"></i> Outils de Gestion CP</h3>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px;">
+                        <button class="btn btn-primary" onclick="openModal('modal-cp-create-activity')"><i class="fas fa-plus"></i> Ajouter Activité Patrouille</button>
+                        <button class="btn btn-primary" onclick="openModal('modal-upload-memory')"><i class="fas fa-upload"></i> Uploader Photo Patrouille</button>
+                    </div>
+                </div>
+                <div id="cp-area-content" class="dashboard-grid">
+                    <!-- Populated dynamically -->
+                </div>
+            </section>
+
+            <!-- IDEAS VIEW -->
+            <section id="view-ideas" class="view-section hidden">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
+                    <div>
+                        <h1>Boîte à Idées de la Troupe</h1>
+                        <p class="text-muted">Proposez des jeux, camps et projets.</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openModal('modal-create-idea')"><i class="fas fa-lightbulb"></i> Soumettre une Idée</button>
+                </div>
+                <div id="ideas-container" class="dashboard-grid">
+                    <p class="text-muted">Aucune idée soumise pour le moment.</p>
+                </div>
+            </section>
+
+            <!-- MEMORIES VIEW -->
+            <section id="view-memories" class="view-section hidden">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
+                    <div>
+                        <h1>Galerie & Souvenirs</h1>
+                        <p class="text-muted">Photos approuvées des camps et rassemblements.</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openModal('modal-upload-memory')"><i class="fas fa-upload"></i> Uploader une Photo</button>
+                </div>
+                <div id="memories-container" class="dashboard-grid">
+                    <p class="text-muted">Aucune photo partagée pour le moment.</p>
+                </div>
+            </section>
+
+            <!-- ADMIN PANEL VIEW (13 Sections) -->
+            <section id="view-admin-panel" class="view-section hidden">
+                <h1 style="color: var(--primary-red);"><i class="fas fa-cogs"></i> Panneau d'Administration</h1>
+                <p class="text-muted" style="margin-bottom: 25px;">Gestion complète de la plateforme et des contenus.</p>
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="adminTab('members')">1. Membres</button>
+                    <button class="btn btn-primary" onclick="adminTab('accounts')">2. Comptes</button>
+                    <button class="btn btn-primary" onclick="adminTab('patrols')">3. Patrouilles</button>
+                    <button class="btn btn-primary" onclick="adminTab('assign-cp')">4. Assigner CPs</button>
+                    <button class="btn btn-primary" onclick="adminTab('calendar')">5. Calendrier</button>
+                    <button class="btn btn-primary" onclick="adminTab('troupe-acts')">6. Activités Troupe</button>
+                    <button class="btn btn-primary" onclick="adminTab('patrol-acts')">7. Activités Patr.</button>
+                    <button class="btn btn-primary" onclick="adminTab('memories')">8. Souvenirs</button>
+                    <button class="btn btn-primary" onclick="adminTab('approve-photos')">9. Valider Photos</button>
+                    <button class="btn btn-primary" onclick="adminTab('ideas')">10. Idées</button>
+                    <button class="btn btn-primary" onclick="adminTab('announcements')">11. Annonces</button>
+                    <button class="btn btn-primary" onclick="adminTab('welcome-page')">12. Page d'Accueil</button>
+                    <button class="btn btn-primary" onclick="adminTab('public-content')">13. Contenu Public</button>
+                </div>
+
+                <div id="admin-tab-content" class="card">
+                    <!-- Dynamic Admin Sub-sections -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODALS -->
+    <div id="modal-create-event" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal" onclick="hideModal('modal-create-event')">&times;</span>
+            <h2>Créer un Événement / Activité</h2>
+            <form id="form-create-event">
+                <input type="text" id="ev-title" placeholder="Titre de l'événement" required>
+                <input type="date" id="ev-date" required>
+                <input type="text" id="ev-time" placeholder="Heure (ex: 15:00)" required>
+                <input type="text" id="ev-location" placeholder="Lieu" required>
+                <textarea id="ev-desc" placeholder="Description & ce qu'il faut apporter..." required></textarea>
+                <select id="ev-type">
+                    <option value="troupe">Activité Troupe Générale</option>
+                    <option value="patrol">Activité Patrouille</option>
+                </select>
+                <select id="ev-patrol-select">
+                    <option value="">-- Aucune Patrouille Spécifique --</option>
+                </select>
+                <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Publier l'Événement</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-cp-create-activity" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal" onclick="hideModal('modal-cp-create-activity')">&times;</span>
+            <h2>Ajouter une Activité de Patrouille</h2>
+            <form id="form-cp-create-activity">
+                <input type="text" id="cp-ev-title" placeholder="Titre de l'activité" required>
+                <input type="date" id="cp-ev-date" required>
+                <input type="text" id="cp-ev-time" placeholder="Heure (ex: 16:00)" required>
+                <input type="text" id="cp-ev-location" placeholder="Lieu" required>
+                <textarea id="cp-ev-desc" placeholder="Description..." required></textarea>
+                <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Créer pour ma Patrouille</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-create-idea" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal" onclick="hideModal('modal-create-idea')">&times;</span>
+            <h2>Soumettre une Idée</h2>
+            <form id="form-create-idea">
+                <input type="text" id="idea-title" placeholder="Titre de l'idée" required>
+                <select id="idea-category">
+                    <option value="Activité">Activité</option>
+                    <option value="Camp">Camp</option>
+                    <option value="Jeu">Jeu</option>
+                    <option value="Projet de Service">Projet de Service</option>
+                </select>
+                <textarea id="idea-desc" placeholder="Description détaillée..." required></textarea>
+                <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Soumettre</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-upload-memory" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal" onclick="hideModal('modal-upload-memory')">&times;</span>
+            <h2>Uploader un Souvenir (Base64 optimisé)</h2>
+            <form id="form-upload-memory">
+                <input type="text" id="mem-title" placeholder="Titre du Souvenir" required>
+                <input type="file" id="mem-file" accept="image/*" required style="padding: 10px; background: #fff;">
+                <select id="mem-patrol">
+                    <option value="">Troupe Générale</option>
+                </select>
+                <input type="number" id="mem-year" placeholder="Année (ex: 2026)" value="2026" required>
+                <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Uploader</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- SCRIPT & FIREBASE / LOCAL STORAGE LOGIC        -->
+    <!-- ============================================== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCe1J8DLrKqODeovn56uDpkT_kmU8ep8rc",
+            authDomain: "troupe-6ff5d.firebaseapp.com",
+            projectId: "troupe-6ff5d",
+            storageBucket: "troupe-6ff5d.appspot.com",
+            messagingSenderId: "169243785679",
+            appId: "1:169243785679:web:1c4d1c028f8b356f936eba",
+            measurementId: "G-C4T3wMRFGK"
+        };
+
+        let app, auth, db, useFirebase = true;
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+        } catch(e) {
+            useFirebase = false;
+        }
+
+        // Initial State strictly empty as requested
+        let state = {
+            user: null,
+            userData: null,
+            currentView: 'dashboard',
+            patrols: [],
+            events: [],
+            memories: [],
+            ideas: [],
+            announcements: [],
+            users: [],
+            settings: { welcomeText: "Plateforme numérique officielle et exclusive de la Troupe. Prêts pour l'aventure, unis dans le scoutisme.", heroTitle: "Scout Saint Georges Mieh w Mieh" }
+        };
+
+        // UI Helpers
+        window.showLoginModal = () => document.getElementById('login-modal').classList.remove('hidden');
+        window.hideModal = (id) => document.getElementById(id).classList.add('hidden');
+        window.openModal = (id) => document.getElementById(id).classList.remove('hidden');
+
+        window.switchView = (viewName) => {
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.add('hidden'));
+            document.getElementById(`view-${viewName}`).classList.remove('hidden');
+            state.currentView = viewName;
+            loadViewData(viewName);
+        };
+
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                e.currentTarget.classList.add('active');
+                const target = e.currentTarget.dataset.target;
+                switchView(target);
+            });
+        });
+
+        // Fetch All Data (Firestore with LocalStorage fallback)
+        async function fetchAllData() {
+            if (useFirebase) {
+                try {
+                    const pSnap = await getDocs(collection(db, "patrols"));
+                    state.patrols = [];
+                    pSnap.forEach(d => state.patrols.push({ id: d.id, ...d.data() }));
+
+                    const eSnap = await getDocs(collection(db, "events"));
+                    state.events = [];
+                    eSnap.forEach(d => state.events.push({ id: d.id, ...d.data() }));
+
+                    const mSnap = await getDocs(collection(db, "memories"));
+                    state.memories = [];
+                    mSnap.forEach(d => state.memories.push({ id: d.id, ...d.data() }));
+
+                    const iSnap = await getDocs(collection(db, "ideas"));
+                    state.ideas = [];
+                    iSnap.forEach(d => state.ideas.push({ id: d.id, ...d.data() }));
+
+                    const aSnap = await getDocs(collection(db, "announcements"));
+                    state.announcements = [];
+                    aSnap.forEach(d => state.announcements.push({ id: d.id, ...d.data() }));
+
+                    const uSnap = await getDocs(collection(db, "users"));
+                    state.users = [];
+                    uSnap.forEach(d => state.users.push({ id: d.id, ...d.data() }));
+                } catch(e) {
+                    loadFromLocalStorage();
+                }
+            } else {
+                loadFromLocalStorage();
+            }
+            renderPublicWelcome();
+            populateSelectOptions();
+        }
+
+        function loadFromLocalStorage() {
+            state.patrols = JSON.parse(localStorage.getItem('mwm_patrols') || '[]');
+            state.events = JSON.parse(localStorage.getItem('mwm_events') || '[]');
+            state.memories = JSON.parse(localStorage.getItem('mwm_memories') || '[]');
+            state.ideas = JSON.parse(localStorage.getItem('mwm_ideas') || '[]');
+            state.announcements = JSON.parse(localStorage.getItem('mwm_announcements') || '[]');
+            state.users = JSON.parse(localStorage.getItem('mwm_users') || '[]');
+        }
+
+        function saveLocal(key) {
+            localStorage.setItem(`mwm_${key}`, JSON.stringify(state[key]));
+        }
+
+        // Login Handler
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value.trim();
+            const pass = document.getElementById('login-password').value;
+
+            // Initial Admin hardcoded credential as requested
+            if (username === 'admin' && pass === 'admin123123') {
+                state.userData = { name: "Administrateur Troupe", role: "admin", username: "admin", patrouilleId: "" };
+                enterApp();
+                hideModal('login-modal');
+                return;
+            }
+
+            let foundUser = state.users.find(u => u.username === username && u.password === pass);
+            if (foundUser) {
+                state.userData = foundUser;
+                enterApp();
+                hideModal('login-modal');
+            } else {
+                document.getElementById('login-error').innerText = "Identifiant ou mot de passe incorrect.";
+            }
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            state.userData = null;
+            document.getElementById('app-layout').classList.add('hidden');
+            document.getElementById('welcome-page').classList.remove('hidden');
+        });
+
+        function enterApp() {
+            document.getElementById('welcome-page').classList.add('hidden');
+            document.getElementById('app-layout').classList.remove('hidden');
+            document.getElementById('user-info-name').innerText = state.userData.name;
+            
+            const roleBadge = document.getElementById('user-info-role');
+            const adminLink = document.getElementById('nav-admin-link');
+            const eventBtn = document.getElementById('btn-add-event');
+            const dynamicPatrolNav = document.getElementById('nav-dynamic-patrol-item');
+            const cpControls = document.getElementById('cp-management-controls');
+
+            if (state.userData.role === 'admin') {
+                roleBadge.innerText = 'Administrateur';
+                roleBadge.className = 'badge badge-admin';
+                adminLink.classList.remove('hidden');
+                eventBtn.classList.remove('hidden');
+                dynamicPatrolNav.classList.add('hidden');
+            } else if (state.userData.role === 'cp') {
+                roleBadge.innerText = 'Chef de Patrouille (CP)';
+                roleBadge.className = 'badge badge-cp';
+                adminLink.classList.add('hidden');
+                eventBtn.classList.remove('hidden');
+                cpControls.classList.remove('hidden');
+
+                // Dynamic Patrouille Button naming and access
+                const assignedPatrol = state.patrols.find(p => p.id === state.userData.patrouilleId);
+                if (assignedPatrol) {
+                    document.getElementById('nav-dynamic-patrol-name').innerText = assignedPatrol.name;
+                    dynamicPatrolNav.classList.remove('hidden');
+                }
+            } else {
+                roleBadge.innerText = 'Membre Scout';
+                roleBadge.className = 'badge badge-scout';
+                adminLink.classList.add('hidden');
+                eventBtn.classList.add('hidden');
+                cpControls.classList.add('hidden');
+
+                const assignedPatrol = state.patrols.find(p => p.id === state.userData.patrouilleId);
+                if (assignedPatrol) {
+                    document.getElementById('nav-dynamic-patrol-name').innerText = assignedPatrol.name;
+                    dynamicPatrolNav.classList.remove('hidden');
+                } else {
+                    dynamicPatrolNav.classList.add('hidden');
+                }
+            }
+            switchView('dashboard');
+            renderDashboard();
+        }
+
+        function renderPublicWelcome() {
+            const container = document.getElementById('public-patrols-container');
+            if (state.patrols.length === 0) {
+                container.innerHTML = `<p class="text-muted" style="grid-column: 1/-1; text-align: center;">Aucune patrouille publique pour le moment. L'Administrateur publiera les contenus prochainement.</p>`;
+                return;
+            }
+            container.innerHTML = state.patrols.map(p => `
+                <div class="patrol-card" onclick="viewPatrolDetail('${p.id}')">
+                    <div class="patrol-card-header">
+                        <i class="fas fa-shield-alt fa-2x"></i>
+                        <div>
+                            <h3 style="margin:0; color:white;">${p.name}</h3>
+                            <span style="font-size:0.85rem; color:#E5E7EB;">CP: ${p.cpName || 'Non assigné'}</span>
+                        </div>
+                    </div>
+                    <div class="patrol-card-body">
+                        <p style="font-style: italic; color: var(--text-muted);">"${p.motto || 'Toujours Prêt'}"</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderDashboard() {
+            const actContainer = document.getElementById('dash-activity-state');
+            const annContainer = document.getElementById('dash-announcement-state');
+            const memContainer = document.getElementById('dash-memory-state');
+
+            actContainer.innerHTML = state.events.length > 0 ? 
+                state.events.slice(0, 3).map(ev => `<div style="margin-bottom:10px;"><strong>${ev.title}</strong><br><small><i class="fas fa-calendar"></i> ${ev.date} à ${ev.time}</small></div>`).join('') : 
+                "Aucune activité pour le moment.";
+
+            annContainer.innerHTML = state.announcements.length > 0 ? 
+                state.announcements.slice(0, 3).map(an => `<div style="margin-bottom:10px;"><strong>${an.title}</strong><br><small>${an.content}</small></div>`).join('') : 
+                "Aucune annonce pour le moment.";
+
+            const approvedMems = state.memories.filter(m => m.approved);
+            memContainer.innerHTML = approvedMems.length > 0 ? 
+                `<div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:10px;">${approvedMems.slice(0, 2).map(m => `<img src="${m.base64Image}" style="width:100%; height:100px; object-fit:cover; border-radius:6px;">`).join('')}</div>` : 
+                "Aucun souvenir publié pour le moment.";
+        }
+
+        function loadViewData(view) {
+            if (view === 'calendar') renderCalendar();
+            if (view === 'patrols') renderPatrolsList();
+            if (view === 'ideas') renderIdeas();
+            if (view === 'memories') renderMemories();
+            if (view === 'dynamic-patrol-area') renderDynamicPatrolArea();
+            if (view === 'admin-panel') adminTab('members');
+        }
+
+        function renderCalendar() {
+            const container = document.getElementById('calendar-container');
+            if (state.events.length === 0) {
+                container.innerHTML = `<p class="text-muted">Aucun événement planifié.</p>`;
+                return;
+            }
+            container.innerHTML = state.events.map(ev => `
+                <div class="card" style="border-top: 4px solid var(--primary-blue);">
+                    <span class="badge badge-scout">${ev.type === 'troupe' ? 'Troupe' : 'Patrouille'}</span>
+                    <h3 style="margin-top:10px;">${ev.title}</h3>
+                    <p><i class="fas fa-calendar"></i> ${ev.date} &nbsp;|&nbsp; <i class="fas fa-clock"></i> ${ev.time}</p>
+                    <p><i class="fas fa-map-marker-alt"></i> ${ev.location}</p>
+                    <p style="margin-top: 10px;">${ev.description}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderPatrolsList() {
+            const container = document.getElementById('app-patrols-grid');
+            if (state.patrols.length === 0) {
+                container.innerHTML = `<p class="text-muted">Aucune patrouille enregistrée.</p>`;
+                return;
+            }
+            container.innerHTML = state.patrols.map(p => `
+                <div class="card" style="cursor:pointer;" onclick="viewPatrolDetail('${p.id}')">
+                    <h3 style="color:var(--dark-blue);"><i class="fas fa-shield-alt"></i> ${p.name}</h3>
+                    <p style="font-style:italic; margin-bottom:10px;">"${p.motto || ''}"</p>
+                    <p><strong>CP:</strong> ${p.cpName || 'Non assigné'}</p>
+                    <p><strong>Membres:</strong> ${(p.members || []).length}</p>
+                </div>
+            `).join('');
+        }
+
+        window.viewPatrolDetail = (patrolId) => {
+            const p = state.patrols.find(item => item.id === patrolId);
+            if (!p) return;
+            const patrolMemories = state.memories.filter(m => m.patrolId === patrolId && m.approved);
+
+            document.getElementById('patrol-detail-content').innerHTML = `
+                <div class="card" style="border-left: 6px solid var(--primary-blue);">
+                    <h2 style="color:var(--dark-blue); font-size: 2rem;">${p.name}</h2>
+                    <p style="font-style:italic; color:var(--text-muted); margin-bottom:15px;">"${p.motto || 'Toujours Prêt'}"</p>
+                    <hr style="border:0; border-top:1px solid #eee; margin: 15px 0;">
+                    <p style="font-size:1.1rem; margin-bottom:10px;"><strong>Chef de Patrouille (CP):</strong> ${p.cpName || 'Non assigné'}</p>
+                    
+                    <h3 style="margin-top:20px;">Membres</h3>
+                    <ul>${(p.members || []).map(m => `<li>${m}</li>`).join('') || '<li class="text-muted">Aucun membre</li>'}</ul>
+
+                    <h3 style="margin-top:20px;">Souvenirs de la Patrouille</h3>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; margin-top:10px;">
+                        ${patrolMemories.map(m => `<div class="card" style="padding:10px;"><img src="${m.base64Image}" style="width:100%; height:140px; object-fit:cover; border-radius:6px;"><p style="font-weight:600; font-size:0.9rem; margin-top:8px;">${m.title}</p></div>`).join('') || '<p class="text-muted">Aucune photo de patrouille validée.</p>'}
+                    </div>
+                </div>
+            `;
+            switchView('patrol-detail');
+        };
+
+        function renderDynamicPatrolArea() {
+            const patrolId = state.userData.patrolId;
+            const p = state.patrols.find(item => item.id === patrolId);
+            const container = document.getElementById('cp-area-content');
+            
+            if (!p) {
+                container.innerHTML = `<p class="text-muted">Vous n'êtes assigné à aucune patrouille.</p>`;
+                return;
+            }
+
+            document.getElementById('cp-area-title').innerText = `Espace Patrouille : ${p.name}`;
+            const patrolEvents = state.events.filter(ev => ev.patrolId === patrolId);
+            const patrolMems = state.memories.filter(m => m.patrolId === patrolId);
+
+            container.innerHTML = `
+                <div class="card">
+                    <h3>Informations</h3>
+                    <p><strong>Devise:</strong> "${p.motto || ''}"</p>
+                    <p><strong>CP:</strong> ${p.cpName || 'Non assigné'}</p>
+                    <p><strong>Membres:</strong> ${(p.members || []).join(', ') || 'Aucun'}</p>
+                </div>
+                <div class="card">
+                    <h3>Activités de la Patrouille</h3>
+                    ${patrolEvents.map(ev => `<div style="margin-top:10px; padding:10px; background:#f9f9f9; border-radius:6px;"><strong>${ev.title}</strong><br><small>${ev.date} à ${ev.time} - ${ev.location}</small></div>`).join('') || '<p class="text-muted">Aucune activité.</p>'}
+                </div>
+            `;
+        }
+
+        function renderIdeas() {
+            const container = document.getElementById('ideas-container');
+            if (state.ideas.length === 0) {
+                container.innerHTML = `<p class="text-muted">Aucune idée soumise.</p>`;
+                return;
+            }
+            container.innerHTML = state.ideas.map(i => `
+                <div class="card" style="border-left: 6px solid #FF8F00;">
+                    <span class="badge" style="background:#FF8F00;">${i.category}</span>
+                    <h3 style="margin-top:10px;">${i.title}</h3>
+                    <p>${i.description}</p>
+                    <p class="text-muted" style="font-size:0.85rem; margin-top:10px;">Statut: <strong>${i.status}</strong></p>
+                </div>
+            `).join('');
+        }
+
+        function renderMemories() {
+            const container = document.getElementById('memories-container');
+            const approved = state.memories.filter(m => m.approved);
+            if (approved.length === 0) {
+                container.innerHTML = `<p class="text-muted">Aucune photo approuvée dans la galerie.</p>`;
+                return;
+            }
+            container.innerHTML = approved.map(m => `
+                <div class="card" style="padding:0; overflow:hidden;">
+                    <img src="${m.base64Image}" style="width:100%; height:200px; object-fit:cover;">
+                    <div style="padding:15px;">
+                        <h4 style="margin-bottom:5px;">${m.title}</h4>
+                        <span class="badge badge-scout">${m.year}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function populateSelectOptions() {
+            const evPatrolSelect = document.getElementById('ev-patrol-select');
+            const memPatrolSelect = document.getElementById('mem-patrol');
+            
+            const optionsHtml = state.patrols.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+            if (evPatrolSelect) evPatrolSelect.innerHTML = `<option value="">-- Aucune Patrouille Spécifique --</option>` + optionsHtml;
+            if (memPatrolSelect) memPatrolSelect.innerHTML = `<option value="">Troupe Générale</option>` + optionsHtml;
+        }
+
+        // Event creation
+        document.getElementById('form-create-event').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newEvent = {
+                id: 'ev_' + Date.now(),
+                title: document.getElementById('ev-title').value,
+                date: document.getElementById('ev-date').value,
+                time: document.getElementById('ev-time').value,
+                location: document.getElementById('ev-location').value,
+                description: document.getElementById('ev-desc').value,
+                type: document.getElementById('ev-type').value,
+                patrolId: document.getElementById('ev-patrol-select').value
+            };
+            state.events.push(newEvent);
+            saveLocal('events');
+            hideModal('modal-create-event');
+            e.target.reset();
+            renderCalendar();
+            alert("Événement créé avec succès !");
+        });
+
+        // CP Activity creation
+        document.getElementById('form-cp-create-activity').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newEvent = {
+                id: 'ev_' + Date.now(),
+                title: document.getElementById('cp-ev-title').value,
+                date: document.getElementById('cp-ev-date').value,
+                time: document.getElementById('cp-ev-time').value,
+                location: document.getElementById('cp-ev-location').value,
+                description: document.getElementById('cp-ev-desc').value,
+                type: 'patrol',
+                patrolId: state.userData.patrolId
+            };
+            state.events.push(newEvent);
+            saveLocal('events');
+            hideModal('modal-cp-create-activity');
+            e.target.reset();
+            renderDynamicPatrolArea();
+            alert("Activité de patrouille créée avec succès !");
+        });
+
+        document.getElementById('form-create-idea').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newIdea = {
+                id: 'idea_' + Date.now(),
+                title: document.getElementById('idea-title').value,
+                category: document.getElementById('idea-category').value,
+                description: document.getElementById('idea-desc').value,
+                status: 'Sous considération',
+                author: state.userData.name
+            };
+            state.ideas.push(newIdea);
+            saveLocal('ideas');
+            hideModal('modal-create-idea');
+            e.target.reset();
+            renderIdeas();
+            alert("Idée soumise avec succès !");
+        });
+
+        // Base64 Image Compression and Upload Handler
+        document.getElementById('form-upload-memory').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('mem-file');
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 800;
+                    const MAX_HEIGHT = 800;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    } else {
+                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    const base64String = canvas.toDataURL('image/jpeg', 0.75);
+
+                    const newMemory = {
+                        id: 'mem_' + Date.now(),
+                        title: document.getElementById('mem-title').value,
+                        patrolId: state.userData.role === 'cp' ? state.userData.patrolId : document.getElementById('mem-patrol').value,
+                        year: document.getElementById('mem-year').value,
+                        base64Image: base64String,
+                        approved: state.userData.role === 'admin' ? true : false
+                    };
+
+                    state.memories.push(newMemory);
+                    saveLocal('memories');
+                    hideModal('modal-upload-memory');
+                    e.target.reset();
+                    renderMemories();
+                    alert(state.userData.role === 'admin' ? "Souvenir publié !" : "Souvenir soumis pour validation par l'administrateur !");
+                }
+                img.src = event.target.result;
+            }
+            reader.readAsDataURL(file);
+        });
+
+        // ==========================================
+        // ADMIN PANEL (13 SECTIONS)
+        // ==========================================
+        window.adminTab = (tab) => {
+            const content = document.getElementById('admin-tab-content');
+            if (tab === 'members') {
+                content.innerHTML = `
+                    <h3>1. Gestion des Membres</h3>
+                    <form onsubmit="handleCreateMember(event)" style="margin-top:20px; display:grid; gap:12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                        <input type="text" id="m-name" placeholder="Nom complet" required style="margin:0;">
+                        <input type="text" id="m-username" placeholder="Nom d'utilisateur" required style="margin:0;">
+                        <input type="password" id="m-pass" placeholder="Mot de passe" required style="margin:0;">
+                        <select id="m-role" style="margin:0;"><option value="member">Membre</option><option value="cp">CP</option><option value="admin">Admin</option></select>
+                        <select id="m-patrol" style="margin:0;"><option value="">-- Patrouille --</option>${state.patrols.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select>
+                        <button type="submit" class="btn btn-primary" style="grid-column: 1/-1;">Créer le Membre</button>
+                    </form>
+                `;
+            } else if (tab === 'accounts') {
+                content.innerHTML = `
+                    <h3>2. Gestion des Comptes</h3>
+                    <table><tr><th>Nom</th><th>Username</th><th>Rôle</th><th>Action</th></tr>
+                        <tr><td>Administrateur</td><td>admin</td><td>admin</td><td>Système</td></tr>
+                        ${state.users.map((u, idx) => `<tr><td>${u.name}</td><td>${u.username}</td><td><span class="badge ${u.role==='admin'?'badge-admin':u.role==='cp'?'badge-cp':'badge-scout'}">${u.role}</span></td><td><button class="btn btn-red" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteUser('${u.id}')">Supprimer</button></td></tr>`).join('')}
+                    </table>
+                `;
+            } else if (tab === 'patrols') {
+                content.innerHTML = `
+                    <h3>3. Gestion des Patrouilles</h3>
+                    <form onsubmit="handleCreatePatrol(event)" style="margin-top:20px; display:grid; gap:12px; grid-template-columns: 1fr 1fr auto;">
+                        <input type="text" id="p-name" placeholder="Nom de la Patrouille" required style="margin:0;">
+                        <input type="text" id="p-motto" placeholder="Devise" required style="margin:0;">
+                        <button type="submit" class="btn btn-primary">Créer Patrouille</button>
+                    </form>
+                    <div style="margin-top:20px;">
+                        ${state.patrols.map(p => `<div class="card"><h4>${p.name}</h4><p>Devise: "${p.motto}"</p><p>CP: ${p.cpName || 'Aucun'}</p></div>`).join('') || '<p class="text-muted">Aucune patrouille.</p>'}
+                    </div>
+                `;
+            } else if (tab === 'assign-cp') {
+                content.innerHTML = `
+                    <h3>4. Assigner CPs</h3>
+                    <form onsubmit="handleAssignCP(event)" style="margin-top:20px; display:grid; gap:15px;">
+                        <select id="acp-patrol" required>${state.patrols.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select>
+                        <select id="acp-user" required>${state.users.filter(u=>u.role==='cp'||u.role==='member').map(u=>`<option value="${u.id}">${u.name} (${u.username})</option>`).join('')}</select>
+                        <button type="submit" class="btn btn-primary">Assigner comme CP</button>
+                    </form>
+                `;
+            } else if (tab === 'calendar') {
+                content.innerHTML = `<h3>5. Gestion du Calendrier</h3><p class="text-muted">Utilisez le bouton "Créer un Événement" dans l'onglet Calendrier.</p>`;
+            } else if (tab === 'troupe-acts') {
+                content.innerHTML = `<h3>6. Activités Troupe</h3><p class="text-muted">Gérez les activités générales depuis le Calendrier.</p>`;
+            } else if (tab === 'patrol-acts') {
+                content.innerHTML = `<h3>7. Activités Patrouille</h3><p class="text-muted">Gérées par les CPs ou l'Administrateur.</p>`;
+            } else if (tab === 'memories') {
+                content.innerHTML = `<h3>8. Gestion des Souvenirs</h3><p class="text-muted">Total souvenirs: ${state.memories.length}</p>`;
+            } else if (tab === 'approve-photos') {
+                const unapproved = state.memories.filter(m => !m.approved);
+                content.innerHTML = `
+                    <h3>9. Valider les Photos Soumises</h3>
+                    <div style="margin-top:20px; display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:15px;">
+                        ${unapproved.map(m => `
+                            <div class="card">
+                                <img src="${m.base64Image}" style="width:100%; height:130px; object-fit:cover; border-radius:6px;">
+                                <h4>${m.title}</h4>
+                                <div style="display:flex; gap:10px; margin-top:10px;">
+                                    <button class="btn btn-green" style="flex:1; padding:6px;" onclick="approveMemory('${m.id}')">Valider</button>
+                                    <button class="btn btn-red" style="flex:1; padding:6px;" onclick="deleteMemory('${m.id}')">Supprimer</button>
+                                </div>
+                            </div>
+                        `).join('') || '<p class="text-muted">Aucune photo en attente.</p>'}
+                    </div>
+                `;
+            } else if (tab === 'ideas') {
+                content.innerHTML = `
+                    <h3>10. Gestion des Idées</h3>
+                    <table><tr><th>Titre</th><th>Catégorie</th><th>Auteur</th><th>Statut</th></tr>
+                        ${state.ideas.map(i => `<tr><td>${i.title}</td><td>${i.category}</td><td>${i.author}</td><td>${i.status}</td></tr>`).join('')}
+                    </table>
+                `;
+            } else if (tab === 'announcements') {
+                content.innerHTML = `
+                    <h3>11. Gestion des Annonces</h3>
+                    <form onsubmit="handleCreateAnnouncement(event)" style="margin-top:20px; display:grid; gap:15px;">
+                        <input type="text" id="ann-title" placeholder="Titre" required style="margin:0;">
+                        <textarea id="ann-content" placeholder="Contenu" required style="margin:0;"></textarea>
+                        <button type="submit" class="btn btn-primary">Publier l'Annonce</button>
+                    </form>
+                `;
+            } else if (tab === 'welcome-page') {
+                content.innerHTML = `
+                    <h3>12. Gestion de la Page d'Accueil</h3>
+                    <form onsubmit="handleSaveWelcome(event)" style="margin-top:20px; display:grid; gap:15px;">
+                        <input type="text" id="set-hero-title" value="${state.settings.heroTitle}" required style="margin:0;">
+                        <textarea id="set-welcome" style="margin:0;">${state.settings.welcomeText}</textarea>
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    </form>
+                `;
+            } else if (tab === 'public-content') {
+                content.innerHTML = `<h3>13. Contenu Public</h3><p class="text-muted">Les patrouilles et souvenirs approuvés sont automatiquement visibles publiquement.</p>`;
+            }
+        };
+
+        window.handleCreateMember = (e) => {
+            e.preventDefault();
+            const newUser = {
+                id: 'usr_' + Date.now(),
+                name: document.getElementById('m-name').value,
+                username: document.getElementById('m-username').value,
+                password: document.getElementById('m-pass').value,
+                role: document.getElementById('m-role').value,
+                patrouilleId: document.getElementById('m-patrol').value
+            };
+            state.users.push(newUser);
+            saveLocal('users');
+            adminTab('members');
+            alert("Membre créé avec succès !");
+        };
+
+        window.deleteUser = (id) => {
+            state.users = state.users.filter(u => u.id !== id);
+            saveLocal('users');
+            adminTab('accounts');
+        };
+
+        window.handleCreatePatrol = (e) => {
+            e.preventDefault();
+            const newPatrol = {
+                id: 'patrol_' + Date.now(),
+                name: document.getElementById('p-name').value,
+                motto: document.getElementById('p-motto').value,
+                cpName: '',
+                members: []
+            };
+            state.patrols.push(newPatrol);
+            saveLocal('patrols');
+            adminTab('patrols');
+            renderPublicWelcome();
+            populateSelectOptions();
+            alert("Patrouille créée avec succès !");
+        };
+
+        window.handleAssignCP = (e) => {
+            e.preventDefault();
+            const patrolId = document.getElementById('acp-patrol').value;
+            const userId = document.getElementById('acp-user').value;
+            const patrol = state.patrols.find(p => p.id === patrolId);
+            const user = state.users.find(u => u.id === userId);
+
+            if (patrol && user) {
+                patrol.cpName = user.name;
+                user.role = 'cp';
+                user.patrouilleId = patrolId;
+                if (!patrol.members.includes(user.name)) patrol.members.push(user.name);
+                saveLocal('patrols');
+                saveLocal('users');
+                renderPublicWelcome();
+                alert(`CP assigné avec succès : ${user.name} pour ${patrol.name}`);
+            }
+        };
+
+        window.approveMemory = (id) => {
+            const mem = state.memories.find(m => m.id === id);
+            if (mem) mem.approved = true;
+            saveLocal('memories');
+            adminTab('approve-photos');
+        };
+
+        window.deleteMemory = (id) => {
+            state.memories = state.memories.filter(m => m.id !== id);
+            saveLocal('memories');
+            adminTab('approve-photos');
+        };
+
+        window.handleCreateAnnouncement = (e) => {
+            e.preventDefault();
+            const newAnn = {
+                id: 'ann_' + Date.now(),
+                title: document.getElementById('ann-title').value,
+                content: document.getElementById('ann-content').value,
+                date: new Date().toLocaleDateString()
+            };
+            state.announcements.push(newAnn);
+            saveLocal('announcements');
+            e.target.reset();
+            alert("Annonce publiée !");
+        };
+
+        window.handleSaveWelcome = (e) => {
+            e.preventDefault();
+            state.settings.heroTitle = document.getElementById('set-hero-title').value;
+            state.settings.welcomeText = document.getElementById('set-welcome').value;
+            document.getElementById('hero-title-text').innerText = state.settings.heroTitle;
+            document.getElementById('hero-welcome-text').innerText = state.settings.welcomeText;
+            alert("Paramètres de la page d'accueil enregistrés !");
+        };
+
+        // Initialize Application
+        fetchAllData();
+    </script>
+</body>
+</html>

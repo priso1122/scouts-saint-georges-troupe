@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scout Saint Georges Mieh w Mieh - Connection Test</title>
+    <title>Scout Saint Georges Mieh w Mieh</title>
     <style>
         /* ==========================================================================
            DESIGN & COLOR PALETTE
@@ -52,7 +52,7 @@
             background-position: center;
             background-repeat: no-repeat;
             z-index: -2;
-            background-color: var(--dark-green); /* Fallback */
+            background-color: var(--dark-green);
         }
 
         #bg-overlay {
@@ -75,24 +75,14 @@
             transition: transform 0.3s ease;
         }
 
-        .fixed-logo.left {
-            left: 20px;
-        }
+        .fixed-logo.left { left: 20px; }
+        .fixed-logo.right { right: 20px; }
+        .fixed-logo:hover { transform: scale(1.05); }
 
-        .fixed-logo.right {
-            right: 20px;
-        }
-
-        .fixed-logo:hover {
-            transform: scale(1.05);
-        }
-
-        img[src=""], img:not([src]) {
-            opacity: 0;
-        }
+        img[src=""], img:not([src]) { opacity: 0; }
 
         /* ==========================================================================
-           CENTERED CARD & CONTAINER
+           CONTAINER & CARDS
            ========================================================================== */
         .container {
             width: 100%;
@@ -103,14 +93,8 @@
         }
 
         @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .header {
@@ -144,7 +128,7 @@
         }
 
         /* ==========================================================================
-           FORM & UI ELEMENTS
+           FORMS & BUTTONS
            ========================================================================== */
         .form-group {
             margin-bottom: 20px;
@@ -195,18 +179,6 @@
             box-shadow: 0 6px 14px rgba(0,0,0,0.2);
         }
 
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .btn-secondary {
-            background: var(--brown);
-        }
-
-        .btn-secondary:hover {
-            background: var(--dark-brown);
-        }
-
         .btn-outline {
             background: transparent;
             color: var(--dark-brown);
@@ -228,160 +200,157 @@
             display: none;
         }
 
-        /* ==========================================================================
-           REALTIME DISPLAY AREA
-           ========================================================================== */
-        .status-container {
-            margin-top: 15px;
-            padding-top: 20px;
-            border-top: 2px dashed rgba(127, 85, 57, 0.3);
+        .success-message {
+            color: var(--green);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 15px;
+            display: none;
         }
 
-        .status-container h2 {
-            font-size: 1rem;
-            color: var(--brown);
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .hidden { display: none !important; }
+
+        .member-list {
+            background: #fff;
+            border-radius: 8px;
+            padding: 12px;
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
         }
 
-        .message-box {
+        .member-item {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.95rem;
+            color: var(--dark-green);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .member-item:last-child { border-bottom: none; }
+
+        .welcome-box {
             background: #ffffff;
             border-left: 4px solid var(--gold);
-            padding: 16px;
+            padding: 20px;
             border-radius: 6px;
             font-size: 1.1rem;
             color: var(--dark-green);
             font-weight: 600;
-            word-wrap: break-word;
-            min-height: 50px;
-            display: flex;
-            align-items: center;
+            margin-bottom: 20px;
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
         }
 
-        .timestamp {
-            display: block;
-            margin-top: 8px;
-            font-size: 0.8rem;
-            color: #777;
-            text-align: right;
-        }
-
-        .mt-3 {
-            margin-top: 20px;
-        }
-
-        /* Utility for hiding views */
-        .hidden {
-            display: none !important;
-        }
-
-        /* ==========================================================================
-           RESPONSIVE DESIGN
-           ========================================================================== */
         @media (max-width: 600px) {
-            body {
-                padding-top: 100px;
-            }
-
-            .fixed-logo {
-                height: 60px;
-                top: 15px;
-            }
-
-            .fixed-logo.left {
-                left: 15px;
-            }
-
-            .fixed-logo.right {
-                right: 15px;
-            }
-
-            .header h1 {
-                font-size: 1.5rem;
-            }
-
-            .card {
-                padding: 24px 18px;
-            }
+            body { padding-top: 100px; }
+            .fixed-logo { height: 60px; top: 15px; }
+            .fixed-logo.left { left: 15px; }
+            .fixed-logo.right { right: 15px; }
+            .header h1 { font-size: 1.5rem; }
+            .card { padding: 24px 18px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- BACKGROUND LAYER & OVERLAY -->
     <div id="bg-layer"></div>
     <div id="bg-overlay"></div>
 
-    <!-- LOGOS -->
     <img id="left-logo" class="fixed-logo left" alt="Left Logo" />
     <img id="right-logo" class="fixed-logo right" alt="Right Logo" />
 
-    <!-- CENTERED CONTENT -->
     <div class="container">
         <header class="header">
             <h1>Scout Saint Georges Mieh w Mieh</h1>
-            <p>Realtime Database Test</p>
+            <p>Portal System</p>
         </header>
 
-        <!-- PUBLIC VIEWER SCREEN -->
-        <main id="public-screen" class="card">
-            <div class="status-container" style="border-top: none; padding-top: 0; margin-top: 0;">
-                <h2>Latest message:</h2>
-                <div id="public-message-display" class="message-box">Connecting to Firebase...</div>
-                <small id="public-updated-at" class="timestamp"></small>
-            </div>
-            <button id="show-login-btn" class="btn btn-outline mt-3">Admin Login</button>
+        <!-- HOME / SELECTION SCREEN -->
+        <main id="home-screen" class="card">
+            <h2 style="color: var(--dark-green); margin-bottom: 20px; text-align: center;">Welcome</h2>
+            <button id="goto-admin-login" class="btn">Admin Login</button>
+            <button id="goto-member-login" class="btn btn-outline">Member Login</button>
         </main>
 
-        <!-- LOGIN SCREEN -->
-        <main id="login-screen" class="card hidden">
+        <!-- ADMIN LOGIN SCREEN -->
+        <main id="admin-login-screen" class="card hidden">
             <h2 style="color: var(--dark-green); margin-bottom: 20px; text-align: center;">Admin Login</h2>
-            
-            <div id="login-error" class="error-message">Invalid Username or Password.</div>
-
+            <div id="admin-login-error" class="error-message">Invalid Username or Password.</div>
             <div class="form-group">
-                <label for="username-input">Username</label>
-                <input type="text" id="username-input" class="form-control" placeholder="Enter username" autocomplete="off" />
+                <label>Username</label>
+                <input type="text" id="admin-user" class="form-control" placeholder="Enter admin username" autocomplete="off" />
             </div>
-
             <div class="form-group">
-                <label for="password-input">Password</label>
-                <input type="password" id="password-input" class="form-control" placeholder="Enter password" />
+                <label>Password</label>
+                <input type="password" id="admin-pass" class="form-control" placeholder="Enter admin password" />
             </div>
-
-            <button id="login-btn" class="btn">Login</button>
-            <button id="cancel-btn" class="btn btn-outline">Cancel</button>
+            <button id="admin-login-btn" class="btn">Login</button>
+            <button id="admin-back-btn" class="btn btn-outline">Back</button>
         </main>
 
-        <!-- ADMIN DASHBOARD SCREEN -->
-        <main id="admin-screen" class="card hidden">
-            <h2 style="color: var(--dark-green); margin-bottom: 20px;">Admin Dashboard</h2>
+        <!-- MEMBER LOGIN SCREEN -->
+        <main id="member-login-screen" class="card hidden">
+            <h2 style="color: var(--dark-green); margin-bottom: 20px; text-align: center;">Member Login</h2>
+            <div id="member-login-error" class="error-message">Invalid Member Username or Password.</div>
             <div class="form-group">
-                <label for="message-input">Update Message</label>
-                <input type="text" id="message-input" class="form-control" placeholder="Type a test message..." autocomplete="off" />
+                <label>Username</label>
+                <input type="text" id="member-user" class="form-control" placeholder="Enter member username" autocomplete="off" />
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="member-pass" class="form-control" placeholder="Enter member password" />
+            </div>
+            <button id="member-login-btn" class="btn">Login</button>
+            <button id="member-back-btn" class="btn btn-outline">Back</button>
+        </main>
+
+        <!-- ADMIN DASHBOARD -->
+        <main id="admin-dashboard" class="card hidden">
+            <h2 style="color: var(--dark-green); margin-bottom: 15px;">Admin Dashboard</h2>
+            <p style="margin-bottom: 15px; font-size: 0.9rem; color: var(--brown);">Create accounts for members below. Accounts sync instantly across all devices.</p>
+            
+            <div id="admin-msg" class="success-message">Member created successfully!</div>
+            <div id="admin-err" class="error-message">Please fill in both fields.</div>
+
+            <div class="form-group">
+                <label>New Member Username</label>
+                <input type="text" id="new-member-user" class="form-control" placeholder="Member username" autocomplete="off" />
+            </div>
+            <div class="form-group">
+                <label>New Member Password</label>
+                <input type="text" id="new-member-pass" class="form-control" placeholder="Member password" autocomplete="off" />
             </div>
 
-            <button id="save-btn" class="btn">Save Message</button>
-            <button id="logout-btn" class="btn btn-outline">Logout</button>
-
-            <div class="status-container">
-                <h2>Live View:</h2>
-                <div id="admin-message-display" class="message-box">Connecting to Firebase...</div>
-                <small id="admin-updated-at" class="timestamp"></small>
+            <button id="create-member-btn" class="btn">Create Member Account</button>
+            
+            <div style="margin-top: 20px;">
+                <label style="font-weight: 700; color: var(--dark-brown); margin-bottom: 8px; display: block;">Existing Members List:</label>
+                <div id="members-list-container" class="member-list">
+                    Loading members...
+                </div>
             </div>
+
+            <button id="admin-logout-btn" class="btn btn-outline" style="margin-top: 15px;">Logout</button>
+        </main>
+
+        <!-- MEMBER DASHBOARD -->
+        <main id="member-dashboard" class="card hidden">
+            <h2 style="color: var(--dark-green); margin-bottom: 20px;">Member Dashboard</h2>
+            <div class="welcome-box">
+                Welcome to Scout Saint Georges Mieh w Mieh, <span id="logged-member-name" style="color: var(--green);"></span>!
+            </div>
+            <button id="member-logout-btn" class="btn btn-outline">Logout</button>
         </main>
     </div>
 
-    <!-- FIREBASE CDN & LOGIC -->
+    <!-- FIREBASE & APP LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
-        // ==========================================================================
-        // CONFIGURATION VARIABLES
-        // ==========================================================================
         const firebaseConfig = {
             apiKey: "AIzaSyCqLoLICq9kbpMsaD58F6U4cwbiMygGrmU",
             authDomain: "troupe-6d1e8.firebaseapp.com",
@@ -396,185 +365,162 @@
         const LEFT_LOGO = "";
         const RIGHT_LOGO = "";
 
-        // ==========================================================================
-        // INITIALIZE IMAGES
-        // ==========================================================================
-        if (BACKGROUND_IMAGE) {
-            document.getElementById('bg-layer').style.backgroundImage = `url('${BACKGROUND_IMAGE}')`;
-        }
-        if (LEFT_LOGO) {
-            document.getElementById('left-logo').src = LEFT_LOGO;
-        }
-        if (RIGHT_LOGO) {
-            document.getElementById('right-logo').src = RIGHT_LOGO;
-        }
+        if (BACKGROUND_IMAGE) document.getElementById('bg-layer').style.backgroundImage = `url('${BACKGROUND_IMAGE}')`;
+        if (LEFT_LOGO) document.getElementById('left-logo').src = LEFT_LOGO;
+        if (RIGHT_LOGO) document.getElementById('right-logo').src = RIGHT_LOGO;
 
-        // ==========================================================================
-        // UI & NAVIGATION LOGIC (WITH PERSISTENT LOGIN CHECK)
-        // ==========================================================================
-        const publicScreen = document.getElementById('public-screen');
-        const loginScreen = document.getElementById('login-screen');
-        const adminScreen = document.getElementById('admin-screen');
-
-        const showLoginBtn = document.getElementById('show-login-btn');
-        const cancelBtn = document.getElementById('cancel-btn');
-        const loginBtn = document.getElementById('login-btn');
-        const logoutBtn = document.getElementById('logout-btn');
-
-        const usernameInput = document.getElementById('username-input');
-        const passwordInput = document.getElementById('password-input');
-        const loginError = document.getElementById('login-error');
-
-        // Check if admin was previously logged in on this device
-        if (localStorage.getItem('scoutAdminLoggedIn') === 'true') {
-            publicScreen.classList.add('hidden');
-            adminScreen.classList.remove('hidden');
-        }
-
-        // Navigation functions
-        showLoginBtn.addEventListener('click', () => {
-            publicScreen.classList.add('hidden');
-            loginScreen.classList.remove('hidden');
-            usernameInput.focus();
-        });
-
-        cancelBtn.addEventListener('click', () => {
-            loginScreen.classList.add('hidden');
-            publicScreen.classList.remove('hidden');
-            loginError.style.display = 'none';
-            usernameInput.value = '';
-            passwordInput.value = '';
-        });
-
-        logoutBtn.addEventListener('click', () => {
-            localStorage.removeItem('scoutAdminLoggedIn');
-            adminScreen.classList.add('hidden');
-            publicScreen.classList.remove('hidden');
-            usernameInput.value = '';
-            passwordInput.value = '';
-        });
-
-        // Authentication logic
-        function attemptLogin() {
-            if (usernameInput.value === 'chef' && passwordInput.value === 'chef') {
-                localStorage.setItem('scoutAdminLoggedIn', 'true');
-                loginError.style.display = 'none';
-                loginScreen.classList.add('hidden');
-                adminScreen.classList.remove('hidden');
-                usernameInput.value = '';
-                passwordInput.value = '';
-            } else {
-                loginError.style.display = 'block';
-            }
-        }
-
-        loginBtn.addEventListener('click', attemptLogin);
-        passwordInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') attemptLogin();
-        });
-
-        // ==========================================================================
-        // FIREBASE & REALTIME SYNC
-        // ==========================================================================
         let db = null;
+        let membersCache = {};
 
-        // Elements to update
-        const publicDisplayEl = document.getElementById('public-message-display');
-        const publicTimestampEl = document.getElementById('public-updated-at');
-        
-        const adminDisplayEl = document.getElementById('admin-message-display');
-        const adminTimestampEl = document.getElementById('admin-updated-at');
-        
-        const inputEl = document.getElementById('message-input');
-        const saveBtn = document.getElementById('save-btn');
+        // UI Screens
+        const screens = {
+            home: document.getElementById('home-screen'),
+            adminLogin: document.getElementById('admin-login-screen'),
+            memberLogin: document.getElementById('member-login-screen'),
+            adminDashboard: document.getElementById('admin-dashboard'),
+            memberDashboard: document.getElementById('member-dashboard')
+        };
 
+        function switchScreen(screenName) {
+            Object.values(screens).forEach(s => s.classList.add('hidden'));
+            screens[screenName].classList.remove('hidden');
+        }
+
+        // Navigation bindings
+        document.getElementById('goto-admin-login').addEventListener('click', () => switchScreen('adminLogin'));
+        document.getElementById('goto-member-login').addEventListener('click', () => switchScreen('memberLogin'));
+        document.getElementById('admin-back-btn').addEventListener('click', () => switchScreen('home'));
+        document.getElementById('member-back-btn').addEventListener('click', () => switchScreen('home'));
+
+        // Initialize Firebase
         try {
             if (firebaseConfig.apiKey) {
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
-                initRealtimeListener();
+                initMembersListener();
             } else {
-                const msg = "Please paste your Firebase configuration at the top of index.html.";
-                publicDisplayEl.innerText = msg;
-                adminDisplayEl.innerText = msg;
+                alert("Please add your Firebase configuration variables in index.html");
             }
         } catch (err) {
-            console.error("Firebase initialization failed:", err);
-            const msg = "Error initializing Firebase. Check configuration.";
-            publicDisplayEl.innerText = msg;
-            adminDisplayEl.innerText = msg;
+            console.error("Firebase init error:", err);
         }
 
-        // Realtime Listener using onSnapshot()
-        function initRealtimeListener() {
-            const docRef = doc(db, "testData", "currentMessage");
-
-            onSnapshot(docRef, (snapshot) => {
-                if (snapshot.exists()) {
-                    const data = snapshot.data();
-                    const text = data.message || "(No message provided)";
-                    const time = data.updatedAt ? `Last updated: ${data.updatedAt}` : "";
-                    
-                    publicDisplayEl.innerText = text;
-                    adminDisplayEl.innerText = text;
-
-                    publicTimestampEl.innerText = time;
-                    adminTimestampEl.innerText = time;
+        // Realtime members synchronization across all devices
+        function initMembersListener() {
+            const colRef = collection(db, "members");
+            onSnapshot(colRef, (snapshot) => {
+                membersCache = {};
+                let html = "";
+                if (snapshot.empty) {
+                    html = "<div class='member-item'>No member accounts created yet.</div>";
                 } else {
-                    const text = "No message saved yet.";
-                    publicDisplayEl.innerText = text;
-                    adminDisplayEl.innerText = text;
-                    publicTimestampEl.innerText = "";
-                    adminTimestampEl.innerText = "";
+                    snapshot.forEach((docSnap) => {
+                        const data = docSnap.data();
+                        membersCache[docSnap.id] = data.password;
+                        html += `<div class='member-item'><span>👤 <strong>${docSnap.id}</strong></span></div>`;
+                    });
                 }
+                document.getElementById('members-list-container').innerHTML = html;
             }, (error) => {
-                console.error("Firestore error:", error);
-                const msg = "Error loading realtime updates. Check Firestore rules.";
-                publicDisplayEl.innerText = msg;
-                adminDisplayEl.innerText = msg;
+                console.error("Error fetching members:", error);
+                document.getElementById('members-list-container').innerHTML = "<div class='member-item'>Error loading members. Check rules.</div>";
             });
         }
 
-        // Save Functionality
-        async function handleSave() {
-            const messageText = inputEl.value.trim();
-
-            if (!messageText) {
-                alert("Please enter a message first!");
-                return;
-            }
-
-            if (!db) {
-                alert("Firebase is not initialized. Please configure firebaseConfig in index.html.");
-                return;
-            }
-
-            saveBtn.disabled = true;
-            saveBtn.innerText = "Saving...";
-
-            try {
-                const docRef = doc(db, "testData", "currentMessage");
-                const formattedDate = new Date().toLocaleString();
-
-                await setDoc(docRef, {
-                    message: messageText,
-                    updatedAt: formattedDate
-                });
-
-                inputEl.value = "";
-            } catch (err) {
-                console.error("Error saving document:", err);
-                alert("Could not save message. Make sure Firestore rules allow writes.");
-            } finally {
-                saveBtn.disabled = false;
-                saveBtn.innerText = "Save Message";
+        // Persistent Session Check on load
+        const savedSession = localStorage.getItem('scoutSession');
+        if (savedSession) {
+            const session = JSON.parse(savedSession);
+            if (session.role === 'admin') {
+                switchScreen('adminDashboard');
+            } else if (session.role === 'member') {
+                document.getElementById('logged-member-name').innerText = session.username;
+                switchScreen('memberDashboard');
             }
         }
 
-        // Event Listeners for Saving
-        saveBtn.addEventListener('click', handleSave);
-        inputEl.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleSave();
+        // Admin Login
+        const adminUserIn = document.getElementById('admin-user');
+        const adminPassIn = document.getElementById('admin-pass');
+        const adminErr = document.getElementById('admin-login-error');
+
+        function handleAdminLogin() {
+            if (adminUserIn.value === 'chef' && adminPassIn.value === 'chef') {
+                adminErr.style.display = 'none';
+                localStorage.setItem('scoutSession', JSON.stringify({ role: 'admin' }));
+                adminUserIn.value = '';
+                adminPassIn.value = '';
+                switchScreen('adminDashboard');
+            } else {
+                adminErr.style.display = 'block';
+            }
+        }
+        document.getElementById('admin-login-btn').addEventListener('click', handleAdminLogin);
+        adminPassIn.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAdminLogin(); });
+
+        // Member Login
+        const memberUserIn = document.getElementById('member-user');
+        const memberPassIn = document.getElementById('member-pass');
+        const memberErr = document.getElementById('member-login-error');
+
+        function handleMemberLogin() {
+            const u = memberUserIn.value.trim();
+            const p = memberPassIn.value;
+
+            if (membersCache[u] && membersCache[u] === p) {
+                memberErr.style.display = 'none';
+                localStorage.setItem('scoutSession', JSON.stringify({ role: 'member', username: u }));
+                document.getElementById('logged-member-name').innerText = u;
+                memberUserIn.value = '';
+                memberPassIn.value = '';
+                switchScreen('memberDashboard');
+            } else {
+                memberErr.style.display = 'block';
+            }
+        }
+        document.getElementById('member-login-btn').addEventListener('click', handleMemberLogin);
+        memberPassIn.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleMemberLogin(); });
+
+        // Admin Create Member
+        const newMemberUser = document.getElementById('new-member-user');
+        const newMemberPass = document.getElementById('new-member-pass');
+        const createMsg = document.getElementById('admin-msg');
+        const createErr = document.getElementById('admin-err');
+
+        document.getElementById('create-member-btn').addEventListener('click', async () => {
+            const u = newMemberUser.value.trim();
+            const p = newMemberPass.value.trim();
+
+            createMsg.style.display = 'none';
+            createErr.style.display = 'none';
+
+            if (!u || !p) {
+                createErr.innerText = "Please fill in both fields.";
+                createErr.style.display = 'block';
+                return;
+            }
+
+            try {
+                await setDoc(doc(db, "members", u), { password: p });
+                createMsg.style.display = 'block';
+                newMemberUser.value = '';
+                newMemberPass.value = '';
+            } catch (err) {
+                console.error("Error creating member:", err);
+                createErr.innerText = "Failed to create account. Check Firestore permissions.";
+                createErr.style.display = 'block';
+            }
+        });
+
+        // Logout Handlers
+        document.getElementById('admin-logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('scoutSession');
+            switchScreen('home');
+        });
+
+        document.getElementById('member-logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('scoutSession');
+            switchScreen('home');
         });
     </script>
 </body>

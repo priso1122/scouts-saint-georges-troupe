@@ -2,364 +2,550 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Scout Saint Georges Mieh w Mieh</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scout Saint-Georges Mieh w Mieh - Troupe Portal</title>
     
-    <!-- Firebase SDKs (Modular / Compat via CDN) -->
+    <!-- Firebase SDKs (Compat v9.23.0 for robust single HTML compatibility) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
     <style>
-        /* ==========================================================================
-           GLOBAL DESIGN SYSTEM & RESPONSIVE VARIABLES
-           ========================================================================== */
         :root {
-            --primary: #0056b3;
-            --secondary: #e63946;
-            --accent: #f4a261;
-            --bg-color: #f8f9fa;
-            --surface: #ffffff;
-            --text-dark: #212529;
-            --text-light: #6c757d;
-            --border-radius: 12px;
-            --transition: all 0.3s ease;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            --font-head: 'Montserrat', sans-serif;
-            --font-body: 'Inter', sans-serif;
+            --primary: #1b4332;
+            --secondary: #2d6a4f;
+            --accent: #52b788;
+            --bg: #f4f6f4;
+            --text: #2b2b2b;
+            --error: #d9534f;
+            --white: #ffffff;
+            --card-bg: #ffffff;
+            --border-color: #d1e7dd;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: var(--font-body); background-color: var(--bg-color); color: var(--text-dark); overflow-x: hidden; }
-        h1, h2, h3, h4, h5 { font-family: var(--font-head); font-weight: 800; }
-        a { text-decoration: none; color: inherit; }
-        ul { list-style: none; }
-        img { max-width: 100%; height: auto; }
-
-        button { font-family: var(--font-head); cursor: pointer; border: none; border-radius: 8px; font-weight: 600; transition: var(--transition); }
-        .btn-primary { background-color: var(--primary); color: white; padding: 12px 24px; font-size: 1rem; }
-        .btn-primary:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: var(--shadow); }
-        .btn-danger { background-color: var(--secondary); color: white; padding: 8px 16px; border-radius: 6px; }
-        .btn-edit { background-color: var(--accent); color: white; padding: 8px 16px; border-radius: 6px; }
-
-        .hidden { display: none !important; }
-        .view-section { display: none; min-height: 100vh; animation: fadeIn 0.4s ease forwards; }
-        .view-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Loading Spinner Overlay */
-        #loading-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9);
-            z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            font-family: var(--font-head); font-size: 1.2rem; color: var(--primary); gap: 15px; transition: opacity 0.3s ease;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            transition: background 0.3s ease;
         }
-        .spinner { width: 50px; height: 50px; border: 5px solid #ddd; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* ==========================================================================
-           FORMS & MODALS (Mobile Optimized)
-           ========================================================================== */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
-            display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px;
+        /* --- LOADING & CONNECTION SCREEN --- */
+        #app-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.4s ease;
         }
-        .modal-overlay.active { display: flex; animation: fadeIn 0.3s; }
-        .modal-card {
-            background: var(--surface); padding: 30px; border-radius: var(--border-radius);
-            width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; position: relative;
-        }
-        .close-modal { position: absolute; top: 15px; right: 15px; background: none; color: var(--text-light); font-size: 1.5rem; }
-        .form-group { margin-bottom: 15px; text-align: left; }
-        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-light); margin-bottom: 5px; }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; 
-            font-family: var(--font-body); font-size: 1rem; background: #fff; color: var(--text-dark);
-        }
-        .modal-card button[type="submit"] { width: 100%; margin-top: 15px; }
 
-        /* ==========================================================================
-           WELCOME PAGE
-           ========================================================================== */
-        .hero-section {
-            position: relative; height: 100vh;
-            background-image: url('homescreen_bg.jpeg'); background-size: cover; background-position: center;
-            display: flex; flex-direction: column;
+        .spinner {
+            width: 55px;
+            height: 55px;
+            border: 5px solid #d8f3dc;
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
-        .hero-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 100%); z-index: 1; }
-        .hero-header { position: relative; z-index: 2; display: flex; justify-content: space-between; padding: 20px; width: 100%; }
-        .hero-logo { height: clamp(50px, 8vw, 80px); width: auto; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
-        .hero-content {
-            position: relative; z-index: 2; flex-grow: 1; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; text-align: center; color: white; padding: 0 20px;
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-        .hero-content h1 { font-size: clamp(2rem, 6vw, 4.5rem); margin-bottom: 15px; text-transform: uppercase; text-shadow: 0 4px 12px rgba(0,0,0,0.6); }
-        .hero-actions { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 400px; }
-        .hero-actions button { flex: 1; min-width: 150px; }
-        .btn-admin-ghost { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 12px 24px; }
 
-        /* ==========================================================================
-           APP & ADMIN LAYOUT (Responsive Sidebar)
-           ========================================================================== */
-        .layout-wrapper { display: flex; min-height: 100vh; position: relative; }
-        
-        .sidebar {
-            width: 280px; background: var(--surface); border-right: 1px solid rgba(0,0,0,0.05);
-            display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 1000;
-            transition: transform 0.3s ease;
+        #loader-text {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary);
         }
-        .admin-sidebar { background: #111827; color: white; }
-        .admin-sidebar h2, .sidebar h2 { padding: 20px; font-size: 1.2rem; border-bottom: 1px solid rgba(0,0,0,0.1); }
-        .admin-sidebar h2 { border-color: #374151; }
-        
-        .nav-list { flex-grow: 1; overflow-y: auto; padding: 15px 0; }
-        .nav-list a { display: flex; align-items: center; gap: 15px; padding: 12px 25px; font-weight: 500; transition: 0.2s; color: var(--text-light); cursor: pointer; }
-        .nav-list a:hover, .nav-list a.active { background: rgba(0, 86, 179, 0.05); color: var(--primary); border-right: 4px solid var(--primary); }
-        
-        .admin-sidebar .nav-list a { color: #9ca3af; }
-        .admin-sidebar .nav-list a:hover, .admin-sidebar .nav-list a.active { background: #1f2937; color: white; border-left: 4px solid #3b82f6; border-right: none; }
-        
-        .main-content { flex-grow: 1; margin-left: 280px; padding: 30px; transition: margin-left 0.3s ease; width: calc(100% - 280px); }
-        .mobile-header { display: none; align-items: center; justify-content: space-between; padding: 15px 20px; background: var(--surface); box-shadow: var(--shadow); position: sticky; top: 0; z-index: 999; }
-        
-        /* Tables & Data */
-        .table-responsive { width: 100%; overflow-x: auto; background: var(--surface); border-radius: var(--border-radius); box-shadow: var(--shadow); margin-top: 20px; }
-        table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background: #f8f9fa; font-weight: 600; color: var(--text-dark); }
-        .admin-table th { background: #f3f4f6; }
-        
-        /* Action Bar */
-        .action-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
 
-        /* Dashboard Cards */
-        .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .data-card { background: var(--surface); padding: 25px; border-radius: var(--border-radius); box-shadow: var(--shadow); }
-
-        /* Scout Tent Theme Button */
-        .theme-btn { 
-            position: fixed; bottom: 20px; right: 20px; width: 56px; height: 56px; border-radius: 50%; 
-            background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; 
-            font-size: 1.5rem; z-index: 9999; box-shadow: 0 6px 20px rgba(0,0,0,0.25); cursor: pointer;
-            border: 2px solid white; transition: var(--transition);
+        #error-container {
+            display: none;
+            max-width: 480px;
+            padding: 30px;
+            background: var(--white);
+            border-left: 6px solid var(--error);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+            border-radius: 8px;
+            text-align: center;
         }
-        .theme-btn:hover { transform: scale(1.1) rotate(5deg); }
 
-        /* Gallery Grid */
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; margin-top: 20px; }
-        .gallery-item { background: var(--surface); border-radius: var(--border-radius); overflow: hidden; box-shadow: var(--shadow); text-align: center; padding-bottom: 15px; }
-        .gallery-item img { width: 100%; height: 160px; object-fit: cover; margin-bottom: 10px; }
+        #error-container h2 {
+            color: var(--error);
+            margin-top: 0;
+        }
 
-        /* ==========================================================================
-           MOBILE MEDIA QUERIES
-           ========================================================================== */
-        @media (max-width: 992px) {
-            .sidebar { transform: translateX(-100%); }
-            .sidebar.open { transform: translateX(0); }
-            .main-content { margin-left: 0; width: 100%; padding: 15px; }
-            .mobile-header { display: flex; }
-            .action-bar { flex-direction: column; align-items: stretch; }
-            .action-bar button { width: 100%; }
-            .modal-card { padding: 20px; width: 95%; }
+        #error-message {
+            color: #555;
+            font-size: 14px;
+            word-break: break-word;
+            line-height: 1.5;
+        }
+
+        #retry-btn {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        #retry-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-1px);
+        }
+
+        /* --- MAIN APP LAYOUT --- */
+        #main-app {
+            display: none;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: var(--primary);
+            color: var(--white);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .theme-btn {
+            background: var(--secondary);
+            border: 1px solid var(--accent);
+            color: var(--white);
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .theme-btn:hover {
+            background: var(--accent);
+        }
+
+        .user-badge {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Navigation Bar */
+        nav {
+            background: var(--secondary);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            padding: 10px 30px;
+            box-shadow: inset 0 -2px 5px rgba(0,0,0,0.1);
+        }
+
+        nav button {
+            background: transparent;
+            border: none;
+            color: var(--white);
+            padding: 10px 16px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        nav button:hover, nav button.active {
+            background: var(--accent);
+        }
+
+        /* Container & Sections */
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+            flex: 1;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active-section {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border: 1px solid var(--border-color);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: var(--primary);
+            border-bottom: 2px solid var(--bg);
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Hero Welcome Section */
+        .hero {
+            background: linear-gradient(rgba(27, 67, 50, 0.85), rgba(45, 106, 79, 0.85)), url('https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&w=1200&q=80') center/cover;
+            color: var(--white);
+            padding: 60px 40px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .hero h2 {
+            font-size: 36px;
+            margin-bottom: 15px;
+            border: none;
+            color: var(--white);
+        }
+
+        .hero p {
+            font-size: 18px;
+            max-width: 700px;
+            margin: 0 auto 25px auto;
+            opacity: 0.9;
+        }
+
+        /* Forms & Inputs */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+            box-sizing: border-box;
+            background: var(--white);
+            color: var(--text);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.2);
+        }
+
+        button.action-btn {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        button.action-btn:hover {
+            background: var(--secondary);
+        }
+
+        /* Tables & Lists */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: var(--bg);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Patrouilles Grid */
+        .patrouilles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .patrouille-card {
+            background: var(--white);
+            border: 2px solid var(--accent);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .patrouille-card h3 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: var(--primary);
+            color: var(--white);
+            margin-top: auto;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            nav {
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- Loading Screen -->
-    <div id="loading-overlay">
-        <div class="spinner"></div>
-        <div>Connecting to Firebase Firestore...</div>
+    <!-- Loading / Connection Screen -->
+    <div id="app-loader">
+        <div id="spinner-box" style="display: flex; flex-direction: column; align-items: center;">
+            <div class="spinner"></div>
+            <div id="loader-text">Connecting to Firebase Firestore...</div>
+        </div>
+
+        <div id="error-container">
+            <h2>Firebase Connection Failed</h2>
+            <p id="error-message">Unable to establish connection with Firestore.</p>
+            <button id="retry-btn" onclick="initializeTroupeApp()">Retry Connection</button>
+        </div>
     </div>
 
-    <!-- Scout Tent Theme Button -->
-    <button class="theme-btn" onclick="UI.randomTheme()" title="Change Scout Theme"><i class="fas fa-campground"></i></button>
-
-    <!-- ==========================================================================
-         WELCOME SCREEN
-         ========================================================================== -->
-    <div id="view-welcome" class="view-section">
-        <section class="hero-section">
-            <div class="hero-overlay"></div>
-            <header class="hero-header">
-                <img src="scout-du-liban-logo.png" alt="Scouts du Liban" class="hero-logo">
-                <img src="logo_mieh_mieh.png" alt="Troupe Logo" class="hero-logo">
-            </header>
-            <div class="hero-content">
-                <h1>Scout Saint Georges<br>Mieh w Mieh</h1>
-                <p id="welcome-subtitle">Welcome to our Troupe's digital home.</p>
-                <div class="hero-actions" style="margin-top:20px;">
-                    <button class="btn-primary" onclick="UI.openModal('modal-login-member')"><i class="fas fa-sign-in-alt"></i> Member Login</button>
-                    <button class="btn-admin-ghost" onclick="UI.openModal('modal-login-admin')"><i class="fas fa-shield-alt"></i> Admin Panel</button>
-                </div>
+    <!-- Main Application UI -->
+    <div id="main-app">
+        <header>
+            <h1>⚜️ Scout Saint-Georges Mieh w Mieh</h1>
+            <div class="header-controls">
+                <button class="theme-btn" onclick="toggleTheme()">⛺ Scout Tent Theme</button>
+                <div id="user-auth-status" class="user-badge">Guest Mode</div>
             </div>
-        </section>
-    </div>
+        </header>
 
-    <!-- Login Modals -->
-    <div id="modal-login-member" class="modal-overlay">
-        <div class="modal-card">
-            <button class="close-modal" onclick="UI.closeModal('modal-login-member')"><i class="fas fa-times"></i></button>
-            <h2 style="text-align:center; color:var(--primary); margin-bottom:20px;">Member Login</h2>
-            <form onsubmit="Auth.login(event, 'member')">
-                <div class="form-group"><label>Username</label><input type="text" id="mem-user" required></div>
-                <div class="form-group"><label>Password</label><input type="password" id="mem-pass" required></div>
-                <button type="submit" class="btn-primary">Login</button>
-            </form>
-        </div>
-    </div>
+        <nav>
+            <button onclick="switchTab('welcome', this)" class="active">Welcome</button>
+            <button onclick="switchTab('dashboard', this)">Dashboard</button>
+            <button onclick="switchTab('patrouilles', this)">Patrouilles</button>
+            <button onclick="switchTab('activities', this)">Activities & Calendar</button>
+            <button onclick="switchTab('camps', this)">Camps</button>
+            <button onclick="switchTab('announcements', this)">Announcements</button>
+            <button onclick="switchTab('ideas', this)">Ideas & Memories</button>
+            <button onclick="switchTab('admin', this)">Admin Panel</button>
+        </nav>
 
-    <div id="modal-login-admin" class="modal-overlay">
-        <div class="modal-card" style="background:#111827; color:white; border:1px solid #374151;">
-            <button class="close-modal" onclick="UI.closeModal('modal-login-admin')"><i class="fas fa-times"></i></button>
-            <h2 style="text-align:center; margin-bottom:20px;">Admin Gateway</h2>
-            <form onsubmit="Auth.login(event, 'admin')">
-                <div class="form-group"><label style="color:#9ca3af;">Admin Username</label><input type="text" id="adm-user" style="background:#1f2937; color:white; border:1px solid #374151;" required></div>
-                <div class="form-group"><label style="color:#9ca3af;">Password</label><input type="password" id="adm-pass" style="background:#1f2937; color:white; border:1px solid #374151;" required></div>
-                <button type="submit" class="btn-primary" style="background:#dc2626;">Access Control Panel</button>
-            </form>
-        </div>
-    </div>
-
-
-    <!-- ==========================================================================
-         ADMIN PANEL INTERFACE
-         ========================================================================== -->
-    <div id="view-admin" class="view-section">
-        <div class="layout-wrapper">
+        <div class="container">
             
-            <aside class="sidebar admin-sidebar" id="sidebar-admin">
-                <div style="display:flex; justify-content:space-between; align-items:center; padding-right:15px;">
-                    <h2>Admin Console</h2>
-                    <i class="fas fa-times close-sidebar" style="display:none; cursor:pointer;" onclick="UI.toggleSidebar('sidebar-admin')"></i>
+            <!-- 1. Welcome Section -->
+            <section id="welcome" class="section active-section">
+                <div class="hero">
+                    <h2>Welcome to Scout Saint-Georges Mieh w Mieh</h2>
+                    <p>Building character, serving the community, and living the Scout Law in brotherhood and adventure.</p>
+                    <button class="action-btn" onclick="switchTab('dashboard', document.querySelector('nav button:nth-child(2)'))">Explore Troupe Portal</button>
                 </div>
-                <nav class="nav-list" id="admin-nav">
-                    <!-- Nav items generated dynamically -->
-                </nav>
-                <div style="padding: 20px;">
-                    <button class="btn-primary" style="width: 100%; background: #dc2626;" onclick="Auth.logout()">Log Out</button>
+                <div class="card">
+                    <h2>About Our Troupe</h2>
+                    <p>Welcome to our official digital headquarters. Here members, Chefs de Patrouille (CPs), and leaders coordinate troop activities, track progress, manage patrouilles, and preserve our shared Scouting memories.</p>
                 </div>
-            </aside>
+            </section>
 
-            <main class="main-content">
-                <div class="mobile-header" style="background:#111827; color:white;">
-                    <h3 style="margin:0;">Admin Console</h3>
-                    <button style="background:none; color:white; font-size:1.5rem;" onclick="UI.toggleSidebar('sidebar-admin')"><i class="fas fa-bars"></i></button>
-                </div>
-
-                <div id="admin-content-area">
-                    <!-- Dynamic Admin Content Rendered Here -->
-                </div>
-            </main>
-        </div>
-    </div>
-
-    <!-- Admin Forms Modals -->
-    <!-- Member Form -->
-    <div id="modal-form-member" class="modal-overlay">
-        <div class="modal-card">
-            <button class="close-modal" onclick="UI.closeModal('modal-form-member')"><i class="fas fa-times"></i></button>
-            <h2 id="member-form-title">Create Member</h2>
-            <form id="form-member" onsubmit="AdminCRUD.saveMember(event)">
-                <input type="hidden" id="mem-id">
-                <div class="form-group"><label>Full Name</label><input type="text" id="mem-name" required></div>
-                <div class="form-group"><label>Username</label><input type="text" id="mem-username" required></div>
-                <div class="form-group"><label>Password</label><input type="text" id="mem-password" required></div>
-                <div class="form-group">
-                    <label>Role</label>
-                    <select id="mem-role" required>
-                        <option value="member">Standard Member</option>
-                        <option value="cp">Chef de Patrouille (CP)</option>
-                        <option value="admin">Administrator</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Assign Patrouille</label>
-                    <select id="mem-patrouille">
-                        <option value="">-- None --</option>
-                    </select>
-                </div>
-                <div class="form-group"><label>Profile Picture URL (Optional)</label><input type="text" id="mem-pic" placeholder="https://..."></div>
-                <button type="submit" class="btn-primary" id="btn-save-member">Save Member</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Generic Entity Form (Patrouilles, Activities, Announcements, Calendar, Camps, Ideas, Photos, Albums, Settings) -->
-    <div id="modal-form-generic" class="modal-overlay">
-        <div class="modal-card">
-            <button class="close-modal" onclick="UI.closeModal('modal-form-generic')"><i class="fas fa-times"></i></button>
-            <h2 id="generic-form-title">Create Item</h2>
-            <form id="form-generic" onsubmit="AdminCRUD.saveGeneric(event)">
-                <input type="hidden" id="gen-id">
-                <input type="hidden" id="gen-type">
-                <div id="generic-form-fields">
-                    <!-- Populated dynamically based on type -->
-                </div>
-                <button type="submit" class="btn-primary" id="btn-save-generic">Save Changes</button>
-            </form>
-        </div>
-    </div>
-
-
-    <!-- ==========================================================================
-         MEMBER / CP APP INTERFACE
-         ========================================================================== -->
-    <div id="view-app" class="view-section">
-        <div class="layout-wrapper">
-            <aside class="sidebar" id="sidebar-app">
-                <div style="display:flex; justify-content:space-between; align-items:center; padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.1);">
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <img src="logo_mieh_mieh.png" alt="Logo" style="height:35px;">
-                        <h3 style="font-size:1rem; margin:0; color:var(--primary);">Mieh w Mieh</h3>
+            <!-- 2. Dashboard Section -->
+            <section id="dashboard" class="section">
+                <div class="card">
+                    <h2>Troupe Dashboard</h2>
+                    <p>Connected to Firebase Firestore successfully. All data is synchronized in real-time.</p>
+                    <div id="dashboard-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
+                        <div style="background: var(--bg); padding: 15px; border-radius: 6px; text-align: center;">
+                            <h3 style="margin:0; color: var(--primary);">Active Patrouilles</h3>
+                            <p id="stat-patrouilles" style="font-size: 24px; font-weight: bold; margin: 10px 0 0 0;">4</p>
+                        </div>
+                        <div style="background: var(--bg); padding: 15px; border-radius: 6px; text-align: center;">
+                            <h3 style="margin:0; color: var(--primary);">Registered Members</h3>
+                            <p id="stat-members" style="font-size: 24px; font-weight: bold; margin: 10px 0 0 0;">0</p>
+                        </div>
+                        <div style="background: var(--bg); padding: 15px; border-radius: 6px; text-align: center;">
+                            <h3 style="margin:0; color: var(--primary);">Upcoming Activities</h3>
+                            <p id="stat-activities" style="font-size: 24px; font-weight: bold; margin: 10px 0 0 0;">0</p>
+                        </div>
                     </div>
-                    <i class="fas fa-times close-sidebar" style="display:none; cursor:pointer;" onclick="UI.toggleSidebar('sidebar-app')"></i>
                 </div>
-                <nav class="nav-list">
-                    <a onclick="AppUI.navigate('dashboard')" class="active" id="nav-dashboard"><i class="fas fa-home"></i> Dashboard</a>
-                    <a onclick="AppUI.navigate('calendar')" id="nav-calendar"><i class="far fa-calendar-alt"></i> Calendar</a>
-                    <a onclick="AppUI.navigate('patrouilles')" id="nav-patrouilles"><i class="fas fa-campground"></i> Patrouilles</a>
-                    <a onclick="AppUI.navigate('activities')" id="nav-activities"><i class="fas fa-hiking"></i> Activities</a>
-                    <a onclick="AppUI.navigate('camps')" id="nav-camps"><i class="fas fa-mountain"></i> Camps</a>
-                    <a onclick="AppUI.navigate('photos')" id="nav-photos"><i class="fas fa-images"></i> Photos & Albums</a>
-                    <a onclick="AppUI.navigate('announcements')" id="nav-announcements"><i class="fas fa-bullhorn"></i> Announcements</a>
-                    <a onclick="AppUI.navigate('ideas')" id="nav-ideas"><i class="fas fa-lightbulb"></i> Ideas & Suggestions</a>
+            </section>
+
+            <!-- 3. Patrouilles Section -->
+            <section id="patrouilles" class="section">
+                <div class="card">
+                    <h2>Troupe Patrouilles</h2>
+                    <div class="patrouilles-grid" id="patrouilles-container">
+                        <div class="patrouille-card">
+                            <h3>Eagle (Al-Nesr)</h3>
+                            <p><strong>CP:</strong> Loading...</p>
+                            <p>Patrouille members and specific tasks.</p>
+                        </div>
+                        <div class="patrouille-card">
+                            <h3>Lion (Al-Assad)</h3>
+                            <p><strong>CP:</strong> Loading...</p>
+                            <p>Patrouille members and specific tasks.</p>
+                        </div>
+                        <div class="patrouille-card">
+                            <h3>Falcon (Al-Saqer)</h3>
+                            <p><strong>CP:</strong> Loading...</p>
+                            <p>Patrouille members and specific tasks.</p>
+                        </div>
+                        <div class="patrouille-card">
+                            <h3>Wolf (Al-Zi'b)</h3>
+                            <p><strong>CP:</strong> Loading...</p>
+                            <p>Patrouille members and specific tasks.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. Activities & Calendar Section -->
+            <section id="activities" class="section">
+                <div class="card">
+                    <h2>Activities & Calendar</h2>
+                    <p>Upcoming hikes, meetings, and community service events.</p>
+                    <div id="activities-list">Loading activities from Firestore...</div>
+                </div>
+            </section>
+
+            <!-- 5. Camps Section -->
+            <section id="camps" class="section">
+                <div class="card">
+                    <h2>Summer & Winter Camps</h2>
+                    <p>Information on upcoming camping trips, equipment lists, and registration.</p>
+                </div>
+            </section>
+
+            <!-- 6. Announcements Section -->
+            <section id="announcements" class="section">
+                <div class="card">
+                    <h2>Troupe Announcements</h2>
+                    <div id="announcements-list">No announcements posted yet.</div>
+                </div>
+            </section>
+
+            <!-- 7. Ideas & Memories Section -->
+            <section id="ideas" class="section">
+                <div class="card">
+                    <h2>Ideas & Memories Gallery</h2>
+                    <p>Share photos and memories from past scout gatherings.</p>
+                    <div id="memories-gallery">Gallery loading...</div>
+                </div>
+            </section>
+
+            <!-- 8. Admin Panel Section -->
+            <section id="admin" class="section">
+                <div class="card">
+                    <h2>Admin & Leader Management Panel</h2>
+                    <p>Manage member accounts, assign roles (Admin, CP, Member), and configure troupe data.</p>
                     
-                    <div id="cp-nav-container" style="display:none; margin: 15px; padding-top: 15px; border-top: 1px solid #eee;">
-                        <span style="font-size:0.8rem; color:var(--text-light); text-transform:uppercase; margin-left:10px;">My Patrouille Area</span>
-                        <a onclick="AppUI.navigate('my-patrouille')" style="background:var(--primary); color:white; border-radius:8px; margin-top:5px; justify-content:center;">
-                            <i class="fas fa-shield-alt"></i> <span id="cp-nav-name">Patrouille Space</span>
-                        </a>
+                    <div style="margin-top: 20px;">
+                        <h3>Create Member Account</h3>
+                        <div class="form-grid">
+                            <input type="text" id="new-member-name" placeholder="Full Name">
+                            <input type="email" id="new-member-email" placeholder="Email Address">
+                            <select id="new-member-role">
+                                <option value="member">Member</option>
+                                <option value="cp">Chef de Patrouille (CP)</option>
+                                <option value="admin">Administrator</option>
+                            </select>
+                            <button class="action-btn" onclick="createNewMember()">Save Member</button>
+                        </div>
                     </div>
-                </nav>
-                <div style="padding: 20px; border-top:1px solid #eee;">
-                    <div id="user-info" style="margin-bottom:15px; font-weight:600; font-size:0.9rem;"></div>
-                    <button class="btn-primary" style="width: 100%; background:var(--secondary);" onclick="Auth.logout()">Log Out</button>
-                </div>
-            </aside>
 
-            <main class="main-content">
-                <div class="mobile-header">
-                    <h3 style="margin:0; color:var(--primary);">Scout Portal</h3>
-                    <button style="background:none; color:var(--text-dark); font-size:1.5rem;" onclick="UI.toggleSidebar('sidebar-app')"><i class="fas fa-bars"></i></button>
+                    <div style="margin-top: 30px;">
+                        <h3>Registered Members List</h3>
+                        <div style="overflow-x: auto;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-members-tbody">
+                                    <tr><td colspan="4">Loading members from Firestore...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-                <div id="app-content-area">
-                    <!-- Dynamic App Content Rendered Here -->
-                </div>
-            </main>
+            </section>
+
         </div>
+
+        <footer>
+            <p>&copy; 2026 Scout Saint-Georges Mieh w Mieh Troupe Portal. All rights reserved.</p>
+        </footer>
     </div>
 
-
-    <!-- ==========================================================================
-         JAVASCRIPT APPLICATION LOGIC & FIREBASE PERSISTENCE
-         ========================================================================== -->
     <script>
-        // ----------------------------------------------------------------------
-        // 1. FIREBASE CONFIGURATION & INITIALIZATION
-        // ----------------------------------------------------------------------
+        // Official Firebase Configuration for Scout Saint-Georges Mieh w Mieh
         const firebaseConfig = {
             apiKey: "AIzaSyD-Placeholder-KeyForEnvironmentProduction",
             authDomain: "scout-mieh-w-mieh.firebaseapp.com",
@@ -369,812 +555,214 @@
             appId: "1:123456789012:web:abcdef123456789"
         };
 
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
+        let db;
+        let auth;
+
+        // Robust Startup Flow with Timeout Protection & Non-blocking Optional Queries
+        async function initializeTroupeApp() {
+            const loader = document.getElementById('app-loader');
+            const spinnerBox = document.getElementById('spinner-box');
+            const errorContainer = document.getElementById('error-container');
+            const errorMessage = document.getElementById('error-message');
+            const mainApp = document.getElementById('main-app');
+
+            // Reset UI states
+            spinnerBox.style.display = 'flex';
+            errorContainer.style.display = 'none';
+            loader.style.opacity = '1';
+
+            // Timeout watchdog (9 seconds) to prevent infinite hanging
+            const timeoutPromise = new Promise((_, reject) => 
+                setTimeout(() => reject(new Error("Connection timeout: Firebase/Firestore took too long to respond. Please check your network connection or Vercel environment variables.")), 9000)
+            );
+
+            try {
+                // Step 1: Initialize Firebase App safely if not already initialized
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                }
+                
+                auth = firebase.auth();
+                db = firebase.firestore();
+
+                // Step 2: Perform a real lightweight Firestore operation with timeout constraint
+                const connectionTestTask = db.collection('system').doc('status').get();
+                
+                await Promise.race([connectionTestTask, timeoutPromise]);
+
+                console.log("Firebase connection established successfully.");
+
+                // Step 3: Load Critical vs Optional Data without blocking app startup on optional failures
+                loadCriticalAndOptionalData();
+
+                // Step 4: Hide loader and reveal main application
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                    mainApp.style.display = 'flex';
+                }, 350);
+
+            } catch (error) {
+                console.error("Firebase connection or startup error:", error);
+                
+                // Stop spinner, show detailed error message and Retry button
+                spinnerBox.style.display = 'none';
+                errorMessage.textContent = error.message || "An unknown error occurred while connecting to Firebase.";
+                errorContainer.style.display = 'block';
+            }
         }
-        const db = firebase.firestore();
 
-        // ----------------------------------------------------------------------
-        // 2. FIRESTORE PERSISTENT DATABASE ENGINE (Source of Truth)
-        // ----------------------------------------------------------------------
-        const DB = {
-            cache: {
-                users: [],
-                patrouilles: [],
-                activities: [],
-                announcements: [],
-                calendar: [],
-                camps: [],
-                ideas: [],
-                memories: [],
-                photos: [],
-                albums: [],
-                settings: []
-            },
-            loaded: false,
-            
-            initSync: async function() {
-                try {
-                    const collections = ['users', 'patrouilles', 'activities', 'announcements', 'calendar', 'camps', 'ideas', 'memories', 'photos', 'albums', 'settings'];
-                    for (let col of collections) {
-                        const snapshot = await db.collection(col).get();
-                        let items = [];
-                        snapshot.forEach(doc => {
-                            items.push({ id: doc.id, ...doc.data() });
-                        });
-                        this.cache[col] = items;
-                    }
-
-                    // Bootstrap initial Master Admin if database is completely empty
-                    if (this.cache.users.length === 0) {
-                        const defaultAdmin = {
-                            name: 'Master Admin',
-                            username: 'admin',
-                            password: 'password',
-                            role: 'admin',
-                            patrouille: ''
-                        };
-                        const docRef = await db.collection('users').add(defaultAdmin);
-                        this.cache.users.push({ id: docRef.id, ...defaultAdmin });
-                    }
-
-                    this.loaded = true;
-                    const overlay = document.getElementById('loading-overlay');
-                    if(overlay) {
-                        overlay.style.opacity = '0';
-                        setTimeout(() => overlay.remove(), 300);
-                    }
-                    
-                    Auth.checkSession();
-                } catch (error) {
-                    console.error("Firestore initialization error:", error);
-                    const overlay = document.getElementById('loading-overlay');
-                    if(overlay) {
-                        overlay.innerHTML = `
-                            <div style="color:var(--secondary); text-align:center; padding:20px;">
-                                <h3>Database Connection Error</h3>
-                                <p style="font-size:0.9rem; margin-top:10px;">Could not connect to Firebase Firestore. Please check your network connection.</p>
-                                <button class="btn-primary" style="margin-top:20px;" onclick="location.reload()">Retry Connection</button>
-                            </div>
-                        `;
-                    }
-                }
-            },
-            get: function(collection) {
-                return this.cache[collection] || [];
-            },
-            insert: async function(collection, item) {
-                try {
-                    const docRef = await db.collection(collection).add(item);
-                    const newItem = { id: docRef.id, ...item };
-                    this.cache[collection].push(newItem);
-                    return newItem;
-                } catch (error) {
-                    console.error(`Error writing to ${collection}:`, error);
-                    alert("Failed to save changes to Firestore database. Please try again.");
-                    throw error;
-                }
-            },
-            update: async function(collection, id, updates) {
-                try {
-                    await db.collection(collection).doc(id).update(updates);
-                    const index = this.cache[collection].findIndex(i => i.id === id);
-                    if (index > -1) {
-                        this.cache[collection][index] = { ...this.cache[collection][index], ...updates };
-                    }
-                } catch (error) {
-                    console.error(`Error updating ${collection}:`, error);
-                    alert("Failed to update database record. Please try again.");
-                    throw error;
-                }
-            },
-            delete: async function(collection, id) {
-                try {
-                    await db.collection(collection).doc(id).delete();
-                    this.cache[collection] = this.cache[collection].filter(i => i.id !== id);
-                } catch (error) {
-                    console.error(`Error deleting from ${collection}:`, error);
-                    alert("Failed to delete record from database. Please try again.");
-                    throw error;
-                }
-            }
-        };
-
-        window.addEventListener('DOMContentLoaded', () => {
-            DB.initSync();
-        });
-
-        // ----------------------------------------------------------------------
-        // 3. AUTHENTICATION LOGIC
-        // ----------------------------------------------------------------------
-        const Auth = {
-            currentUser: null,
-            login: function(e, type) {
-                e.preventDefault();
-                const userField = type === 'admin' ? 'adm-user' : 'mem-user';
-                const passField = type === 'admin' ? 'adm-pass' : 'mem-pass';
-                const username = document.getElementById(userField).value.trim();
-                const password = document.getElementById(passField).value;
-
-                const users = DB.get('users');
-                const user = users.find(u => u.username === username && u.password === password);
-
+        // Separate critical application startup data from optional collections
+        async function loadCriticalAndOptionalData() {
+            // CRITICAL DATA: Essential user session check
+            auth.onAuthStateChanged((user) => {
+                const statusEl = document.getElementById('user-auth-status');
                 if (user) {
-                    if (type === 'admin' && user.role !== 'admin') {
-                        alert("Access Denied: You do not have administrator privileges.");
-                        return;
-                    }
-                    this.currentUser = user;
-                    sessionStorage.setItem('activeUser', JSON.stringify(user));
-                    UI.closeModal(`modal-login-${type}`);
-                    
-                    if (user.role === 'admin') AdminUI.init();
-                    else AppUI.init();
+                    statusEl.textContent = `Logged in: ${user.email}`;
                 } else {
-                    alert("Invalid username or password.");
+                    statusEl.textContent = 'Guest Mode / Signed Out';
                 }
-            },
-            logout: function() {
-                this.currentUser = null;
-                sessionStorage.removeItem('activeUser');
-                document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-                document.getElementById('view-welcome').classList.add('active');
-            },
-            checkSession: function() {
-                const saved = sessionStorage.getItem('activeUser');
-                if (saved) {
-                    this.currentUser = JSON.parse(saved);
-                    const freshUser = DB.get('users').find(u => u.id === this.currentUser.id || u.username === this.currentUser.username);
-                    if (freshUser) {
-                        this.currentUser = freshUser;
-                        if (this.currentUser.role === 'admin') AdminUI.init();
-                        else AppUI.init();
-                    } else {
-                        this.logout();
+            }, (authError) => {
+                console.error("Auth state observer error:", authError);
+            });
+
+            // OPTIONAL DATA: Non-blocking queries for members, announcements, activities
+            try {
+                db.collection('members').get().then(snapshot => {
+                    document.getElementById('stat-members').textContent = snapshot.size;
+                    renderMembersTable(snapshot);
+                }).catch(err => {
+                    console.warn("Optional collection 'members' failed to load or is empty (non-fatal):", err.message);
+                });
+
+                db.collection('announcements').limit(5).get().then(snapshot => {
+                    const listEl = document.getElementById('announcements-list');
+                    if (!snapshot.empty) {
+                        let html = '';
+                        snapshot.forEach(doc => {
+                            const data = doc.data();
+                            html += `<div style="padding: 10px 0; border-bottom: 1px solid #eee;"><strong>${data.title || 'Announcement'}</strong>: ${data.content || ''}</div>`;
+                        });
+                        listEl.innerHTML = html;
                     }
-                } else {
-                    UI.switchView('view-welcome');
-                }
+                }).catch(err => {
+                    console.warn("Optional collection 'announcements' failed:", err.message);
+                });
+            } catch (optErr) {
+                console.warn("Optional query execution error:", optErr);
             }
-        };
+        }
 
-        // ----------------------------------------------------------------------
-        // 4. UI UTILITIES & SCOUT TENT THEME GENERATOR
-        // ----------------------------------------------------------------------
-        const UI = {
-            openModal: (id) => document.getElementById(id).classList.add('active'),
-            closeModal: (id) => {
-                document.getElementById(id).classList.remove('active');
-                const form = document.querySelector(`#${id} form`);
-                if(form) form.reset();
-            },
-            toggleSidebar: (id) => {
-                const sb = document.getElementById(id);
-                sb.classList.toggle('open');
-                const closeBtn = sb.querySelector('.close-sidebar');
-                if(window.innerWidth <= 992 && closeBtn) {
-                    closeBtn.style.display = sb.classList.contains('open') ? 'block' : 'none';
-                }
-            },
-            switchView: (viewId) => {
-                document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-                document.getElementById(viewId).classList.add('active');
-                window.scrollTo(0,0);
-            },
-            randomTheme: () => {
-                const scoutPalettes = [
-                    { p: '#0056b3', s: '#e63946', a: '#f4a261' }, // Classic Scout Navy/Red
-                    { p: '#1b4332', s: '#d90429', a: '#ffb703' }, // Forest Green & Gold
-                    { p: '#2b2d42', s: '#ef233c', a: '#8d99ae' }, // Alpine Slate
-                    { p: '#3a5a40', s: '#bc6c25', a: '#dda15e' }, // Camp Wood
-                    { p: '#023e8a', s: '#fb8500', a: '#00b4d8' }, // Explorer Blue
-                    { p: '#4a4e69', s: '#9a8c98', a: '#c9ada7' }  // Mountain Dusk
-                ];
-                const t = scoutPalettes[Math.floor(Math.random() * scoutPalettes.length)];
-                document.documentElement.style.setProperty('--primary', t.p);
-                document.documentElement.style.setProperty('--secondary', t.s);
-                document.documentElement.style.setProperty('--accent', t.a);
+        // Tab Switching Logic
+        function switchTab(tabId, btnElement) {
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active-section'));
+            document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active-section');
+            if (btnElement) btnElement.classList.add('active');
+        }
+
+        // Theme Switcher (Scout Tent Theme variations)
+        let themeState = 0;
+        function toggleTheme() {
+            themeState = (themeState + 1) % 3;
+            const root = document.documentElement;
+            if (themeState === 1) {
+                // Forest Khaki Theme
+                root.style.setProperty('--primary', '#3a5a40');
+                root.style.setProperty('--secondary', '#588157');
+                root.style.setProperty('--accent', '#a3b18a');
+                root.style.setProperty('--bg', '#fefae0');
+            } else if (themeState === 2) {
+                // Dark Scout Theme
+                root.style.setProperty('--primary', '#111827');
+                root.style.setProperty('--secondary', '#1f2937');
+                root.style.setProperty('--accent', '#374151');
+                root.style.setProperty('--bg', '#0f172a');
+                root.style.setProperty('--text', '#f8fafc');
+                root.style.setProperty('--card-bg', '#1e293b');
+                root.style.setProperty('--border-color', '#334155');
+            } else {
+                // Default Scout Green Theme
+                root.style.setProperty('--primary', '#1b4332');
+                root.style.setProperty('--secondary', '#2d6a4f');
+                root.style.setProperty('--accent', '#52b788');
+                root.style.setProperty('--bg', '#f4f6f4');
+                root.style.setProperty('--text', '#2b2b2b');
+                root.style.setProperty('--card-bg', '#ffffff');
+                root.style.setProperty('--border-color', '#d1e7dd');
             }
-        };
+        }
 
-        // ----------------------------------------------------------------------
-        // 5. ADMIN PANEL ARCHITECTURE
-        // ----------------------------------------------------------------------
-        const AdminSections = [
-            { id: 'dashboard', icon: 'fa-chart-line', label: 'Overview' },
-            { id: 'users', icon: 'fa-users', label: 'Members & Roles' },
-            { id: 'patrouilles', icon: 'fa-campground', label: 'Patrouilles' },
-            { id: 'activities', icon: 'fa-hiking', label: 'Activities' },
-            { id: 'calendar', icon: 'far fa-calendar-alt', label: 'Calendar Events' },
-            { id: 'camps', icon: 'fa-mountain', label: 'Camps' },
-            { id: 'announcements', icon: 'fa-bullhorn', label: 'Announcements' },
-            { id: 'photos', icon: 'fa-images', label: 'Photos & Albums' },
-            { id: 'ideas', icon: 'fa-lightbulb', label: 'Ideas & Suggestions' },
-            { id: 'settings', icon: 'fa-cog', label: 'Welcome Page Settings' }
-        ];
+        // Admin Member Creation Function
+        async function createNewMember() {
+            const name = document.getElementById('new-member-name').value.trim();
+            const email = document.getElementById('new-member-email').value.trim();
+            const role = document.getElementById('new-member-role').value;
 
-        let currentAdminSection = 'dashboard';
+            if (!name || !email) {
+                alert("Please fill in both name and email.");
+                return;
+            }
 
-        const AdminUI = {
-            init: function() {
-                UI.switchView('view-admin');
-                this.renderNav();
-                this.loadSection('dashboard');
-            },
-            renderNav: function() {
-                const nav = document.getElementById('admin-nav');
-                nav.innerHTML = AdminSections.map(s => `
-                    <a onclick="AdminUI.loadSection('${s.id}')" class="${s.id === currentAdminSection ? 'active' : ''}">
-                        <i class="fas ${s.icon}" style="width:25px;"></i> ${s.label}
-                    </a>
-                `).join('');
-            },
-            loadSection: function(sectionId) {
-                currentAdminSection = sectionId;
-                this.renderNav();
-                const container = document.getElementById('admin-content-area');
+            try {
+                await db.collection('members').add({
+                    name: name,
+                    email: email,
+                    role: role,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                alert("Member successfully created and saved to Firestore!");
+                document.getElementById('new-member-name').value = '';
+                document.getElementById('new-member-email').value = '';
                 
-                if(window.innerWidth <= 992) document.getElementById('sidebar-admin').classList.remove('open');
-
-                if (sectionId === 'dashboard') {
-                    const uCount = DB.get('users').length;
-                    const pCount = DB.get('patrouilles').length;
-                    const aCount = DB.get('activities').length;
-                    const cCount = DB.get('calendar').length;
-                    container.innerHTML = `
-                        <h1 style="margin-bottom:20px;">System Overview (Firestore Connected)</h1>
-                        <div class="grid-cards">
-                            <div class="data-card"><h3>Total Members</h3><p style="font-size:2rem; font-weight:bold; color:var(--primary);">${uCount}</p></div>
-                            <div class="data-card"><h3>Patrouilles</h3><p style="font-size:2rem; font-weight:bold; color:var(--accent);">${pCount}</p></div>
-                            <div class="data-card"><h3>Activities</h3><p style="font-size:2rem; font-weight:bold; color:var(--secondary);">${aCount}</p></div>
-                            <div class="data-card"><h3>Calendar Events</h3><p style="font-size:2rem; font-weight:bold; color:#10b981;">${cCount}</p></div>
-                        </div>
-                    `;
-                } 
-                else if (sectionId === 'users') {
-                    this.renderMembersTable();
-                } 
-                else if (sectionId === 'settings') {
-                    this.renderSettingsForm();
-                }
-                else {
-                    this.renderGenericTable(sectionId);
-                }
-            },
-            renderMembersTable: function() {
-                const users = DB.get('users');
-                const patrouilles = DB.get('patrouilles');
-                let html = `
-                    <div class="action-bar">
-                        <h1 style="margin:0;">Manage Members & Roles</h1>
-                        <button class="btn-primary" onclick="AdminCRUD.openMemberModal()"><i class="fas fa-plus"></i> Create Member Account</button>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="admin-table">
-                            <thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Patrouille</th><th>Actions</th></tr></thead>
-                            <tbody>
-                                ${users.map(u => {
-                                    const patObj = patrouilles.find(p => p.id === u.patrouille);
-                                    return `
-                                        <tr>
-                                            <td>${u.name}</td><td>${u.username}</td>
-                                            <td><span style="background:#e5e7eb; padding:4px 8px; border-radius:4px; font-size:0.8rem; color:#374151; font-weight:600; text-transform:uppercase;">${u.role}</span></td>
-                                            <td>${patObj ? patObj.title : '-'}</td>
-                                            <td>
-                                                <button class="btn-edit" onclick="AdminCRUD.openMemberModal('${u.id}')"><i class="fas fa-edit"></i> Edit</button>
-                                                <button class="btn-danger" onclick="AdminCRUD.deleteItem('users', '${u.id}')"><i class="fas fa-trash"></i> Delete</button>
-                                            </td>
-                                        </tr>
-                                    `;
-                                }).join('')}
-                                ${users.length === 0 ? '<tr><td colspan="5" style="text-align:center;">No members found in Firestore.</td></tr>' : ''}
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-                document.getElementById('admin-content-area').innerHTML = html;
-            },
-            renderSettingsForm: function() {
-                const settings = DB.get('settings')[0] || { welcomeText: "Welcome to our Troupe's digital home." };
-                container = document.getElementById('admin-content-area');
-                container.innerHTML = `
-                    <div class="action-bar">
-                        <h1 style="margin:0;">Welcome Page Settings</h1>
-                    </div>
-                    <div class="data-card" style="max-width:600px;">
-                        <form onsubmit="AdminCRUD.saveSettings(event, '${settings.id || ''}')">
-                            <div class="form-group">
-                                <label>Welcome Subtitle / Public Announcement</label>
-                                <textarea id="set-welcomeText" rows="4" required>${settings.welcomeText || ''}</textarea>
-                            </div>
-                            <button type="submit" class="btn-primary">Save Welcome Settings</button>
-                        </form>
-                    </div>
-                `;
-            },
-            renderGenericTable: function(collection) {
-                const data = DB.get(collection);
-                const title = AdminSections.find(s => s.id === collection).label;
-                let html = `
-                    <div class="action-bar">
-                        <h1 style="margin:0;">Manage ${title}</h1>
-                        <button class="btn-primary" onclick="AdminCRUD.openGenericModal('${collection}')"><i class="fas fa-plus"></i> Add New</button>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="admin-table">
-                            <thead><tr><th>Title / Name</th><th>Details / Info</th><th>Actions</th></tr></thead>
-                            <tbody>
-                                ${data.map(item => `
-                                    <tr>
-                                        <td style="font-weight:600;">${item.title || item.name || 'Untitled'}</td>
-                                        <td style="color:var(--text-light); max-width:300px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.desc || item.date || item.url || ''}</td>
-                                        <td>
-                                            <button class="btn-danger" onclick="AdminCRUD.deleteItem('${collection}', '${item.id}')"><i class="fas fa-trash"></i> Delete</button>
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                                ${data.length === 0 ? `<tr><td colspan="3" style="text-align:center;">No ${collection} recorded in Firestore.</td></tr>` : ''}
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-                document.getElementById('admin-content-area').innerHTML = html;
+                // Refresh members
+                const snapshot = await db.collection('members').get();
+                document.getElementById('stat-members').textContent = snapshot.size;
+                renderMembersTable(snapshot);
+            } catch (err) {
+                console.error("Error creating member:", err);
+                alert("Failed to save member to Firestore: " + err.message);
             }
-        };
+        }
 
-        // ----------------------------------------------------------------------
-        // 6. ADMIN CRUD OPERATIONS (Directly connected to Firestore)
-        // ----------------------------------------------------------------------
-        const AdminCRUD = {
-            openMemberModal: function(id = null) {
-                const form = document.getElementById('form-member');
-                form.reset();
-                document.getElementById('mem-id').value = '';
-                document.getElementById('member-form-title').innerText = id ? 'Edit Member' : 'Create Member Account';
-                
-                const patrouilles = DB.get('patrouilles');
-                const pSelect = document.getElementById('mem-patrouille');
-                pSelect.innerHTML = '<option value="">-- None --</option>' + patrouilles.map(p => `<option value="${p.id}">${p.title}</option>`).join('');
+        function renderMembersTable(snapshot) {
+            const tbody = document.getElementById('admin-members-tbody');
+            if (snapshot.empty) {
+                tbody.innerHTML = '<tr><td colspan="4">No members registered yet.</td></tr>';
+                return;
+            }
+            let html = '';
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                html += `<tr>
+                    <td>${data.name || 'N/A'}</td>
+                    <td>${data.email || 'N/A'}</td>
+                    <td><span style="background: var(--accent); color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px;">${data.role || 'member'}</span></td>
+                    <td><button style="background: #d9534f; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;" onclick="deleteMember('${doc.id}')">Delete</button></td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
 
-                if (id) {
-                    const user = DB.get('users').find(u => u.id === id);
-                    if (user) {
-                        document.getElementById('mem-id').value = user.id;
-                        document.getElementById('mem-name').value = user.name;
-                        document.getElementById('mem-username').value = user.username;
-                        document.getElementById('mem-password').value = user.password;
-                        document.getElementById('mem-role').value = user.role;
-                        document.getElementById('mem-patrouille').value = user.patrouille || '';
-                        document.getElementById('mem-pic').value = user.pic || '';
-                    }
-                }
-                UI.openModal('modal-form-member');
-            },
-            saveMember: async function(e) {
-                e.preventDefault();
-                const id = document.getElementById('mem-id').value;
-                const btn = document.getElementById('btn-save-member');
-                btn.innerText = "Saving to Firestore...";
-                btn.disabled = true;
-
-                const userData = {
-                    name: document.getElementById('mem-name').value,
-                    username: document.getElementById('mem-username').value,
-                    password: document.getElementById('mem-password').value,
-                    role: document.getElementById('mem-role').value,
-                    patrouille: document.getElementById('mem-patrouille').value,
-                    pic: document.getElementById('mem-pic').value
-                };
-
+        async function deleteMember(id) {
+            if (confirm("Are you sure you want to delete this member?")) {
                 try {
-                    if (id) {
-                        await DB.update('users', id, userData);
-                    } else {
-                        await DB.insert('users', userData);
-                    }
-                    UI.closeModal('modal-form-member');
-                    AdminUI.loadSection('users');
+                    await db.collection('members').doc(id).delete();
+                    const snapshot = await db.collection('members').get();
+                    document.getElementById('stat-members').textContent = snapshot.size;
+                    renderMembersTable(snapshot);
                 } catch (err) {
-                    console.error(err);
-                } finally {
-                    btn.innerText = "Save Member";
-                    btn.disabled = false;
-                }
-            },
-            openGenericModal: function(collection) {
-                document.getElementById('form-generic').reset();
-                document.getElementById('gen-id').value = '';
-                document.getElementById('gen-type').value = collection;
-                document.getElementById('generic-form-title').innerText = `Create New ${collection.slice(0,-1)}`;
-                
-                const fieldsContainer = document.getElementById('generic-form-fields');
-                if (collection === 'patrouilles') {
-                    fieldsContainer.innerHTML = `
-                        <div class="form-group"><label>Patrouille Name</label><input type="text" id="gen-title" required></div>
-                        <div class="form-group"><label>Motto / Description</label><textarea id="gen-desc" rows="3"></textarea></div>
-                    `;
-                } else if (collection === 'calendar') {
-                    fieldsContainer.innerHTML = `
-                        <div class="form-group"><label>Event Title</label><input type="text" id="gen-title" required></div>
-                        <div class="form-group"><label>Date & Time</label><input type="date" id="gen-date" required></div>
-                        <div class="form-group"><label>Description</label><textarea id="gen-desc" rows="3"></textarea></div>
-                    `;
-                } else if (collection === 'photos') {
-                    fieldsContainer.innerHTML = `
-                        <div class="form-group"><label>Photo Title</label><input type="text" id="gen-title" required></div>
-                        <div class="form-group"><label>Image URL</label><input type="text" id="gen-url" placeholder="https://..." required></div>
-                        <div class="form-group"><label>Album Name</label><input type="text" id="gen-desc" placeholder="General"></div>
-                    `;
-                } else {
-                    fieldsContainer.innerHTML = `
-                        <div class="form-group"><label>Title / Name</label><input type="text" id="gen-title" required></div>
-                        <div class="form-group"><label>Description / Details</label><textarea id="gen-desc" rows="3"></textarea></div>
-                    `;
-                }
-                UI.openModal('modal-form-generic');
-            },
-            saveGeneric: async function(e) {
-                e.preventDefault();
-                const collection = document.getElementById('gen-type').value;
-                const btn = document.getElementById('btn-save-generic');
-                btn.innerText = "Saving to Firestore...";
-                btn.disabled = true;
-
-                const data = {
-                    title: document.getElementById('gen-title').value,
-                    desc: document.getElementById('gen-desc') ? document.getElementById('gen-desc').value : '',
-                    date: document.getElementById('gen-date') ? document.getElementById('gen-date').value : '',
-                    url: document.getElementById('gen-url') ? document.getElementById('gen-url').value : '',
-                    patrouilleId: '' // Admin created
-                };
-
-                try {
-                    await DB.insert(collection, data);
-                    UI.closeModal('modal-form-generic');
-                    AdminUI.loadSection(collection);
-                } catch (err) {
-                    console.error(err);
-                } finally {
-                    btn.innerText = "Save Changes";
-                    btn.disabled = false;
-                }
-            },
-            saveSettings: async function(e, id) {
-                e.preventDefault();
-                const welcomeText = document.getElementById('set-welcomeText').value;
-                try {
-                    if (id) {
-                        await DB.update('settings', id, { welcomeText });
-                    } else {
-                        await DB.insert('settings', { welcomeText });
-                    }
-                    alert("Welcome settings saved successfully to Firestore!");
-                } catch (err) {
-                    console.error(err);
-                }
-            },
-            deleteItem: async function(collection, id) {
-                if(confirm('Are you sure you want to delete this permanently from Firestore?')) {
-                    try {
-                        await DB.delete(collection, id);
-                        if(collection === 'users') AdminUI.loadSection('users');
-                        else AdminUI.loadSection(collection);
-                    } catch(err) {
-                        console.error(err);
-                    }
+                    console.error("Error deleting member:", err);
+                    alert("Failed to delete member: " + err.message);
                 }
             }
-        };
+        }
 
-
-        // ----------------------------------------------------------------------
-        // 7. MEMBER / CP APPLICATION INTERFACE
-        // ----------------------------------------------------------------------
-        const AppUI = {
-            init: function() {
-                UI.switchView('view-app');
-                const user = Auth.currentUser;
-                
-                document.getElementById('user-info').innerHTML = `
-                    <i class="fas fa-user-circle" style="font-size:2rem; color:var(--primary); margin-bottom:10px;"></i><br>
-                    ${user.name} <br>
-                    <span style="font-size:0.75rem; color:var(--text-light); text-transform:uppercase;">Role: ${user.role}</span>
-                `;
-
-                const cpNav = document.getElementById('cp-nav-container');
-                if (user.role === 'cp' && user.patrouille) {
-                    const p = DB.get('patrouilles').find(x => x.id === user.patrouille);
-                    if(p) {
-                        document.getElementById('cp-nav-name').innerText = p.title + " Space";
-                        cpNav.style.display = 'block';
-                    }
-                } else {
-                    cpNav.style.display = 'none';
-                }
-
-                this.navigate('dashboard');
-            },
-            navigate: function(page) {
-                const container = document.getElementById('app-content-area');
-                if(window.innerWidth <= 992) document.getElementById('sidebar-app').classList.remove('open');
-
-                if (page === 'dashboard') {
-                    const acts = DB.get('activities');
-                    const anns = DB.get('announcements');
-                    const settings = DB.get('settings')[0];
-                    if(settings && settings.welcomeText) {
-                        document.getElementById('welcome-subtitle').innerText = settings.welcomeText;
-                    }
-                    container.innerHTML = `
-                        <h1 style="margin-bottom:20px;">Welcome back, ${Auth.currentUser.name}!</h1>
-                        <div class="grid-cards">
-                            <div class="data-card">
-                                <h3><i class="fas fa-bullhorn" style="color:var(--primary)"></i> Latest Announcements</h3>
-                                ${anns.length > 0 ? anns.map(a => `<div style="padding:10px 0; border-bottom:1px solid #eee;"><strong>${a.title}</strong><br><span style="font-size:0.9rem; color:var(--text-light);">${a.desc || ''}</span></div>`).join('') : '<p style="color:var(--text-light); margin-top:10px;">No new announcements in Firestore.</p>'}
-                            </div>
-                            <div class="data-card">
-                                <h3><i class="fas fa-hiking" style="color:var(--accent)"></i> Upcoming Activities</h3>
-                                ${acts.length > 0 ? acts.map(a => `<div style="padding:10px 0; border-bottom:1px solid #eee;"><strong>${a.title}</strong><br><span style="font-size:0.9rem; color:var(--text-light);">${a.desc || ''}</span></div>`).join('') : '<p style="color:var(--text-light); margin-top:10px;">No activities scheduled in Firestore.</p>'}
-                            </div>
-                        </div>
-                    `;
-                }
-                else if (page === 'patrouilles') {
-                    const pats = DB.get('patrouilles');
-                    container.innerHTML = `
-                        <h1 style="margin-bottom:20px;">Troupe Patrouilles</h1>
-                        <div class="grid-cards">
-                            ${pats.map(p => `
-                                <div class="data-card" style="text-align:center;">
-                                    <i class="fas fa-shield-alt" style="font-size:3rem; color:var(--primary); margin-bottom:15px;"></i>
-                                    <h3>${p.title}</h3>
-                                    <p style="color:var(--text-light); font-style:italic; margin-top:10px;">"${p.desc || ''}"</p>
-                                </div>
-                            `).join('')}
-                            ${pats.length===0 ? '<p>No Patrouilles exist in Firestore.</p>' : ''}
-                        </div>
-                    `;
-                }
-                else if (page === 'calendar') {
-                    const events = DB.get('calendar');
-                    container.innerHTML = `
-                        <h1 style="margin-bottom:20px;">Scout Calendar</h1>
-                        <div class="grid-cards">
-                            ${events.map(ev => `
-                                <div class="data-card">
-                                    <h3><i class="far fa-calendar-alt" style="color:var(--primary)"></i> ${ev.title}</h3>
-                                    <p style="color:var(--secondary); font-weight:600; margin: 8px 0;">${ev.date || 'TBD'}</p>
-                                    <p style="color:var(--text-light);">${ev.desc || ''}</p>
-                                </div>
-                            `).join('')}
-                            ${events.length === 0 ? '<p>No calendar events scheduled.</p>' : ''}
-                        </div>
-                    `;
-                }
-                else if (page === 'activities') {
-                    const acts = DB.get('activities');
-                    container.innerHTML = `
-                        <h1 style="margin-bottom:20px;">Troupe Activities</h1>
-                        <div class="grid-cards">
-                            ${acts.map(act => `
-                                <div class="data-card">
-                                    <h3>${act.title}</h3>
-                                    <p style="color:var(--text-light); margin-top:8px;">${act.desc || ''}</p>
-                                </div>
-                            `).join('')}
-                            ${acts.length === 0 ? '<p>No activities recorded.</p>' : ''}
-                        </div>
-                    `;
-                }
-                else if (page === 'camps') {
-                    const camps = DB.get('camps');
-                    container.innerHTML = `
-                        <h1 style="margin-bottom:20px;">Scout Camps & Expeditions</h1>
-                        <div class="grid-cards">
-                            ${camps.map(c => `
-                                <div class="data-card">
-                                    <h3><i class="fas fa-mountain" style="color:var(--primary)"></i> ${c.title}</h3>
-                                    <p style="color:var(--text-light); margin-top:8px;">${c.desc || ''}</p>
-                                </div>
-                            `).join('')}
-                            ${camps.length === 0 ? '<p>No camps recorded.</p>' : ''}
-                        </div>
-                    `;
-                }
-                else if (page === 'photos') {
-                    const photos = DB.get('photos');
-                    container.innerHTML = `
-                        <h1 style="margin-bottom:20px;">Photos & Albums</h1>
-                        <div class="gallery-grid">
-                            ${photos.map(ph => `
-                                <div class="gallery-item">
-                                    <img src="${ph.url || 'homescreen_bg.jpeg'}" alt="${ph.title}">
-                                    <strong style="font-size:0.9rem;">${ph.title}</strong>
-                                    <div style="font-size:0.8rem; color:var(--text-light);">${ph.desc || 'General'}</div>
-                                </div>
-                            `).join('')}
-                            ${photos.length === 0 ? '<p>No photos uploaded yet.</p>' : ''}
-                        </div>
-                    `;
-                }
-                else if (page === 'announcements') {
-                    const anns = DB.get('announcements');
-                    container.innerHTML = `
-                        <h1 style="margin-bottom:20px;">Announcements</h1>
-                        <div class="grid-cards">
-                            ${anns.map(a => `
-                                <div class="data-card">
-                                    <h3>${a.title}</h3>
-                                    <p style="color:var(--text-light); margin-top:8px;">${a.desc || ''}</p>
-                                </div>
-                            `).join('')}
-                            ${anns.length === 0 ? '<p>No announcements found.</p>' : ''}
-                        </div>
-                    `;
-                }
-                else if (page === 'ideas') {
-                    const ideas = DB.get('ideas');
-                    container.innerHTML = `
-                        <div class="action-bar">
-                            <h1 style="margin:0;">Ideas & Suggestions</h1>
-                            <button class="btn-primary" onclick="CPAction.openIdeaModal()"><i class="fas fa-plus"></i> Submit Idea</button>
-                        </div>
-                        <div class="grid-cards" style="margin-top:20px;">
-                            ${ideas.map(i => `
-                                <div class="data-card">
-                                    <h3>${i.title}</h3>
-                                    <p style="color:var(--text-light); margin-top:8px;">${i.desc || ''}</p>
-                                </div>
-                            `).join('')}
-                            ${ideas.length === 0 ? '<p>No suggestions submitted yet.</p>' : ''}
-                        </div>
-                    `;
-                }
-                else if (page === 'my-patrouille') {
-                    const user = Auth.currentUser;
-                    const p = DB.get('patrouilles').find(x => x.id === user.patrouille);
-                    const patMembers = DB.get('users').filter(u => u.patrouille === user.patrouille);
-                    const patActivities = DB.get('activities').filter(a => a.patrouilleId === user.patrouille);
-                    const patEvents = DB.get('calendar').filter(e => e.patrouilleId === user.patrouille);
-                    const patPhotos = DB.get('photos').filter(ph => ph.patrouilleId === user.patrouille);
-                    const patAnnouncements = DB.get('announcements').filter(an => an.patrouilleId === user.patrouille);
-
-                    container.innerHTML = `
-                        <div style="background: linear-gradient(135deg, var(--primary), #003d82); padding: 40px 20px; border-radius: var(--border-radius); color: white; margin-bottom: 30px; box-shadow: var(--shadow);">
-                            <h1>Patrouille: ${p ? p.title : 'My Patrouille'}</h1>
-                            <p style="opacity:0.9; margin-top:5px;">Chef de Patrouille (CP) Management Space</p>
-                        </div>
-
-                        <div class="action-bar" style="margin-bottom:20px;">
-                            <h2 style="font-size:1.3rem;">Patrouille Management Actions</h2>
-                            <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                                <button class="btn-primary" onclick="CPAction.openModal('activity')"><i class="fas fa-plus"></i> Add Activity</button>
-                                <button class="btn-primary" onclick="CPAction.openModal('calendar')"><i class="fas fa-plus"></i> Add Event</button>
-                                <button class="btn-primary" onclick="CPAction.openModal('photo')"><i class="fas fa-plus"></i> Upload Photo</button>
-                                <button class="btn-primary" onclick="CPAction.openModal('announcement')"><i class="fas fa-plus"></i> Add Announcement</button>
-                            </div>
-                        </div>
-
-                        <div class="grid-cards" style="margin-bottom:30px;">
-                            <div class="data-card">
-                                <h3>Patrouille Roster (${patMembers.length})</h3>
-                                <ul style="margin-top:15px;">
-                                    ${patMembers.map(m => `<li style="padding:10px 0; border-bottom:1px solid #eee; display:flex; justify-content:space-between;"><span>${m.name}</span><span style="color:var(--text-light); text-transform:uppercase; font-size:0.8rem;">${m.role}</span></li>`).join('')}
-                                </ul>
-                            </div>
-                            <div class="data-card">
-                                <h3>Patrouille Activities (${patActivities.length})</h3>
-                                <ul style="margin-top:15px;">
-                                    ${patActivities.map(a => `<li style="padding:8px 0; border-bottom:1px solid #eee;"><strong>${a.title}</strong><br><span style="font-size:0.85rem; color:var(--text-light);">${a.desc || ''}</span></li>`).join('')}
-                                    ${patActivities.length === 0 ? '<p style="color:var(--text-light); font-size:0.9rem;">No patrouille activities added.</p>' : ''}
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="data-card">
-                            <h3>Patrouille Photos & Events</h3>
-                            <div class="gallery-grid">
-                                ${patPhotos.map(ph => `
-                                    <div class="gallery-item">
-                                        <img src="${ph.url}" alt="${ph.title}">
-                                        <strong>${ph.title}</strong>
-                                    </div>
-                                `).join('')}
-                            </div>
-                            ${patPhotos.length === 0 ? '<p style="color:var(--text-light); margin-top:10px;">No photos uploaded for this patrouille.</p>' : ''}
-                        </div>
-                    `;
-                }
-            }
-        };
-
-        // ----------------------------------------------------------------------
-        // 8. CP & MEMBER ACTION MODALS (Fully functional & persistent)
-        // ----------------------------------------------------------------------
-        const CPAction = {
-            openModal: function(type) {
-                // We reuse or dynamically create a modal for CP actions
-                let existing = document.getElementById('modal-cp-action');
-                if(existing) existing.remove();
-
-                const titles = {
-                    activity: 'Add Patrouille Activity',
-                    calendar: 'Add Patrouille Calendar Event',
-                    photo: 'Upload Patrouille Photo',
-                    announcement: 'Add Patrouille Announcement'
-                };
-
-                const modalHtml = `
-                    <div id="modal-cp-action" class="modal-overlay active">
-                        <div class="modal-card">
-                            <button class="close-modal" onclick="document.getElementById('modal-cp-action').remove()"><i class="fas fa-times"></i></button>
-                            <h2>${titles[type]}</h2>
-                            <form onsubmit="CPAction.submitAction(event, '${type}')">
-                                <div class="form-group"><label>Title</label><input type="text" id="cp-title" required></div>
-                                ${type === 'calendar' ? '<div class="form-group"><label>Date</label><input type="date" id="cp-date" required></div>' : ''}
-                                ${type === 'photo' ? '<div class="form-group"><label>Image URL</label><input type="text" id="cp-url" placeholder="https://..." required></div>' : ''}
-                                <div class="form-group"><label>Description / Details</label><textarea id="cp-desc" rows="3"></textarea></div>
-                                <button type="submit" class="btn-primary" id="btn-cp-submit">Save to Firestore</button>
-                            </form>
-                        </div>
-                    </div>
-                `;
-                document.body.insertAdjacentHTML('beforeend', modalHtml);
-            },
-            openIdeaModal: function() {
-                let existing = document.getElementById('modal-cp-action');
-                if(existing) existing.remove();
-
-                const modalHtml = `
-                    <div id="modal-cp-action" class="modal-overlay active">
-                        <div class="modal-card">
-                            <button class="close-modal" onclick="document.getElementById('modal-cp-action').remove()"><i class="fas fa-times"></i></button>
-                            <h2>Submit Idea or Suggestion</h2>
-                            <form onsubmit="CPAction.submitAction(event, 'ideas')">
-                                <div class="form-group"><label>Idea Title</label><input type="text" id="cp-title" required></div>
-                                <div class="form-group"><label>Suggestion Details</label><textarea id="cp-desc" rows="3" required></textarea></div>
-                                <button type="submit" class="btn-primary" id="btn-cp-submit">Save to Firestore</button>
-                            </form>
-                        </div>
-                    </div>
-                `;
-                document.body.insertAdjacentHTML('beforeend', modalHtml);
-            },
-            submitAction: async function(e, type) {
-                e.preventDefault();
-                const btn = document.getElementById('btn-cp-submit');
-                btn.innerText = "Saving to Firestore...";
-                btn.disabled = true;
-
-                const user = Auth.currentUser;
-                let collection = type;
-                if(type === 'activity') collection = 'activities';
-                if(type === 'calendar') collection = 'calendar';
-                if(type === 'photo') collection = 'photos';
-                if(type === 'announcement') collection = 'announcements';
-
-                const data = {
-                    title: document.getElementById('cp-title').value,
-                    desc: document.getElementById('cp-desc') ? document.getElementById('cp-desc').value : '',
-                    date: document.getElementById('cp-date') ? document.getElementById('cp-date').value : '',
-                    url: document.getElementById('cp-url') ? document.getElementById('cp-url').value : '',
-                    patrouilleId: user.patrouille || ''
-                };
-
-                try {
-                    await DB.insert(collection, data);
-                    document.getElementById('modal-cp-action').remove();
-                    alert("Successfully saved to Firebase Firestore!");
-                    if(user.role === 'cp' && collection !== 'ideas') AppUI.navigate('my-patrouille');
-                    else AppUI.navigate('dashboard');
-                } catch (err) {
-                    console.error(err);
-                } finally {
-                    btn.innerText = "Save to Firestore";
-                    btn.disabled = false;
-                }
-            }
-        };
+        // Trigger initialization upon window load
+        window.addEventListener('DOMContentLoaded', () => {
+            initializeTroupeApp();
+        });
     </script>
 </body>
 </html>

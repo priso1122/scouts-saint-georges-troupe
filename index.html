@@ -158,6 +158,10 @@
             box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.2);
         }
 
+        select.form-control {
+            cursor: pointer;
+        }
+
         .btn {
             width: 100%;
             padding: 14px;
@@ -228,9 +232,34 @@
             color: var(--dark-green);
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
 
         .member-item:last-child { border-bottom: none; }
+
+        .badges-container {
+            display: flex;
+            gap: 6px;
+        }
+
+        .role-badge {
+            background: var(--gold);
+            color: var(--dark-brown);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .patrouille-badge {
+            background: var(--brown);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
 
         .welcome-box {
             background: #ffffff;
@@ -242,6 +271,13 @@
             font-weight: 600;
             margin-bottom: 20px;
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .divider {
+            border: 0;
+            height: 1px;
+            background: rgba(127, 85, 57, 0.2);
+            margin: 25px 0;
         }
 
         @media (max-width: 600px) {
@@ -271,76 +307,90 @@
         <!-- HOME / SELECTION SCREEN -->
         <main id="home-screen" class="card">
             <h2 style="color: var(--dark-green); margin-bottom: 20px; text-align: center;">Welcome</h2>
-            <button id="goto-admin-login" class="btn">Admin Login</button>
-            <button id="goto-member-login" class="btn btn-outline">Member Login</button>
+            <button id="goto-login" class="btn">Login</button>
         </main>
 
-        <!-- ADMIN LOGIN SCREEN -->
-        <main id="admin-login-screen" class="card hidden">
-            <h2 style="color: var(--dark-green); margin-bottom: 20px; text-align: center;">Admin Login</h2>
-            <div id="admin-login-error" class="error-message">Invalid Username or Password.</div>
+        <!-- GENERAL LOGIN SCREEN -->
+        <main id="login-screen" class="card hidden">
+            <h2 style="color: var(--dark-green); margin-bottom: 20px; text-align: center;">Account Login</h2>
+            <div id="login-error" class="error-message">Invalid Username or Password.</div>
             <div class="form-group">
                 <label>Username</label>
-                <input type="text" id="admin-user" class="form-control" placeholder="Enter admin username" autocomplete="off" />
+                <input type="text" id="login-user" class="form-control" placeholder="Enter your username" autocomplete="off" />
             </div>
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" id="admin-pass" class="form-control" placeholder="Enter admin password" />
+                <input type="password" id="login-pass" class="form-control" placeholder="Enter your password" />
             </div>
-            <button id="admin-login-btn" class="btn">Login</button>
-            <button id="admin-back-btn" class="btn btn-outline">Back</button>
+            <button id="login-btn" class="btn">Login</button>
+            <button id="login-back-btn" class="btn btn-outline">Back</button>
         </main>
 
-        <!-- MEMBER LOGIN SCREEN -->
-        <main id="member-login-screen" class="card hidden">
-            <h2 style="color: var(--dark-green); margin-bottom: 20px; text-align: center;">Member Login</h2>
-            <div id="member-login-error" class="error-message">Invalid Member Username or Password.</div>
-            <div class="form-group">
-                <label>Username</label>
-                <input type="text" id="member-user" class="form-control" placeholder="Enter member username" autocomplete="off" />
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="member-pass" class="form-control" placeholder="Enter member password" />
-            </div>
-            <button id="member-login-btn" class="btn">Login</button>
-            <button id="member-back-btn" class="btn btn-outline">Back</button>
-        </main>
-
-        <!-- ADMIN DASHBOARD -->
+        <!-- ADMIN/CP DASHBOARD -->
         <main id="admin-dashboard" class="card hidden">
-            <h2 style="color: var(--dark-green); margin-bottom: 15px;">Admin Dashboard</h2>
-            <p style="margin-bottom: 15px; font-size: 0.9rem; color: var(--brown);">Create accounts for members below. Accounts sync instantly across all devices.</p>
+            <h2 id="dashboard-title" style="color: var(--dark-green); margin-bottom: 15px;">Dashboard</h2>
+            <p style="margin-bottom: 15px; font-size: 0.9rem; color: var(--brown);">Manage Patrouilles and Member Accounts. Everything synchronizes instantly across devices.</p>
             
-            <div id="admin-msg" class="success-message">Member created successfully!</div>
-            <div id="admin-err" class="error-message">Please fill in both fields.</div>
+            <!-- SECTION 1: CREATE PATROUILLE -->
+            <div style="background: rgba(255,255,255,0.5); padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid rgba(127,85,57,0.2);">
+                <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">⛺ Create New Patrouille</h3>
+                <div id="patrol-msg" class="success-message">Patrouille created successfully!</div>
+                <div id="patrol-err" class="error-message">Please enter a patrouille name.</div>
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <input type="text" id="new-patrol-name" class="form-control" placeholder="e.g., The Eagles (Al Nisr)" autocomplete="off" />
+                </div>
+                <button id="create-patrol-btn" class="btn btn-outline" style="margin-bottom: 0;">Add Patrouille</button>
+            </div>
+
+            <hr class="divider">
+
+            <!-- SECTION 2: CREATE MEMBER ACCOUNT -->
+            <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">👤 Create Member Account</h3>
+            <div id="admin-msg" class="success-message">Account created successfully!</div>
+            <div id="admin-err" class="error-message">Please fill out all fields and assign a patrouille.</div>
 
             <div class="form-group">
-                <label>New Member Username</label>
-                <input type="text" id="new-member-user" class="form-control" placeholder="Member username" autocomplete="off" />
+                <label>New Account Username</label>
+                <input type="text" id="new-member-user" class="form-control" placeholder="Username" autocomplete="off" />
             </div>
             <div class="form-group">
-                <label>New Member Password</label>
-                <input type="text" id="new-member-pass" class="form-control" placeholder="Member password" autocomplete="off" />
+                <label>New Account Password</label>
+                <input type="text" id="new-member-pass" class="form-control" placeholder="Password" autocomplete="off" />
+            </div>
+            <div class="form-group">
+                <label>Role</label>
+                <select id="new-member-role" class="form-control">
+                    <option value="Member">Member</option>
+                    <option value="Cp">Cp</option>
+                    <option value="Admin">Admin</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Patrouille</label>
+                <select id="new-member-patrol" class="form-control">
+                    <option value="" disabled selected>Select a Patrouille</option>
+                </select>
             </div>
 
-            <button id="create-member-btn" class="btn">Create Member Account</button>
+            <button id="create-member-btn" class="btn">Create Account</button>
             
             <div style="margin-top: 20px;">
-                <label style="font-weight: 700; color: var(--dark-brown); margin-bottom: 8px; display: block;">Existing Members List:</label>
+                <label style="font-weight: 700; color: var(--dark-brown); margin-bottom: 8px; display: block;">All Accounts List:</label>
                 <div id="members-list-container" class="member-list">
-                    Loading members...
+                    Loading accounts...
                 </div>
             </div>
 
             <button id="admin-logout-btn" class="btn btn-outline" style="margin-top: 15px;">Logout</button>
         </main>
 
-        <!-- MEMBER DASHBOARD -->
+        <!-- STANDARD MEMBER DASHBOARD -->
         <main id="member-dashboard" class="card hidden">
             <h2 style="color: var(--dark-green); margin-bottom: 20px;">Member Dashboard</h2>
             <div class="welcome-box">
                 Welcome to Scout Saint Georges Mieh w Mieh, <span id="logged-member-name" style="color: var(--green);"></span>!
+                <br><small style="color: var(--brown); font-size: 0.85rem;" id="logged-member-role-text"></small>
+                <br><small style="color: var(--dark-brown); font-size: 0.85rem;" id="logged-member-patrol-text"></small>
             </div>
             <button id="member-logout-btn" class="btn btn-outline">Logout</button>
         </main>
@@ -349,7 +399,7 @@
     <!-- FIREBASE & APP LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-        import { getFirestore, collection, doc, setDoc, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCqLoLICq9kbpMsaD58F6U4cwbiMygGrmU",
@@ -370,13 +420,13 @@
         if (RIGHT_LOGO) document.getElementById('right-logo').src = RIGHT_LOGO;
 
         let db = null;
-        let membersCache = {};
+        let usersCache = {};
+        let patrolsCache = [];
 
         // UI Screens
         const screens = {
             home: document.getElementById('home-screen'),
-            adminLogin: document.getElementById('admin-login-screen'),
-            memberLogin: document.getElementById('member-login-screen'),
+            login: document.getElementById('login-screen'),
             adminDashboard: document.getElementById('admin-dashboard'),
             memberDashboard: document.getElementById('member-dashboard')
         };
@@ -387,17 +437,20 @@
         }
 
         // Navigation bindings
-        document.getElementById('goto-admin-login').addEventListener('click', () => switchScreen('adminLogin'));
-        document.getElementById('goto-member-login').addEventListener('click', () => switchScreen('memberLogin'));
-        document.getElementById('admin-back-btn').addEventListener('click', () => switchScreen('home'));
-        document.getElementById('member-back-btn').addEventListener('click', () => switchScreen('home'));
+        document.getElementById('goto-login').addEventListener('click', () => switchScreen('login'));
+        document.getElementById('login-back-btn').addEventListener('click', () => switchScreen('home'));
 
         // Initialize Firebase
         try {
             if (firebaseConfig.apiKey) {
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
-                initMembersListener();
+                
+                // Ensure default hardcoded root admin account exists in Firestore
+                setDoc(doc(db, "members", "chef"), { password: "chef", role: "Admin", patrol: "Staff" }, { merge: true });
+
+                initPatrolsListener();
+                initUsersListener();
             } else {
                 alert("Please add your Firebase configuration variables in index.html");
             }
@@ -405,25 +458,60 @@
             console.error("Firebase init error:", err);
         }
 
-        // Realtime members synchronization across all devices
-        function initMembersListener() {
+        // Realtime Patrouilles Synchronization
+        function initPatrolsListener() {
+            const colRef = collection(db, "patrols");
+            onSnapshot(colRef, (snapshot) => {
+                patrolsCache = [];
+                let selectHtml = `<option value="" disabled selected>Select a Patrouille</option>`;
+                
+                // Always include Staff option for leaders/admins
+                patrolsCache.push("Staff");
+                selectHtml += `<option value="Staff">Staff (Leadership)</option>`;
+
+                snapshot.forEach((docSnap) => {
+                    const pName = docSnap.id;
+                    if (pName !== "Staff") {
+                        patrolsCache.push(pName);
+                        selectHtml += `<option value="${pName}">${pName}</option>`;
+                    }
+                });
+                document.getElementById('new-member-patrol').innerHTML = selectHtml;
+            }, (error) => {
+                console.error("Error fetching patrols:", error);
+            });
+        }
+
+        // Realtime Users Synchronization
+        function initUsersListener() {
             const colRef = collection(db, "members");
             onSnapshot(colRef, (snapshot) => {
-                membersCache = {};
+                usersCache = {};
                 let html = "";
                 if (snapshot.empty) {
-                    html = "<div class='member-item'>No member accounts created yet.</div>";
+                    html = "<div class='member-item'>No accounts created yet.</div>";
                 } else {
                     snapshot.forEach((docSnap) => {
                         const data = docSnap.data();
-                        membersCache[docSnap.id] = data.password;
-                        html += `<div class='member-item'><span>👤 <strong>${docSnap.id}</strong></span></div>`;
+                        usersCache[docSnap.id] = { 
+                            password: data.password, 
+                            role: data.role || 'Member',
+                            patrol: data.patrol || 'Unassigned'
+                        };
+                        html += `
+                            <div class='member-item'>
+                                <span>👤 <strong>${docSnap.id}</strong></span> 
+                                <div class="badges-container">
+                                    <span class="patrouille-badge">⛺ ${data.patrol || 'Unassigned'}</span>
+                                    <span class="role-badge">${data.role || 'Member'}</span>
+                                </div>
+                            </div>`;
                     });
                 }
                 document.getElementById('members-list-container').innerHTML = html;
             }, (error) => {
-                console.error("Error fetching members:", error);
-                document.getElementById('members-list-container').innerHTML = "<div class='member-item'>Error loading members. Check rules.</div>";
+                console.error("Error fetching users:", error);
+                document.getElementById('members-list-container').innerHTML = "<div class='member-item'>Error loading accounts. Check rules.</div>";
             });
         }
 
@@ -431,82 +519,111 @@
         const savedSession = localStorage.getItem('scoutSession');
         if (savedSession) {
             const session = JSON.parse(savedSession);
-            if (session.role === 'admin') {
+            if (session.role === 'Admin' || session.role === 'Cp') {
+                document.getElementById('dashboard-title').innerText = `${session.role} Dashboard`;
                 switchScreen('adminDashboard');
-            } else if (session.role === 'member') {
+            } else if (session.role === 'Member') {
                 document.getElementById('logged-member-name').innerText = session.username;
+                document.getElementById('logged-member-role-text').innerText = `Role: Member`;
+                document.getElementById('logged-member-patrol-text').innerText = `Patrouille: ${session.patrol || 'Unassigned'}`;
                 switchScreen('memberDashboard');
             }
         }
 
-        // Admin Login
-        const adminUserIn = document.getElementById('admin-user');
-        const adminPassIn = document.getElementById('admin-pass');
-        const adminErr = document.getElementById('admin-login-error');
+        // Unified Login Handler
+        const loginUserIn = document.getElementById('login-user');
+        const loginPassIn = document.getElementById('login-pass');
+        const loginErr = document.getElementById('login-error');
 
-        function handleAdminLogin() {
-            if (adminUserIn.value === 'chef' && adminPassIn.value === 'chef') {
-                adminErr.style.display = 'none';
-                localStorage.setItem('scoutSession', JSON.stringify({ role: 'admin' }));
-                adminUserIn.value = '';
-                adminPassIn.value = '';
-                switchScreen('adminDashboard');
+        function handleLogin() {
+            const u = loginUserIn.value.trim();
+            const p = loginPassIn.value;
+
+            const userData = usersCache[u];
+            if (userData && userData.password === p) {
+                loginErr.style.display = 'none';
+                const role = userData.role || 'Member';
+                const patrol = userData.patrol || 'Unassigned';
+                localStorage.setItem('scoutSession', JSON.stringify({ role: role, username: u, patrol: patrol }));
+                
+                loginUserIn.value = '';
+                loginPassIn.value = '';
+
+                if (role === 'Admin' || role === 'Cp') {
+                    document.getElementById('dashboard-title').innerText = `${role} Dashboard`;
+                    switchScreen('adminDashboard');
+                } else {
+                    document.getElementById('logged-member-name').innerText = u;
+                    document.getElementById('logged-member-role-text').innerText = `Role: ${role}`;
+                    document.getElementById('logged-member-patrol-text').innerText = `Patrouille: ${patrol}`;
+                    switchScreen('memberDashboard');
+                }
             } else {
-                adminErr.style.display = 'block';
+                loginErr.style.display = 'block';
             }
         }
-        document.getElementById('admin-login-btn').addEventListener('click', handleAdminLogin);
-        adminPassIn.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAdminLogin(); });
 
-        // Member Login
-        const memberUserIn = document.getElementById('member-user');
-        const memberPassIn = document.getElementById('member-pass');
-        const memberErr = document.getElementById('member-login-error');
+        document.getElementById('login-btn').addEventListener('click', handleLogin);
+        loginPassIn.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLogin(); });
 
-        function handleMemberLogin() {
-            const u = memberUserIn.value.trim();
-            const p = memberPassIn.value;
+        // Create Patrouille Handler
+        const newPatrolInput = document.getElementById('new-patrol-name');
+        const patrolMsg = document.getElementById('patrol-msg');
+        const patrolErr = document.getElementById('patrol-err');
 
-            if (membersCache[u] && membersCache[u] === p) {
-                memberErr.style.display = 'none';
-                localStorage.setItem('scoutSession', JSON.stringify({ role: 'member', username: u }));
-                document.getElementById('logged-member-name').innerText = u;
-                memberUserIn.value = '';
-                memberPassIn.value = '';
-                switchScreen('memberDashboard');
-            } else {
-                memberErr.style.display = 'block';
+        document.getElementById('create-patrol-btn').addEventListener('click', async () => {
+            const pName = newPatrolInput.value.trim();
+            patrolMsg.style.display = 'none';
+            patrolErr.style.display = 'none';
+
+            if (!pName) {
+                patrolErr.style.display = 'block';
+                return;
             }
-        }
-        document.getElementById('member-login-btn').addEventListener('click', handleMemberLogin);
-        memberPassIn.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleMemberLogin(); });
 
-        // Admin Create Member
-        const newMemberUser = document.getElementById('new-member-user');
-        const newMemberPass = document.getElementById('new-member-pass');
+            try {
+                await setDoc(doc(db, "patrols", pName), { createdAt: new Date().toLocaleString() });
+                patrolMsg.style.display = 'block';
+                newPatrolInput.value = '';
+            } catch (err) {
+                console.error("Error creating patrouille:", err);
+                patrolErr.innerText = "Failed to create patrouille. Check permissions.";
+                patrolErr.style.display = 'block';
+            }
+        });
+
+        // Admin/Cp Create Account Handler
+        const newUserIn = document.getElementById('new-member-user');
+        const newPassIn = document.getElementById('new-member-pass');
+        const newRoleIn = document.getElementById('new-member-role');
+        const newPatrolIn = document.getElementById('new-member-patrol');
         const createMsg = document.getElementById('admin-msg');
         const createErr = document.getElementById('admin-err');
 
         document.getElementById('create-member-btn').addEventListener('click', async () => {
-            const u = newMemberUser.value.trim();
-            const p = newMemberPass.value.trim();
+            const u = newUserIn.value.trim();
+            const p = newPassIn.value.trim();
+            const role = newRoleIn.value;
+            const patrol = newPatrolIn.value;
 
             createMsg.style.display = 'none';
             createErr.style.display = 'none';
 
-            if (!u || !p) {
-                createErr.innerText = "Please fill in both fields.";
+            if (!u || !p || !patrol) {
+                createErr.innerText = "Please fill out all fields and select a patrouille.";
                 createErr.style.display = 'block';
                 return;
             }
 
             try {
-                await setDoc(doc(db, "members", u), { password: p });
+                await setDoc(doc(db, "members", u), { password: p, role: role, patrol: patrol });
                 createMsg.style.display = 'block';
-                newMemberUser.value = '';
-                newMemberPass.value = '';
+                newUserIn.value = '';
+                newPassIn.value = '';
+                newRoleIn.value = 'Member';
+                newPatrolIn.selectedIndex = 0;
             } catch (err) {
-                console.error("Error creating member:", err);
+                console.error("Error creating account:", err);
                 createErr.innerText = "Failed to create account. Check Firestore permissions.";
                 createErr.style.display = 'block';
             }

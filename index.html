@@ -175,7 +175,7 @@
             background: white;
             border-radius: 8px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            width: 220px;
+            width: 230px;
             display: none;
             z-index: 1000;
             border: 1px solid #ddd;
@@ -429,6 +429,50 @@
         }
 
         /* ==========================================================================
+           ATTENDANCE STYLING & BADGES
+           ========================================================================== */
+        .attendance-status-badge {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+        .status-present { background: #2a9d8f; color: white; }
+        .status-absent { background: #e76f51; color: white; }
+        .status-excused { background: #e9c46a; color: #5c3d2e; }
+        .status-late { background: #f4a261; color: white; }
+
+        .stat-card-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-mini-card {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .stat-mini-card h4 {
+            font-size: 0.8rem;
+            color: var(--brown);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .stat-mini-card .stat-val {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--green);
+        }
+
+        /* ==========================================================================
            IMAGE LIGHTBOX MODAL
            ========================================================================== */
         #image-modal {
@@ -520,6 +564,7 @@
                         <div class="dropdown-item" onclick="switchAdminSection('admin-section-activities')">📅 Activities</div>
                         <div class="dropdown-item" onclick="switchAdminSection('admin-section-memories')">🖼️ Memories</div>
                         <div class="dropdown-item" onclick="switchAdminSection('admin-section-ideas')">💡 Ideas Review</div>
+                        <div class="dropdown-item" onclick="switchAdminSection('admin-section-attendance')">📊 Attendance Hub</div>
                         <div class="dropdown-item" onclick="openPatrouilleSectionForAdmin()">⛺ Patrouilles Hub</div>
                     </div>
                 </div>
@@ -626,6 +671,50 @@
                 </div>
             </div>
 
+            <!-- SUB-SECTION 5: ATTENDANCE HUB (ADMIN) -->
+            <div id="admin-section-attendance" class="admin-tab-content hidden">
+                <div class="section-box">
+                    <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">📊 Attendance Hub & Reports</h3>
+                    <div id="admin-attendance-msg" class="success-message">Attendance session saved successfully!</div>
+                    <div id="admin-attendance-err" class="error-message">Please fill in title, date and select a Patrouille.</div>
+
+                    <div class="form-group">
+                        <label>Target Patrouille</label>
+                        <select id="attendance-patrol-target" class="form-control">
+                            <option value="" disabled selected>Select Patrouille</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Meeting / Activity Name</label>
+                        <input type="text" id="attendance-session-title" class="form-control" placeholder="e.g., Weekly Gathering" autocomplete="off" />
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="attendance-session-date" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Optional Description</label>
+                        <input type="text" id="attendance-session-desc" class="form-control" placeholder="Notes or details" autocomplete="off" />
+                    </div>
+
+                    <div style="margin-bottom: 15px;">
+                        <label style="font-weight: 700; color: var(--dark-brown); margin-bottom: 8px; display: block;">Member Attendance Marking:</label>
+                        <div id="attendance-marking-roster" class="list-container" style="max-height: 250px;">Select a Patrouille above to load members...</div>
+                    </div>
+
+                    <button id="save-attendance-btn" class="btn" style="margin-bottom: 0;">Save Attendance Record</button>
+                </div>
+
+                <div class="section-box" style="margin-bottom: 0;">
+                    <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">📈 Overall Troop Statistics & Sessions</h3>
+                    <div id="admin-troop-stats-container">Loading troop statistics...</div>
+                    <div style="margin-top: 15px;">
+                        <label style="font-weight: 700; color: var(--dark-brown); margin-bottom: 8px; display: block;">Saved Attendance Sessions:</label>
+                        <div id="admin-attendance-sessions-list" class="list-container" style="margin-bottom: 0; max-height: 200px;">Loading sessions...</div>
+                    </div>
+                </div>
+            </div>
+
             <button id="admin-logout-btn" class="btn btn-outline" style="margin-top: 25px;">Logout</button>
         </main>
 
@@ -644,6 +733,8 @@
                         <div class="dropdown-item" onclick="switchViewerSection('viewer-section-activities')">📅 Activities</div>
                         <div class="dropdown-item" onclick="switchViewerSection('viewer-section-memories')">🖼️ Memories</div>
                         <div class="dropdown-item" onclick="switchViewerSection('viewer-section-ideas')">💡 Suggest an Idea</div>
+                        <div class="dropdown-item" id="viewer-menu-attendance-item" onclick="switchViewerSection('viewer-section-attendance')">📊 Attendance History</div>
+                        <div class="dropdown-item" id="cp-menu-attendance-manage" onclick="switchViewerSection('cp-section-attendance-manage')" class="hidden">📋 Take Attendance</div>
                         <div class="dropdown-item" onclick="openMyPatrouilleSection()">⛺ My Patrouille</div>
                     </div>
                 </div>
@@ -656,7 +747,7 @@
                     <br><small style="color: var(--brown); font-size: 0.85rem;" id="logged-viewer-role-text"></small>
                     <br><small style="color: var(--dark-brown); font-size: 0.85rem;" id="logged-viewer-patrol-text"></small>
                 </div>
-                <p style="text-align: center; color: var(--brown); font-size: 0.95rem;">Use the top-right menu (⋮) to navigate through Activities, Memories, Ideas, and your Patrouille area.</p>
+                <p style="text-align: center; color: var(--brown); font-size: 0.95rem;">Use the top-right menu (⋮) to navigate through Activities, Memories, Ideas, Attendance, and your Patrouille area.</p>
             </div>
 
             <!-- VIEWER SUB-SECTION 2: ACTIVITIES -->
@@ -685,6 +776,65 @@
                         <textarea id="idea-text" class="form-control" rows="3" placeholder="Share your idea for future activities or improvements..."></textarea>
                     </div>
                     <button id="submit-idea-btn" class="btn btn-outline" style="margin-bottom: 0;">Submit Idea</button>
+                </div>
+            </div>
+
+            <!-- VIEWER SUB-SECTION 5: MEMBER ATTENDANCE HISTORY & STATS -->
+            <div id="viewer-section-attendance" class="viewer-tab-content hidden">
+                <div class="section-box" style="margin-bottom: 0;">
+                    <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 15px;">📊 My Attendance Record & Statistics</h3>
+                    
+                    <!-- Stats Grid -->
+                    <div id="member-attendance-stats" class="stat-card-grid">
+                        <div class="stat-mini-card">
+                            <h4>Total Meetings</h4>
+                            <div class="stat-val" id="stat-total-mtg">0</div>
+                        </div>
+                        <div class="stat-mini-card">
+                            <h4>Attendance %</h4>
+                            <div class="stat-val" id="stat-pct">0%</div>
+                        </div>
+                        <div class="stat-mini-card">
+                            <h4>Present</h4>
+                            <div class="stat-val" id="stat-present" style="color: #2a9d8f;">0</div>
+                        </div>
+                        <div class="stat-mini-card">
+                            <h4>Absent / Excused / Late</h4>
+                            <div class="stat-val" id="stat-ael" style="color: #e76f51; font-size: 1rem; padding-top: 4px;" id="stat-ael-text">0 / 0 / 0</div>
+                        </div>
+                    </div>
+
+                    <label style="font-weight: 700; color: var(--dark-brown); margin-bottom: 8px; display: block; margin-top: 15px;">Attendance History:</label>
+                    <div id="member-attendance-history-list" class="list-container" style="margin-bottom: 0; max-height: 220px;">Loading attendance history...</div>
+                </div>
+            </div>
+
+            <!-- CP SUB-SECTION: TAKE ATTENDANCE FOR OWN PATROL -->
+            <div id="cp-section-attendance-manage" class="viewer-tab-content hidden">
+                <div class="section-box" style="margin-bottom: 0;">
+                    <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">📋 Patrouille Attendance Management</h3>
+                    <div id="cp-attendance-msg" class="success-message">Attendance session saved successfully!</div>
+                    <div id="cp-attendance-err" class="error-message">Please fill in title and date.</div>
+
+                    <div class="form-group">
+                        <label>Meeting / Activity Name</label>
+                        <input type="text" id="cp-attendance-title" class="form-control" placeholder="e.g., Patrol Council" autocomplete="off" />
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="cp-attendance-date" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Optional Description</label>
+                        <input type="text" id="cp-attendance-desc" class="form-control" placeholder="Notes" autocomplete="off" />
+                    </div>
+
+                    <div style="margin-bottom: 15px;">
+                        <label style="font-weight: 700; color: var(--dark-brown); margin-bottom: 8px; display: block;">Patrol Members Roster:</label>
+                        <div id="cp-attendance-roster" class="list-container" style="max-height: 220px;">Loading patrol members...</div>
+                    </div>
+
+                    <button id="cp-save-attendance-btn" class="btn" style="margin-bottom: 0;">Save Patrol Attendance</button>
                 </div>
             </div>
 
@@ -804,6 +954,7 @@
         let db = null;
         let usersCache = {};
         let currentLoggedInUser = null;
+        let attendanceSessionsCache = [];
 
         // UI Screens
         const screens = {
@@ -862,6 +1013,9 @@
             const targetEl = document.getElementById(sectionId);
             if (targetEl) targetEl.classList.remove('hidden');
             if (adminDropdown) adminDropdown.classList.remove('show');
+            if (sectionId === 'admin-section-attendance') {
+                renderAdminAttendanceSection();
+            }
         };
 
         window.switchViewerSection = function(sectionId) {
@@ -869,6 +1023,11 @@
             const targetEl = document.getElementById(sectionId);
             if (targetEl) targetEl.classList.remove('hidden');
             if (viewerDropdown) viewerDropdown.classList.remove('show');
+            if (sectionId === 'viewer-section-attendance') {
+                renderMemberAttendanceHistory();
+            } else if (sectionId === 'cp-section-attendance-manage') {
+                renderCpAttendanceRoster();
+            }
         };
 
         // Initialize Firebase
@@ -885,6 +1044,7 @@
                 initActivitiesListener();
                 initGalleryListener();
                 initIdeasListener();
+                initAttendanceListener();
             } else {
                 alert("Please add your Firebase configuration variables in index.html");
             }
@@ -925,6 +1085,11 @@
                 // Refresh Patrouille section views if active
                 if (currentLoggedInUser) {
                     renderPatrouilleSectionData();
+                    if (currentLoggedInUser.role === 'Admin' && document.getElementById('admin-section-attendance') && !document.getElementById('admin-section-attendance').classList.contains('hidden')) {
+                        renderAdminAttendanceSection();
+                    } else if (currentLoggedInUser.role === 'Cp' && document.getElementById('cp-section-attendance-manage') && !document.getElementById('cp-section-attendance-manage').classList.contains('hidden')) {
+                        renderCpAttendanceRoster();
+                    }
                 }
             });
         }
@@ -939,11 +1104,16 @@
                 let adminSelectHtml = `<option value="" disabled selected>Select a Patrouille</option>`;
                 adminSelectHtml += `<option value="Staff">Staff (Leadership)</option>`;
 
+                let attendanceTargetHtml = `<option value="" disabled selected>Select Patrouille</option>`;
+
                 snapshot.forEach((docSnap) => {
                     const pName = docSnap.id;
                     if (pName !== "Staff") {
                         selectHtml += `<option value="${pName}">${pName}</option>`;
                         adminSelectHtml += `<option value="${pName}">${pName}</option>`;
+                        attendanceTargetHtml += `<option value="${pName}">${pName}</option>`;
+                    } else {
+                        attendanceTargetHtml += `<option value="Staff">Staff (Leadership)</option>`;
                     }
                 });
                 const mPatrolSel = document.getElementById('new-member-patrol');
@@ -954,6 +1124,13 @@
                     const currentVal = adminPatrolSel.value;
                     adminPatrolSel.innerHTML = adminSelectHtml;
                     if (currentVal) adminPatrolSel.value = currentVal;
+                }
+
+                const attendanceTargetSel = document.getElementById('attendance-patrol-target');
+                if (attendanceTargetSel) {
+                    const currAttVal = attendanceTargetSel.value;
+                    attendanceTargetSel.innerHTML = attendanceTargetHtml;
+                    if (currAttVal) attendanceTargetSel.value = currAttVal;
                 }
             });
         }
@@ -1038,6 +1215,289 @@
                 const adminIdeas = document.getElementById('admin-ideas-list');
                 if (adminIdeas) adminIdeas.innerHTML = html;
             });
+        }
+
+        // ==========================================================================
+        // ATTENDANCE SYSTEM SYNCHRONIZATION & LOGIC
+        // ==========================================================================
+        function initAttendanceListener() {
+            const colRef = collection(db, "attendance_sessions");
+            onSnapshot(colRef, (snapshot) => {
+                attendanceSessionsCache = [];
+                snapshot.forEach((docSnap) => {
+                    attendanceSessionsCache.push({
+                        id: docSnap.id,
+                        ...docSnap.data()
+                    });
+                });
+                // Sort by date descending
+                attendanceSessionsCache.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                if (currentLoggedInUser) {
+                    if (currentLoggedInUser.role === 'Admin') {
+                        renderAdminAttendanceSection();
+                    } else if (document.getElementById('viewer-section-attendance') && !document.getElementById('viewer-section-attendance').classList.contains('hidden')) {
+                        renderMemberAttendanceHistory();
+                    }
+                }
+            });
+        }
+
+        // Admin attendance target patrol selector change listener
+        const attendancePatrolTarget = document.getElementById('attendance-patrol-target');
+        if (attendancePatrolTarget) {
+            attendancePatrolTarget.addEventListener('change', (e) => {
+                renderAdminAttendanceRoster(e.target.value);
+            });
+        }
+
+        function renderAdminAttendanceRoster(patrolName) {
+            const rosterContainer = document.getElementById('attendance-marking-roster');
+            if (!rosterContainer) return;
+
+            let html = "";
+            let memberCount = 0;
+            for (let [username, uData] of Object.entries(usersCache)) {
+                if (uData.patrol === patrolName) {
+                    memberCount++;
+                    html += `
+                        <div class='list-item' style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>👤 <strong>${username}</strong> (${uData.role})</span>
+                            <div style="display: flex; gap: 6px;">
+                                <select class="form-control attendance-status-select" data-member="${username}" style="padding: 6px 10px; font-size: 0.85rem; width: auto;">
+                                    <option value="Present">Present</option>
+                                    <option value="Absent">Absent</option>
+                                    <option value="Excused">Excused</option>
+                                    <option value="Late">Late</option>
+                                </select>
+                            </div>
+                        </div>`;
+                }
+            }
+            if (memberCount === 0) {
+                html = "<div class='list-item'>No members found in this Patrouille.</div>";
+            }
+            rosterContainer.innerHTML = html;
+        }
+
+        function renderCpAttendanceRoster() {
+            if (!currentLoggedInUser || currentLoggedInUser.role !== 'Cp') return;
+            const patrolName = currentLoggedInUser.patrol;
+            const rosterContainer = document.getElementById('cp-attendance-roster');
+            if (!rosterContainer) return;
+
+            let html = "";
+            let memberCount = 0;
+            for (let [username, uData] of Object.entries(usersCache)) {
+                if (uData.patrol === patrolName) {
+                    memberCount++;
+                    html += `
+                        <div class='list-item' style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>👤 <strong>${username}</strong> (${uData.role})</span>
+                            <div style="display: flex; gap: 6px;">
+                                <select class="form-control cp-attendance-status-select" data-member="${username}" style="padding: 6px 10px; font-size: 0.85rem; width: auto;">
+                                    <option value="Present">Present</option>
+                                    <option value="Absent">Absent</option>
+                                    <option value="Excused">Excused</option>
+                                    <option value="Late">Late</option>
+                                </select>
+                            </div>
+                        </div>`;
+                }
+            }
+            if (memberCount === 0) {
+                html = "<div class='list-item'>No members found in your Patrouille.</div>";
+            }
+            rosterContainer.innerHTML = html;
+        }
+
+        // Save Attendance (Admin)
+        const saveAttendanceBtn = document.getElementById('save-attendance-btn');
+        if (saveAttendanceBtn) {
+            saveAttendanceBtn.addEventListener('click', async () => {
+                const patrol = document.getElementById('attendance-patrol-target').value;
+                const title = document.getElementById('attendance-session-title').value.trim();
+                const date = document.getElementById('attendance-session-date').value;
+                const desc = document.getElementById('attendance-session-desc').value.trim();
+
+                if (!patrol || !title || !date) return showMsg('admin-attendance-err', 'admin-attendance-msg');
+
+                const records = {};
+                document.querySelectorAll('.attendance-status-select').forEach(sel => {
+                    const memberName = sel.getAttribute('data-member');
+                    records[memberName] = sel.value;
+                });
+
+                if (Object.keys(records).length === 0) {
+                    return showMsg('admin-attendance-err', 'admin-attendance-msg');
+                }
+
+                await setDoc(doc(collection(db, "attendance_sessions")), {
+                    patrol,
+                    title,
+                    date,
+                    desc,
+                    records,
+                    createdBy: currentLoggedInUser.username,
+                    created: Date.now()
+                });
+
+                document.getElementById('attendance-session-title').value = '';
+                document.getElementById('attendance-session-date').value = '';
+                document.getElementById('attendance-session-desc').value = '';
+                showMsg('admin-attendance-msg', 'admin-attendance-err');
+            });
+        }
+
+        // Save Attendance (CP)
+        const cpSaveAttendanceBtn = document.getElementById('cp-save-attendance-btn');
+        if (cpSaveAttendanceBtn) {
+            cpSaveAttendanceBtn.addEventListener('click', async () => {
+                if (!currentLoggedInUser || currentLoggedInUser.role !== 'Cp') return;
+                const patrol = currentLoggedInUser.patrol;
+                const title = document.getElementById('cp-attendance-title').value.trim();
+                const date = document.getElementById('cp-attendance-date').value;
+                const desc = document.getElementById('cp-attendance-desc').value.trim();
+
+                if (!title || !date) return showMsg('cp-attendance-err', 'cp-attendance-msg');
+
+                const records = {};
+                document.querySelectorAll('.cp-attendance-status-select').forEach(sel => {
+                    const memberName = sel.getAttribute('data-member');
+                    records[memberName] = sel.value;
+                });
+
+                if (Object.keys(records).length === 0) {
+                    return showMsg('cp-attendance-err', 'cp-attendance-msg');
+                }
+
+                await setDoc(doc(collection(db, "attendance_sessions")), {
+                    patrol,
+                    title,
+                    date,
+                    desc,
+                    records,
+                    createdBy: currentLoggedInUser.username,
+                    created: Date.now()
+                });
+
+                document.getElementById('cp-attendance-title').value = '';
+                document.getElementById('cp-attendance-date').value = '';
+                document.getElementById('cp-attendance-desc').value = '';
+                showMsg('cp-attendance-msg', 'cp-attendance-err');
+            });
+        }
+
+        // Render Admin Attendance Sessions & Statistics
+        function renderAdminAttendanceSection() {
+            const sessionsList = document.getElementById('admin-attendance-sessions-list');
+            const statsContainer = document.getElementById('admin-troop-stats-container');
+            if (!sessionsList || !statsContainer) return;
+
+            let totalSessions = attendanceSessionsCache.length;
+            let totalRecordsCount = 0;
+            let totalPresentCount = 0;
+
+            let sessionsHtml = "";
+            if (totalSessions === 0) {
+                sessionsHtml = "<div class='list-item'>No attendance sessions recorded yet.</div>";
+            } else {
+                attendanceSessionsCache.forEach(sess => {
+                    let recs = sess.records || {};
+                    let sessionPresent = 0;
+                    let sessionTotal = Object.keys(recs).length;
+                    Object.values(recs).forEach(st => {
+                        totalRecordsCount++;
+                        if (st === 'Present' || st === 'Late') {
+                            if (st === 'Present') totalPresentCount++;
+                        }
+                        if (st === 'Present') sessionPresent++;
+                    });
+
+                    sessionsHtml += `
+                        <div class='list-item' style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong>${sess.title}</strong> (${sess.patrol})<br>
+                                <small>📅 ${sess.date} | Present: ${sessionPresent}/${sessionTotal} members</small>
+                            </div>
+                            <button class="btn-danger" onclick="deleteAttendanceSession('${sess.id}')">Delete</button>
+                        </div>`;
+                });
+            }
+            sessionsList.innerHTML = sessionsHtml;
+
+            let overallPct = totalRecordsCount > 0 ? Math.round((totalPresentCount / totalRecordsCount) * 100) : 0;
+            statsContainer.innerHTML = `
+                <div class="stat-card-grid">
+                    <div class="stat-mini-card">
+                        <h4>Total Sessions</h4>
+                        <div class="stat-val">${totalSessions}</div>
+                    </div>
+                    <div class="stat-mini-card">
+                        <h4>Troop Attendance %</h4>
+                        <div class="stat-val">${overallPct}%</div>
+                    </div>
+                </div>`;
+        }
+
+        window.deleteAttendanceSession = async function(sessionId) {
+            await deleteDoc(doc(db, "attendance_sessions", sessionId));
+        };
+
+        // Render Member Attendance History & Statistics
+        function renderMemberAttendanceHistory() {
+            if (!currentLoggedInUser) return;
+            const username = currentLoggedInUser.username;
+
+            let totalMtg = 0;
+            let presentCount = 0;
+            let absentCount = 0;
+            let excusedCount = 0;
+            let lateCount = 0;
+
+            let historyHtml = "";
+            let relevantSessions = attendanceSessionsCache.filter(sess => sess.records && sess.records[username] !== undefined);
+
+            relevantSessions.forEach(sess => {
+                totalMtg++;
+                let status = sess.records[username];
+                if (status === 'Present') presentCount++;
+                else if (status === 'Absent') absentCount++;
+                else if (status === 'Excused') excusedCount++;
+                else if (status === 'Late') lateCount++;
+
+                let badgeClass = 'status-present';
+                if (status === 'Absent') badgeClass = 'status-absent';
+                else if (status === 'Excused') badgeClass = 'status-excused';
+                else if (status === 'Late') badgeClass = 'status-late';
+
+                historyHtml += `
+                    <div class='list-item' style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${sess.title}</strong><br>
+                            <small>📅 ${sess.date} ${sess.desc ? '| ' + sess.desc : ''}</small>
+                        </div>
+                        <span class="attendance-status-badge ${badgeClass}">${status}</span>
+                    </div>`;
+            });
+
+            if (totalMtg === 0) {
+                historyHtml = "<div class='list-item'>No attendance records found for your account yet.</div>";
+            }
+
+            let attendancePct = totalMtg > 0 ? Math.round(((presentCount + lateCount) / totalMtg) * 100) : 0;
+
+            const statTotal = document.getElementById('stat-total-mtg');
+            const statPct = document.getElementById('stat-pct');
+            const statPresent = document.getElementById('stat-present');
+            const statAel = document.getElementById('stat-ael');
+            const historyList = document.getElementById('member-attendance-history-list');
+
+            if (statTotal) statTotal.innerText = totalMtg;
+            if (statPct) statPct.innerText = attendancePct + '%';
+            if (statPresent) statPresent.innerText = presentCount;
+            if (statAel) statAel.innerText = `${absentCount} / ${excusedCount} / ${lateCount}`;
+            if (historyList) historyList.innerHTML = historyHtml;
         }
 
         // ==========================================================================
@@ -1391,6 +1851,15 @@
                         role: role,
                         patrol: usersCache[user].patrol || 'Unassigned'
                     };
+
+                    const cpAttendanceManageItem = document.getElementById('cp-menu-attendance-manage');
+                    if (cpAttendanceManageItem) {
+                        if (role === 'Cp') {
+                            cpAttendanceManageItem.classList.remove('hidden');
+                        } else {
+                            cpAttendanceManageItem.classList.add('hidden');
+                        }
+                    }
 
                     if (role === 'Admin') {
                         document.getElementById('login-user').value = '';

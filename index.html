@@ -32,7 +32,8 @@
             color: var(--text-dark);
             min-height: 100vh;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            justify-content: flex-start;
             align-items: center;
             padding: 20px;
             position: relative;
@@ -40,7 +41,7 @@
         }
 
         /* ==========================================================================
-           BACKGROUND & LOGOS
+           BACKGROUND & LOGOS (FIXED FACE VISIBILITY)
            ========================================================================== */
         #bg-layer {
             position: fixed;
@@ -61,7 +62,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.55);
+            /* Reduced overlay darkness so background faces/details are clearly visible */
+            background: rgba(0, 0, 0, 0.35);
             z-index: -1;
         }
 
@@ -101,13 +103,14 @@
         .header {
             text-align: center;
             margin-bottom: 24px;
+            margin-top: 20px;
         }
 
         .header h1 {
             color: var(--beige);
             font-size: 2rem;
             font-weight: 700;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
             margin-bottom: 6px;
         }
 
@@ -117,16 +120,18 @@
             font-weight: 600;
             letter-spacing: 1px;
             text-transform: uppercase;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.8);
         }
 
         .card {
-            background: var(--beige);
+            background: rgba(244, 241, 222, 0.95); /* Slight transparency to let background breathe */
             border-radius: var(--radius);
             padding: 32px 28px;
             box-shadow: var(--shadow);
             border-top: 6px solid var(--green);
             border-bottom: 4px solid var(--gold);
             margin-bottom: 20px;
+            backdrop-filter: blur(4px);
         }
 
         /* ==========================================================================
@@ -435,7 +440,7 @@
         }
 
         .section-box {
-            background: rgba(255,255,255,0.6);
+            background: rgba(255,255,255,0.7);
             padding: 20px;
             border-radius: 8px;
             margin-bottom: 20px;
@@ -450,7 +455,7 @@
         }
 
         /* ==========================================================================
-           ATTENDANCE & CHALLENGES STYLING (FUN SCOUT GAMIFICATION)
+           ATTENDANCE & CHALLENGES STYLING
            ========================================================================== */
         .status-badge {
             padding: 3px 8px;
@@ -493,7 +498,6 @@
             color: var(--green);
         }
 
-        /* Fun Scout Weekly Challenge Gamified Cards */
         .challenge-card {
             background: linear-gradient(135deg, #1d3557, #457b9d);
             color: white;
@@ -611,15 +615,6 @@
             gap: 5px;
         }
 
-        .action-btn {
-            border: none;
-            padding: 4px 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.85rem;
-        }
-
-        /* Notifications */
         #notification-container {
             position: fixed;
             top: 20px;
@@ -645,9 +640,6 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
-        /* ==========================================================================
-           IMAGE LIGHTBOX MODAL
-           ========================================================================== */
         #image-modal {
             position: fixed;
             top: 0;
@@ -680,21 +672,14 @@
         }
 
         @media (max-width: 600px) {
-            body { 
-                padding-top: 20px; 
-                align-items: flex-start; 
-            }
-            .container {
-                margin-top: 75px; 
-            }
+            body { padding-top: 10px; }
+            .container { margin-top: 65px; }
             .fixed-logo { height: 50px; top: 12px; }
             .fixed-logo.left { left: 12px; }
             .fixed-logo.right { right: 12px; }
             .header h1 { font-size: 1.4rem; }
             .card { padding: 20px 14px; }
             .stat-card-grid { grid-template-columns: 1fr; }
-            .verification-table th, .verification-table td { padding: 4px; font-size: 0.8rem; }
-            .action-btns { flex-direction: column; }
         }
     </style>
 </head>
@@ -706,22 +691,30 @@
     <img id="left-logo" class="fixed-logo left" alt="" />
     <img id="right-logo" class="fixed-logo right" alt="" />
 
-    <!-- NOTIFICATION SYSTEM -->
     <div id="notification-container"></div>
 
     <div class="container">
         <header class="header">
             <h1>Scout Saint Georges Mieh w Mieh</h1>
-            <p>Portal System</p>
+            <p>Scout Troop Hub</p>
         </header>
 
-        <!-- HOME / SELECTION SCREEN -->
+        <!-- WELCOME / HOME SCREEN (Standalone Welcome & Login Button) -->
         <main id="home-screen" class="card">
-            <h2 style="color: var(--dark-green); margin-bottom: 20px; text-align: center;">Welcome</h2>
-            <button id="goto-login" class="btn">Login</button>
+            <h2 style="color: var(--dark-green); margin-bottom: 15px; text-align: center;">Welcome</h2>
+            <p style="text-align: center; color: var(--dark-brown); margin-bottom: 20px; font-size: 0.95rem;">Please log in to access your scout dashboard and tracking features.</p>
+            <button id="goto-login" class="btn">Login to Account</button>
         </main>
 
-        <!-- GENERAL LOGIN SCREEN -->
+        <!-- SEPARATE ACTIVE PATROLS SECTION (Displayed below home/login card so it scrolls naturally in separate blocks) -->
+        <section id="public-patrols-section" class="card" style="border-top-color: var(--gold); border-bottom-color: var(--green);">
+            <h3 style="color: var(--dark-green); font-size: 1.2rem; margin-bottom: 12px; text-align: center;">⛺ Active Patrols & Mottos</h3>
+            <div id="public-patrols-container" class="list-container" style="margin-bottom: 0;">
+                Loading patrols...
+            </div>
+        </section>
+
+        <!-- GENERAL LOGIN SCREEN (Standalone view) -->
         <main id="login-screen" class="card hidden">
             <h2 style="color: var(--dark-green); margin-bottom: 20px; text-align: center;">Account Login</h2>
             <div id="login-error" class="error-message">Invalid Username or Password.</div>
@@ -737,9 +730,8 @@
             <button id="login-back-btn" class="btn btn-outline">Back</button>
         </main>
 
-        <!-- ADMIN DASHBOARD (FULL AUTHORITY) -->
+        <!-- ADMIN DASHBOARD -->
         <main id="admin-dashboard" class="card hidden">
-            <!-- TOP NAV BAR WITH THREE DOTS MENU -->
             <div class="dashboard-nav-bar">
                 <h3 id="admin-panel-title">Admin Control Panel</h3>
                 <div class="menu-container">
@@ -756,16 +748,19 @@
                 </div>
             </div>
 
-            <!-- SUB-SECTION 1: MANAGEMENT (Patrols & Accounts) -->
+            <!-- SUB-SECTION 1: MANAGEMENT -->
             <div id="admin-section-management" class="admin-tab-content">
                 <p style="margin-bottom: 20px; font-size: 0.9rem; color: var(--brown);">Full structural and member account authority.</p>
                 
                 <div class="section-box">
                     <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">⛺ Create Patrouille</h3>
                     <div id="patrol-msg" class="success-message">Patrouille created successfully!</div>
-                    <div id="patrol-err" class="error-message">Please enter a patrouille name.</div>
+                    <div id="patrol-err" class="error-message">Please enter a patrouille name and motto.</div>
                     <div class="form-group" style="margin-bottom: 10px;">
-                        <input type="text" id="new-patrol-name" class="form-control" placeholder="e.g., Al Nisr (Eagles)" autocomplete="off" />
+                        <input type="text" id="new-patrol-name" class="form-control" placeholder="Patrouille Name (e.g., Al Nisr)" autocomplete="off" />
+                    </div>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <input type="text" id="new-patrol-moto" class="form-control" placeholder="Patrol Motto (e.g., Always Ahead)" autocomplete="off" />
                     </div>
                     <button id="create-patrol-btn" class="btn btn-outline" style="margin-bottom: 0;">Add Patrouille</button>
                 </div>
@@ -856,7 +851,6 @@
                     <button id="create-challenge-btn" class="btn">Create Challenge</button>
                 </div>
 
-                <!-- Admin Verification Panel -->
                 <div class="section-box" id="admin-verification-panel">
                     <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">✅ Active Challenge Verification</h3>
                     <div id="active-challenge-admin-info" style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.8); border-radius: 6px; border-left: 3px solid var(--gold);">
@@ -877,7 +871,6 @@
                     </div>
                 </div>
 
-                <!-- Challenge Archive -->
                 <div class="section-box" style="margin-bottom: 0;">
                     <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">🗂️ Challenge Archive</h3>
                     <div id="admin-challenges-list" class="list-container" style="margin-bottom: 0;">Loading challenges...</div>
@@ -907,7 +900,7 @@
                 </div>
             </div>
 
-            <!-- SUB-SECTION 3: MEMORIES (GALLERY) -->
+            <!-- SUB-SECTION 3: MEMORIES -->
             <div id="admin-section-memories" class="admin-tab-content hidden">
                 <div class="section-box">
                     <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">🖼️ Memories (Gallery)</h3>
@@ -926,7 +919,7 @@
                 </div>
             </div>
 
-            <!-- SUB-SECTION 4: IDEAS REVIEW -->
+            <!-- SUB-SECTION 4: IDEAS -->
             <div id="admin-section-ideas" class="admin-tab-content hidden">
                 <div class="section-box" style="margin-bottom: 0;">
                     <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">💡 Ideas & Suggestions Review</h3>
@@ -934,7 +927,7 @@
                 </div>
             </div>
 
-            <!-- SUB-SECTION 5: ATTENDANCE HUB (ADMIN) -->
+            <!-- SUB-SECTION 5: ATTENDANCE HUB -->
             <div id="admin-section-attendance" class="admin-tab-content hidden">
                 <div class="section-box">
                     <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">📊 Attendance Hub & Reports</h3>
@@ -981,9 +974,8 @@
             <button id="admin-logout-btn" class="btn btn-outline" style="margin-top: 25px;">Logout</button>
         </main>
 
-        <!-- SHARED HUB DASHBOARD (FOR CP & MEMBERS - VIEWERS ONLY) -->
+        <!-- SHARED HUB DASHBOARD -->
         <main id="viewer-dashboard" class="card hidden">
-            <!-- TOP NAV BAR WITH THREE DOTS MENU -->
             <div class="dashboard-nav-bar">
                 <div>
                     <h3 id="viewer-title">Member Portal</h3>
@@ -1017,7 +1009,6 @@
                     <div id="viewer-patrol-rank" style="font-size: 1.1rem; font-weight: bold; color: var(--gold); margin-top: 5px;">Loading points...</div>
                 </div>
 
-                <!-- Gamified Active Challenge Container -->
                 <div id="viewer-active-challenge-container"></div>
 
                 <div class="section-box" style="margin-bottom: 0;">
@@ -1040,13 +1031,6 @@
                             <span>Completed: <strong id="profile-chal-completed" style="color: var(--green)">0</strong></span>
                             <span>Failed: <strong id="profile-chal-failed" style="color: #d62828">0</strong></span>
                         </div>
-                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
-                            <span>Current Streak: <strong id="profile-curr-streak">0</strong></span>
-                            <span>Best Streak: <strong id="profile-best-streak">0</strong></span>
-                        </div>
-                        <div style="font-size: 0.85rem; margin-top: 10px; color: var(--dark-brown);">
-                            Last Completed: <strong id="profile-last-completed">None</strong>
-                        </div>
                     </div>
 
                     <h4 style="font-size: 0.9rem; color: var(--dark-green); margin-bottom: 10px;">Activity Timeline</h4>
@@ -1056,7 +1040,7 @@
                 </div>
             </div>
 
-            <!-- VIEWER SUB-SECTION 1.5: CHALLENGES LIST -->
+            <!-- CHALLENGES LIST -->
             <div id="viewer-section-challenges" class="viewer-tab-content hidden">
                 <div class="section-box" style="margin-bottom: 0;">
                     <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">🏆 All Challenges</h3>
@@ -1064,7 +1048,7 @@
                 </div>
             </div>
 
-            <!-- VIEWER SUB-SECTION 2: ACTIVITIES -->
+            <!-- ACTIVITIES -->
             <div id="viewer-section-activities" class="viewer-tab-content hidden">
                 <div class="section-box" style="margin-bottom: 0;">
                     <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">📅 Calendar of Activities</h3>
@@ -1072,7 +1056,7 @@
                 </div>
             </div>
 
-            <!-- VIEWER SUB-SECTION 3: MEMORIES -->
+            <!-- MEMORIES -->
             <div id="viewer-section-memories" class="viewer-tab-content hidden">
                 <div class="section-box" style="margin-bottom: 0;">
                     <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">🖼️ Scout Memories Gallery</h3>
@@ -1080,7 +1064,7 @@
                 </div>
             </div>
 
-            <!-- VIEWER SUB-SECTION 4: IDEAS -->
+            <!-- IDEAS -->
             <div id="viewer-section-ideas" class="viewer-tab-content hidden">
                 <div class="section-box" style="margin-bottom: 0;">
                     <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">💡 Suggest an Idea</h3>
@@ -1093,7 +1077,7 @@
                 </div>
             </div>
 
-            <!-- VIEWER SUB-SECTION 5: MEMBER ATTENDANCE HISTORY & STATS -->
+            <!-- ATTENDANCE HISTORY -->
             <div id="viewer-section-attendance" class="viewer-tab-content hidden">
                 <div class="section-box" style="margin-bottom: 0;">
                     <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 15px;">📊 My Attendance Record & Statistics</h3>
@@ -1107,14 +1091,6 @@
                             <h4>Attendance %</h4>
                             <div class="stat-val" id="stat-pct">0%</div>
                         </div>
-                        <div class="stat-mini-card">
-                            <h4>Present</h4>
-                            <div class="stat-val" id="stat-present" style="color: #2a9d8f;">0</div>
-                        </div>
-                        <div class="stat-mini-card">
-                            <h4>Absent / Excused / Late</h4>
-                            <div class="stat-val" id="stat-ael" style="color: #e76f51; font-size: 1rem; padding-top: 4px;">0 / 0 / 0</div>
-                        </div>
                     </div>
 
                     <label style="font-weight: 700; color: var(--dark-brown); margin-bottom: 8px; display: block; margin-top: 15px;">Attendance History:</label>
@@ -1122,7 +1098,7 @@
                 </div>
             </div>
 
-            <!-- CP SUB-SECTION: TAKE ATTENDANCE FOR OWN PATROL -->
+            <!-- CP ATTENDANCE MANAGE -->
             <div id="cp-section-attendance-manage" class="viewer-tab-content hidden">
                 <div class="section-box" style="margin-bottom: 0;">
                     <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">📋 Patrouille Attendance Management</h3>
@@ -1154,7 +1130,7 @@
             <button id="viewer-logout-btn" class="btn btn-outline" style="margin-top: 25px;">Logout</button>
         </main>
 
-        <!-- DEDICATED PATROUILLE SECTION (ISOLATED PER PATROUILLE) -->
+        <!-- DEDICATED PATROUILLE SECTION -->
         <main id="patrouille-section-card" class="card hidden">
             <div class="dashboard-nav-bar">
                 <div>
@@ -1164,7 +1140,6 @@
                 <button id="patrouille-back-btn" class="btn btn-outline" style="width: auto; padding: 6px 12px; margin-bottom: 0; font-size: 0.85rem;" type="button">⬅ Back</button>
             </div>
 
-            <!-- Admin Patrouille Selector Dropdown -->
             <div id="admin-patrol-selector-wrapper" class="form-group hidden" style="background: rgba(255,255,255,0.7); padding: 12px; border-radius: 8px;">
                 <label>Select Patrouille to Manage (Admin View):</label>
                 <select id="admin-target-patrol-select" class="form-control">
@@ -1191,7 +1166,6 @@
                     </div>
                     <button id="add-patrol-memory-btn" class="btn btn-outline" style="margin-bottom: 0; padding: 10px;">Publish Memory</button>
                 </div>
-                <!-- Patrouille Memories Container -->
                 <div id="memories-container" class="gallery-grid" style="margin-bottom: 0;">Loading memories...</div>
             </div>
 
@@ -1209,7 +1183,6 @@
                     </div>
                     <button id="add-patrol-activity-btn" class="btn btn-outline" style="margin-bottom: 0; padding: 10px;">Schedule Activity</button>
                 </div>
-                <!-- Patrouille Activities Container -->
                 <div id="activities-container" class="list-container" style="margin-bottom: 0; max-height: 200px;">Loading activities...</div>
             </div>
         </main>
@@ -1223,7 +1196,7 @@
     <!-- FIREBASE & APP LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, getDoc, updateDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, updateDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCqLoLICq9kbpMsaD58F6U4cwbiMygGrmU",
@@ -1255,6 +1228,7 @@
 
         const screens = {
             home: document.getElementById('home-screen'),
+            publicPatrolsSection: document.getElementById('public-patrols-section'),
             login: document.getElementById('login-screen'),
             adminDashboard: document.getElementById('admin-dashboard'),
             viewerDashboard: document.getElementById('viewer-dashboard'),
@@ -1262,8 +1236,17 @@
         };
 
         function switchScreen(screenName) {
-            Object.values(screens).forEach(s => s.classList.add('hidden'));
-            screens[screenName].classList.remove('hidden');
+            Object.keys(screens).forEach(key => {
+                if(key === 'publicPatrolsSection') {
+                    if(screenName === 'home') screens[key].classList.remove('hidden');
+                    else screens[key].classList.add('hidden');
+                } else {
+                    screens[key].classList.add('hidden');
+                }
+            });
+            if(screenName !== 'publicPatrolsSection' && screens[screenName]) {
+                screens[screenName].classList.remove('hidden');
+            }
         }
 
         document.getElementById('goto-login').addEventListener('click', () => switchScreen('login'));
@@ -1329,24 +1312,10 @@
                 initChallengesListener();
                 initChallengeResultsListener();
             } else {
-                alert("Please add your Firebase configuration variables in index.html");
+                alert("Please add your Firebase configuration variables");
             }
         } catch (err) {
             console.error("Firebase init error:", err);
-        }
-
-        function showNotification(title, message, icon = '🎉') {
-            const container = document.getElementById('notification-container');
-            const toast = document.createElement('div');
-            toast.className = 'toast-notification';
-            toast.innerHTML = `<strong style="display:block;margin-bottom:5px;font-size:1.1rem;color:var(--dark-green);">${icon} ${title}</strong>
-                               <div style="font-size:0.9rem;color:var(--dark-brown);">${message}</div>`;
-            container.appendChild(toast);
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateX(100%)';
-                setTimeout(() => toast.remove(), 500);
-            }, 5000);
         }
 
         function initPatrolsListener() {
@@ -1359,19 +1328,34 @@
                 adminSelectHtml += `<option value="Staff">Staff (Leadership)</option>`;
 
                 patrolsCache = {};
-                snapshot.forEach((docSnap) => {
-                    const pName = docSnap.id;
-                    const pData = docSnap.data();
-                    patrolsCache[pName] = pData.points || 0;
+                let publicPatrolsHtml = "";
 
-                    if (pName !== "Staff") {
-                        selectHtml += `<option value="${pName}">${pName}</option>`;
-                        adminSelectHtml += `<option value="${pName}">${pName}</option>`;
-                        attendanceTargetHtml += `<option value="${pName}">${pName}</option>`;
-                    } else {
-                        attendanceTargetHtml += `<option value="Staff">Staff (Leadership)</option>`;
-                    }
-                });
+                if (snapshot.empty) {
+                    publicPatrolsHtml = "<div class='list-item'>No patrols available.</div>";
+                } else {
+                    snapshot.forEach((docSnap) => {
+                        const pName = docSnap.id;
+                        const pData = docSnap.data();
+                        patrolsCache[pName] = pData.points || 0;
+                        const moto = pData.moto || "No motto set";
+
+                        if (pName !== "Staff") {
+                            selectHtml += `<option value="${pName}">${pName}</option>`;
+                            adminSelectHtml += `<option value="${pName}">${pName}</option>`;
+                            attendanceTargetHtml += `<option value="${pName}">${pName}</option>`;
+
+                            publicPatrolsHtml += `
+                                <div class='list-item'>
+                                    <div>⛺ <strong>${pName}</strong><br><small style="color: var(--brown);">Moto: "${moto}"</small></div>
+                                </div>`;
+                        } else {
+                            attendanceTargetHtml += `<option value="Staff">Staff (Leadership)</option>`;
+                        }
+                    });
+                }
+
+                const publicPatrolsContainer = document.getElementById('public-patrols-container');
+                if (publicPatrolsContainer) publicPatrolsContainer.innerHTML = publicPatrolsHtml || "<div class='list-item'>No patrols available.</div>";
 
                 if (document.getElementById('new-member-patrol')) document.getElementById('new-member-patrol').innerHTML = selectHtml;
                 const adminPatrolSel = document.getElementById('admin-target-patrol-select');
@@ -1403,9 +1387,6 @@
                             xp: data.xp || 0,
                             challengesCompleted: data.challengesCompleted || 0,
                             challengesFailed: data.challengesFailed || 0,
-                            currentStreak: data.currentStreak || 0,
-                            bestStreak: data.bestStreak || 0,
-                            lastCompleted: data.lastCompleted || 'None',
                             timeline: data.timeline || []
                         };
 
@@ -1658,7 +1639,6 @@
             if(rankIndex !== -1) rankEl.innerText = `#${rankIndex + 1} Place (${sorted[rankIndex].points} pts)`;
         }
 
-        // Fun Gamified Challenge Card Render & Countdown Timer for Scouts
         function renderViewerChallengeCard() {
             const container = document.getElementById('viewer-active-challenge-container');
             if(!container) return;
@@ -1726,9 +1706,11 @@
 
         document.getElementById('create-patrol-btn')?.addEventListener('click', async () => {
             const name = document.getElementById('new-patrol-name').value.trim();
-            if (!name) return showMsg('patrol-err', 'patrol-msg');
-            await setDoc(doc(db, "patrols", name), { created: Date.now(), points: 0 });
+            const moto = document.getElementById('new-patrol-moto').value.trim();
+            if (!name || !moto) return showMsg('patrol-err', 'patrol-msg');
+            await setDoc(doc(db, "patrols", name), { created: Date.now(), points: 0, moto: moto });
             document.getElementById('new-patrol-name').value = '';
+            document.getElementById('new-patrol-moto').value = '';
             showMsg('patrol-msg', 'patrol-err');
         });
 
@@ -1804,7 +1786,6 @@
         document.getElementById('admin-logout-btn')?.addEventListener('click', () => { currentLoggedInUser = null; switchScreen('home'); });
         document.getElementById('viewer-logout-btn')?.addEventListener('click', () => { currentLoggedInUser = null; switchScreen('home'); });
 
-        // --- ATTENDANCE SYSTEM FIX & ROSTER LOADING ---
         function renderAdminAttendanceSection() {
             const sessionsList = document.getElementById('admin-attendance-sessions-list');
             const statsContainer = document.getElementById('admin-troop-stats-container');
@@ -1883,7 +1864,6 @@
             document.getElementById('admin-patrol-selector-wrapper')?.classList.add('hidden');
             document.getElementById('patrouille-sec-title').innerText = `⛺ Patrouille: ${currentLoggedInUser.patrol}`;
             
-            // AUTHORIZE CP & ADMIN TO ADD MEMORIES & ACTIVITIES IN THEIR PATROL AREA
             if (currentLoggedInUser.role === 'Cp' || currentLoggedInUser.role === 'Admin') {
                 document.getElementById('patrol-memory-form-wrapper')?.classList.remove('hidden');
                 document.getElementById('patrol-activity-form-wrapper')?.classList.remove('hidden');
@@ -1904,7 +1884,6 @@
             document.getElementById('admin-patrol-selector-wrapper')?.classList.remove('hidden');
             document.getElementById('patrouille-sec-title').innerText = `⛺ Admin Patrouille Management`;
             
-            // Admins always have authority to add stuff
             document.getElementById('patrol-memory-form-wrapper')?.classList.remove('hidden');
             document.getElementById('patrol-activity-form-wrapper')?.classList.remove('hidden');
 
@@ -1936,7 +1915,6 @@
             document.getElementById('patrol-members-badges-container').innerHTML = c === 0 ? "<div>No members.</div>" : html;
         }
 
-        // --- Patrouille Memories Loading & Adding Logic ---
         window.loadPatrouilleMemories = async function(patrouilleId) {
             const memoriesContainer = document.getElementById('memories-container');
             memoriesContainer.innerHTML = '<p class="loading-text">Loading memories...</p>';
@@ -1967,7 +1945,7 @@
                 });
             } catch (error) {
                 console.error("Error loading memories: ", error);
-                memoriesContainer.innerHTML = '<p class="error-text">Failed to load memories. Please try again.</p>';
+                memoriesContainer.innerHTML = '<p class="error-text">Failed to load memories.</p>';
             }
         };
 
@@ -2001,7 +1979,6 @@
             }
         };
 
-        // --- Patrouille Planned Activities Loading & Adding Logic ---
         window.loadPatrouilleActivities = async function(patrouilleId) {
             const activitiesContainer = document.getElementById('activities-container');
             activitiesContainer.innerHTML = '<p class="loading-text">Loading activities...</p>';
@@ -2031,7 +2008,7 @@
                 });
             } catch (error) {
                 console.error("Error loading activities: ", error);
-                activitiesContainer.innerHTML = '<p class="error-text">Failed to load activities. Please try again.</p>';
+                activitiesContainer.innerHTML = '<p class="error-text">Failed to load activities.</p>';
             }
         };
 

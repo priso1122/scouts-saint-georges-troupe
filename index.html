@@ -73,7 +73,7 @@
             z-index: 100;
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
             transition: transform 0.3s ease;
-            pointer-events: none; /* Prevents logo from interfering with clicks underneath if overlapping */
+            pointer-events: none;
         }
 
         .fixed-logo.left { left: 20px; }
@@ -176,7 +176,7 @@
             background: white;
             border-radius: 8px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            width: 230px;
+            width: 240px;
             display: none;
             z-index: 1000;
             border: 1px solid #ddd;
@@ -281,11 +281,31 @@
             width: auto;
             box-shadow: none;
             margin-bottom: 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
         }
 
         .btn-danger:hover {
             background: #b71c1c;
             transform: none;
+        }
+        
+        .btn-success {
+            background: #2a9d8f;
+            color: white;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            width: auto;
+            box-shadow: none;
+            margin-bottom: 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-success:hover {
+            background: #21867a;
         }
 
         .error-message {
@@ -312,7 +332,7 @@
             background: #fff;
             border-radius: 8px;
             padding: 12px;
-            max-height: 200px;
+            max-height: 300px;
             overflow-y: auto;
             border: 1px solid #ddd;
             margin-bottom: 20px;
@@ -430,9 +450,9 @@
         }
 
         /* ==========================================================================
-           ATTENDANCE STYLING & BADGES
+           ATTENDANCE & CHALLENGES STYLING (FUN SCOUT GAMIFICATION)
            ========================================================================== */
-        .attendance-status-badge {
+        .status-badge {
             padding: 3px 8px;
             border-radius: 4px;
             font-size: 0.75rem;
@@ -440,9 +460,9 @@
             text-transform: uppercase;
             display: inline-block;
         }
-        .status-present { background: #2a9d8f; color: white; }
-        .status-absent { background: #e76f51; color: white; }
-        .status-excused { background: #e9c46a; color: #5c3d2e; }
+        .status-present, .status-completed { background: #2a9d8f; color: white; }
+        .status-absent, .status-failed { background: #e76f51; color: white; }
+        .status-excused, .status-pending { background: #e9c46a; color: #5c3d2e; }
         .status-late { background: #f4a261; color: white; }
 
         .stat-card-grid {
@@ -471,6 +491,158 @@
             font-size: 1.3rem;
             font-weight: 700;
             color: var(--green);
+        }
+
+        /* Fun Scout Weekly Challenge Gamified Cards */
+        .challenge-card {
+            background: linear-gradient(135deg, #1d3557, #457b9d);
+            color: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(29, 53, 87, 0.3);
+            position: relative;
+            overflow: hidden;
+            border: 2px solid var(--gold);
+        }
+        
+        .challenge-card::after {
+            content: "🛡️";
+            position: absolute;
+            right: -15px;
+            bottom: -20px;
+            font-size: 90px;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .challenge-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 10px;
+        }
+
+        .challenge-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--gold);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .challenge-rewards {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .reward-badge {
+            background: rgba(221, 161, 94, 0.2);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            border: 1px solid var(--gold);
+            color: var(--beige);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .challenge-countdown {
+            background: rgba(0,0,0,0.3);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #ffb703;
+            margin-bottom: 15px;
+            display: inline-block;
+            border: 1px dashed rgba(255,183,3,0.4);
+        }
+
+        .timeline-container {
+            border-left: 2px solid var(--gold);
+            padding-left: 15px;
+            margin-left: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .timeline-item::before {
+            content: "";
+            position: absolute;
+            left: -21px;
+            top: 4px;
+            width: 10px;
+            height: 10px;
+            background: var(--gold);
+            border-radius: 50%;
+        }
+
+        .verification-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        
+        .verification-table th, .verification-table td {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .verification-table th {
+            background: var(--beige);
+            color: var(--dark-brown);
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 5px;
+        }
+
+        .action-btn {
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        /* Notifications */
+        #notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast-notification {
+            background: #ffffff;
+            border-left: 5px solid var(--gold);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            padding: 15px 20px;
+            border-radius: 4px;
+            animation: slideInRight 0.5s ease-out forwards;
+            min-width: 250px;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
         /* ==========================================================================
@@ -509,17 +681,20 @@
 
         @media (max-width: 600px) {
             body { 
-                padding-top: 20px; /* Reset body top padding so container doesn't push down incorrectly */
-                align-items: flex-start; /* Allow page to flow naturally from top on mobile */
+                padding-top: 20px; 
+                align-items: flex-start; 
             }
             .container {
-                margin-top: 75px; /* Safely push content down below fixed logos */
+                margin-top: 75px; 
             }
             .fixed-logo { height: 50px; top: 12px; }
             .fixed-logo.left { left: 12px; }
             .fixed-logo.right { right: 12px; }
             .header h1 { font-size: 1.4rem; }
             .card { padding: 20px 14px; }
+            .stat-card-grid { grid-template-columns: 1fr; }
+            .verification-table th, .verification-table td { padding: 4px; font-size: 0.8rem; }
+            .action-btns { flex-direction: column; }
         }
     </style>
 </head>
@@ -530,6 +705,9 @@
 
     <img id="left-logo" class="fixed-logo left" alt="" />
     <img id="right-logo" class="fixed-logo right" alt="" />
+
+    <!-- NOTIFICATION SYSTEM -->
+    <div id="notification-container"></div>
 
     <div class="container">
         <header class="header">
@@ -568,6 +746,7 @@
                     <button class="menu-btn" id="admin-menu-toggle" type="button">⋮</button>
                     <div class="dropdown-menu" id="admin-dropdown">
                         <div class="dropdown-item" onclick="switchAdminSection('admin-section-management')">⚙️ Management</div>
+                        <div class="dropdown-item" onclick="switchAdminSection('admin-section-challenges')">🏆 Weekly Challenges</div>
                         <div class="dropdown-item" onclick="switchAdminSection('admin-section-activities')">📅 Activities</div>
                         <div class="dropdown-item" onclick="switchAdminSection('admin-section-memories')">🖼️ Memories</div>
                         <div class="dropdown-item" onclick="switchAdminSection('admin-section-ideas')">💡 Ideas Review</div>
@@ -625,6 +804,83 @@
                         <label style="font-weight: 700; color: var(--dark-brown); margin-bottom: 8px; display: block;">Registered Accounts:</label>
                         <div id="members-list-container" class="list-container">Loading accounts...</div>
                     </div>
+                </div>
+            </div>
+
+            <!-- SUB-SECTION: WEEKLY CHALLENGES (ADMIN) -->
+            <div id="admin-section-challenges" class="admin-tab-content hidden">
+                <div class="section-box">
+                    <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">🏆 Create Weekly Challenge</h3>
+                    <div id="challenge-msg" class="success-message">Challenge saved successfully!</div>
+                    <div id="challenge-err" class="error-message">Please fill all required fields.</div>
+
+                    <div class="form-group">
+                        <label>Challenge Title *</label>
+                        <input type="text" id="challenge-title" class="form-control" placeholder="e.g., Campfire Master" />
+                    </div>
+                    <div class="form-group">
+                        <label>Description *</label>
+                        <textarea id="challenge-desc" class="form-control" rows="2" placeholder="Challenge details..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>XP Reward *</label>
+                        <input type="number" id="challenge-xp" class="form-control" placeholder="e.g., 50" min="0" />
+                    </div>
+                    <div class="form-group">
+                        <label>Optional Badge Reward (Count)</label>
+                        <input type="number" id="challenge-badge" class="form-control" placeholder="e.g., 1" min="0" value="0" />
+                    </div>
+                    <div class="form-group">
+                        <label>Difficulty</label>
+                        <select id="challenge-difficulty" class="form-control">
+                            <option value="Easy">Easy</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Hard">Hard</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="display:flex; gap:10px;">
+                        <div style="flex:1;">
+                            <label>Start Date *</label>
+                            <input type="date" id="challenge-start" class="form-control" />
+                        </div>
+                        <div style="flex:1;">
+                            <label>End Date *</label>
+                            <input type="date" id="challenge-end" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Optional Image</label>
+                        <input type="file" id="challenge-img" class="form-control" accept="image/*" />
+                    </div>
+
+                    <button id="create-challenge-btn" class="btn">Create Challenge</button>
+                </div>
+
+                <!-- Admin Verification Panel -->
+                <div class="section-box" id="admin-verification-panel">
+                    <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">✅ Active Challenge Verification</h3>
+                    <div id="active-challenge-admin-info" style="margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.8); border-radius: 6px; border-left: 3px solid var(--gold);">
+                        Loading active challenge...
+                    </div>
+                    <div class="list-container" style="max-height: 400px; padding: 0; overflow-x: auto;">
+                        <table class="verification-table" id="challenge-verification-table">
+                            <thead>
+                                <tr>
+                                    <th>Scout Name</th>
+                                    <th>Patrol</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="challenge-verification-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Challenge Archive -->
+                <div class="section-box" style="margin-bottom: 0;">
+                    <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">🗂️ Challenge Archive</h3>
+                    <div id="admin-challenges-list" class="list-container" style="margin-bottom: 0;">Loading challenges...</div>
                 </div>
             </div>
 
@@ -736,25 +992,76 @@
                 <div class="menu-container">
                     <button class="menu-btn" id="viewer-menu-toggle" type="button">⋮</button>
                     <div class="dropdown-menu" id="viewer-dropdown">
-                        <div class="dropdown-item" onclick="switchViewerSection('viewer-section-welcome')">🏠 Home / Welcome</div>
+                        <div class="dropdown-item" onclick="switchViewerSection('viewer-section-welcome')">🏠 Home & Profile</div>
+                        <div class="dropdown-item" onclick="switchViewerSection('viewer-section-challenges')">🏆 Challenges</div>
                         <div class="dropdown-item" onclick="switchViewerSection('viewer-section-activities')">📅 Activities</div>
                         <div class="dropdown-item" onclick="switchViewerSection('viewer-section-memories')">🖼️ Memories</div>
                         <div class="dropdown-item" onclick="switchViewerSection('viewer-section-ideas')">💡 Suggest an Idea</div>
                         <div class="dropdown-item" id="viewer-menu-attendance-item" onclick="switchViewerSection('viewer-section-attendance')">📊 Attendance History</div>
-                        <div class="dropdown-item" id="cp-menu-attendance-manage" onclick="switchViewerSection('cp-section-attendance-manage')" class="hidden">📋 Take Attendance</div>
+                        <div class="dropdown-item hidden" id="cp-menu-attendance-manage" onclick="switchViewerSection('cp-section-attendance-manage')">📋 Take Attendance</div>
                         <div class="dropdown-item" onclick="openMyPatrouilleSection()">⛺ My Patrouille</div>
                     </div>
                 </div>
             </div>
 
-            <!-- VIEWER SUB-SECTION 1: WELCOME HOME -->
+            <!-- VIEWER SUB-SECTION 1: WELCOME HOME & PROFILE -->
             <div id="viewer-section-welcome" class="viewer-tab-content">
                 <div class="welcome-box">
                     Welcome, <span id="logged-viewer-name" style="color: var(--green);"></span>!
                     <br><small style="color: var(--brown); font-size: 0.85rem;" id="logged-viewer-role-text"></small>
                     <br><small style="color: var(--dark-brown); font-size: 0.85rem;" id="logged-viewer-patrol-text"></small>
                 </div>
-                <p style="text-align: center; color: var(--brown); font-size: 0.95rem;">Use the top-right menu (⋮) to navigate through Activities, Memories, Ideas, Attendance, and your Patrouille area.</p>
+                
+                <div class="section-box" style="padding: 10px 20px; background: #fff; text-align: center;">
+                    <h4 style="color: var(--dark-green); font-size: 0.95rem;">🏆 Patrol Leaderboard Rank</h4>
+                    <div id="viewer-patrol-rank" style="font-size: 1.1rem; font-weight: bold; color: var(--gold); margin-top: 5px;">Loading points...</div>
+                </div>
+
+                <!-- Gamified Active Challenge Container -->
+                <div id="viewer-active-challenge-container"></div>
+
+                <div class="section-box" style="margin-bottom: 0;">
+                    <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 15px;">👤 Digital Scout Profile</h3>
+                    
+                    <div class="stat-card-grid">
+                        <div class="stat-mini-card">
+                            <h4>Total XP</h4>
+                            <div class="stat-val" id="profile-xp">0</div>
+                        </div>
+                        <div class="stat-mini-card">
+                            <h4>Total Badges</h4>
+                            <div class="stat-val" id="profile-badges">0</div>
+                        </div>
+                    </div>
+
+                    <div style="background: white; border: 1px solid #ddd; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+                        <h4 style="font-size: 0.85rem; color: var(--brown); margin-bottom: 10px;">Weekly Challenges Stats</h4>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 5px;">
+                            <span>Completed: <strong id="profile-chal-completed" style="color: var(--green)">0</strong></span>
+                            <span>Failed: <strong id="profile-chal-failed" style="color: #d62828">0</strong></span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                            <span>Current Streak: <strong id="profile-curr-streak">0</strong></span>
+                            <span>Best Streak: <strong id="profile-best-streak">0</strong></span>
+                        </div>
+                        <div style="font-size: 0.85rem; margin-top: 10px; color: var(--dark-brown);">
+                            Last Completed: <strong id="profile-last-completed">None</strong>
+                        </div>
+                    </div>
+
+                    <h4 style="font-size: 0.9rem; color: var(--dark-green); margin-bottom: 10px;">Activity Timeline</h4>
+                    <div class="timeline-container" id="profile-timeline">
+                        <div style="font-size: 0.85rem; color: #888;">No recent activity.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEWER SUB-SECTION 1.5: CHALLENGES LIST -->
+            <div id="viewer-section-challenges" class="viewer-tab-content hidden">
+                <div class="section-box" style="margin-bottom: 0;">
+                    <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">🏆 All Challenges</h3>
+                    <div id="viewer-challenges-list" class="list-container" style="margin-bottom: 0;">Loading challenges...</div>
+                </div>
             </div>
 
             <!-- VIEWER SUB-SECTION 2: ACTIVITIES -->
@@ -791,7 +1098,6 @@
                 <div class="section-box" style="margin-bottom: 0;">
                     <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 15px;">📊 My Attendance Record & Statistics</h3>
                     
-                    <!-- Stats Grid -->
                     <div id="member-attendance-stats" class="stat-card-grid">
                         <div class="stat-mini-card">
                             <h4>Total Meetings</h4>
@@ -807,7 +1113,7 @@
                         </div>
                         <div class="stat-mini-card">
                             <h4>Absent / Excused / Late</h4>
-                            <div class="stat-val" id="stat-ael" style="color: #e76f51; font-size: 1rem; padding-top: 4px;" id="stat-ael-text">0 / 0 / 0</div>
+                            <div class="stat-val" id="stat-ael" style="color: #e76f51; font-size: 1rem; padding-top: 4px;">0 / 0 / 0</div>
                         </div>
                     </div>
 
@@ -858,7 +1164,7 @@
                 <button id="patrouille-back-btn" class="btn btn-outline" style="width: auto; padding: 6px 12px; margin-bottom: 0; font-size: 0.85rem;" type="button">⬅ Back</button>
             </div>
 
-            <!-- Admin Patrouille Selector Dropdown (Only visible to Admin) -->
+            <!-- Admin Patrouille Selector Dropdown -->
             <div id="admin-patrol-selector-wrapper" class="form-group hidden" style="background: rgba(255,255,255,0.7); padding: 12px; border-radius: 8px;">
                 <label>Select Patrouille to Manage (Admin View):</label>
                 <select id="admin-target-patrol-select" class="form-control">
@@ -866,79 +1172,58 @@
                 </select>
             </div>
 
-            <!-- 1. MEMBERS & BADGES -->
             <div class="section-box">
                 <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">👥 Members & Badges</h3>
                 <div id="patrol-members-badges-container" class="list-container" style="max-height: 220px;">Loading members...</div>
             </div>
 
-            <!-- 2. PATROUILLE MEMORIES -->
             <div class="section-box">
                 <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">🖼️ Patrouille Memories</h3>
-                
                 <div id="patrol-memory-form-wrapper" class="hidden" style="background: rgba(255,255,255,0.8); padding: 12px; border-radius: 8px; margin-bottom: 15px;">
                     <h4 style="font-size: 0.9rem; color: var(--dark-green); margin-bottom: 8px;">Add New Memory</h4>
                     <div id="patrol-mem-msg" class="success-message">Memory added!</div>
-                    <div id="patrol-mem-err" class="error-message">Please provide a title and date.</div>
+                    <div id="patrol-mem-err" class="error-message">Please provide a title.</div>
                     <div class="form-group" style="margin-bottom: 10px;">
                         <input type="text" id="patrol-mem-title" class="form-control" placeholder="Memory Title" autocomplete="off" />
                     </div>
                     <div class="form-group" style="margin-bottom: 10px;">
-                        <input type="text" id="patrol-mem-desc" class="form-control" placeholder="Description" autocomplete="off" />
-                    </div>
-                    <div class="form-group" style="margin-bottom: 10px;">
-                        <input type="date" id="patrol-mem-date" class="form-control" />
-                    </div>
-                    <div class="form-group" style="margin-bottom: 10px;">
-                        <label style="font-size: 0.85rem;">Photo (Optional)</label>
                         <input type="file" id="patrol-mem-file" class="form-control" accept="image/*" />
                     </div>
                     <button id="add-patrol-memory-btn" class="btn btn-outline" style="margin-bottom: 0; padding: 10px;">Publish Memory</button>
                 </div>
-
-                <div id="patrol-memories-grid" class="gallery-grid" style="margin-bottom: 0;">Loading memories...</div>
+                <!-- Patrouille Memories Container -->
+                <div id="memories-container" class="gallery-grid" style="margin-bottom: 0;">Loading memories...</div>
             </div>
 
-            <!-- 3. PATROUILLE ACTIVITIES -->
             <div class="section-box" style="margin-bottom: 0;">
                 <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">📅 Patrouille Planned Activities</h3>
-                
                 <div id="patrol-activity-form-wrapper" class="hidden" style="background: rgba(255,255,255,0.8); padding: 12px; border-radius: 8px; margin-bottom: 15px;">
                     <h4 style="font-size: 0.9rem; color: var(--dark-green); margin-bottom: 8px;">Plan New Activity</h4>
                     <div id="patrol-act-msg" class="success-message">Activity planned!</div>
-                    <div id="patrol-act-err" class="error-message">Please fill in title, date, time and location.</div>
+                    <div id="patrol-act-err" class="error-message">Please fill in title and date.</div>
                     <div class="form-group" style="margin-bottom: 10px;">
                         <input type="text" id="patrol-act-title" class="form-control" placeholder="Activity Title" autocomplete="off" />
                     </div>
                     <div class="form-group" style="margin-bottom: 10px;">
-                        <input type="text" id="patrol-act-desc" class="form-control" placeholder="Description / Additional Details" autocomplete="off" />
-                    </div>
-                    <div class="form-group" style="margin-bottom: 10px;">
                         <input type="date" id="patrol-act-date" class="form-control" />
-                    </div>
-                    <div class="form-group" style="margin-bottom: 10px;">
-                        <input type="time" id="patrol-act-time" class="form-control" />
-                    </div>
-                    <div class="form-group" style="margin-bottom: 10px;">
-                        <input type="text" id="patrol-act-location" class="form-control" placeholder="Location" autocomplete="off" />
                     </div>
                     <button id="add-patrol-activity-btn" class="btn btn-outline" style="margin-bottom: 0; padding: 10px;">Schedule Activity</button>
                 </div>
-
-                <div id="patrol-activities-list" class="list-container" style="margin-bottom: 0; max-height: 200px;">Loading activities...</div>
+                <!-- Patrouille Activities Container -->
+                <div id="activities-container" class="list-container" style="margin-bottom: 0; max-height: 200px;">Loading activities...</div>
             </div>
         </main>
     </div>
 
     <!-- IMAGE LIGHTBOX MODAL -->
     <div id="image-modal">
-        <img id="modal-img" src="" alt="Zoomed Memory" />
+        <img id="modal-img" src="" alt="Zoomed" />
     </div>
 
     <!-- FIREBASE & APP LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, getDoc, updateDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCqLoLICq9kbpMsaD58F6U4cwbiMygGrmU",
@@ -960,10 +1245,14 @@
 
         let db = null;
         let usersCache = {};
+        let patrolsCache = {};
         let currentLoggedInUser = null;
         let attendanceSessionsCache = [];
+        let challengesCache = {};
+        let challengeResultsCache = {};
+        let activeChallengeId = null;
+        let countdownInterval = null;
 
-        // UI Screens
         const screens = {
             home: document.getElementById('home-screen'),
             login: document.getElementById('login-screen'),
@@ -977,7 +1266,6 @@
             screens[screenName].classList.remove('hidden');
         }
 
-        // Navigation bindings
         document.getElementById('goto-login').addEventListener('click', () => switchScreen('login'));
         document.getElementById('login-back-btn').addEventListener('click', () => switchScreen('home'));
         document.getElementById('patrouille-back-btn').addEventListener('click', () => {
@@ -990,23 +1278,16 @@
             }
         });
 
-        // Three dots menu toggle handlers
         const adminMenuToggle = document.getElementById('admin-menu-toggle');
         const adminDropdown = document.getElementById('admin-dropdown');
         if (adminMenuToggle && adminDropdown) {
-            adminMenuToggle.addEventListener('click', (e) => {
-                e.stopPropagation();
-                adminDropdown.classList.toggle('show');
-            });
+            adminMenuToggle.addEventListener('click', (e) => { e.stopPropagation(); adminDropdown.classList.toggle('show'); });
         }
 
         const viewerMenuToggle = document.getElementById('viewer-menu-toggle');
         const viewerDropdown = document.getElementById('viewer-dropdown');
         if (viewerMenuToggle && viewerDropdown) {
-            viewerMenuToggle.addEventListener('click', (e) => {
-                e.stopPropagation();
-                viewerDropdown.classList.toggle('show');
-            });
+            viewerMenuToggle.addEventListener('click', (e) => { e.stopPropagation(); viewerDropdown.classList.toggle('show'); });
         }
 
         window.addEventListener('click', () => {
@@ -1014,15 +1295,13 @@
             if (viewerDropdown) viewerDropdown.classList.remove('show');
         });
 
-        // Tab Switchers for Menus
         window.switchAdminSection = function(sectionId) {
             document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.add('hidden'));
             const targetEl = document.getElementById(sectionId);
             if (targetEl) targetEl.classList.remove('hidden');
             if (adminDropdown) adminDropdown.classList.remove('show');
-            if (sectionId === 'admin-section-attendance') {
-                renderAdminAttendanceSection();
-            }
+            if (sectionId === 'admin-section-attendance') renderAdminAttendanceSection();
+            if (sectionId === 'admin-section-challenges') renderAdminVerificationTable();
         };
 
         window.switchViewerSection = function(sectionId) {
@@ -1030,28 +1309,25 @@
             const targetEl = document.getElementById(sectionId);
             if (targetEl) targetEl.classList.remove('hidden');
             if (viewerDropdown) viewerDropdown.classList.remove('show');
-            if (sectionId === 'viewer-section-attendance') {
-                renderMemberAttendanceHistory();
-            } else if (sectionId === 'cp-section-attendance-manage') {
-                renderCpAttendanceRoster();
-            }
+            if (sectionId === 'viewer-section-attendance') renderMemberAttendanceHistory();
+            else if (sectionId === 'cp-section-attendance-manage') renderCpAttendanceRoster();
         };
 
-        // Initialize Firebase
         try {
             if (firebaseConfig.apiKey) {
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 
-                // Ensure default hardcoded admin account exists in Firestore
-                setDoc(doc(db, "members", "chef"), { password: "chef", role: "Admin", patrol: "Staff", badges: 0 }, { merge: true });
+                setDoc(doc(db, "members", "chef"), { password: "chef", role: "Admin", patrol: "Staff", badges: 0, xp: 0 }, { merge: true });
 
-                initUsersListener();
                 initPatrolsListener();
+                initUsersListener();
                 initActivitiesListener();
                 initGalleryListener();
                 initIdeasListener();
                 initAttendanceListener();
+                initChallengesListener();
+                initChallengeResultsListener();
             } else {
                 alert("Please add your Firebase configuration variables in index.html");
             }
@@ -1059,62 +1335,35 @@
             console.error("Firebase init error:", err);
         }
 
-        // Realtime Users Synchronization
-        function initUsersListener() {
-            const colRef = collection(db, "members");
-            onSnapshot(colRef, (snapshot) => {
-                usersCache = {};
-                let html = "";
-                if (snapshot.empty) {
-                    html = "<div class='list-item'>No accounts created yet.</div>";
-                } else {
-                    snapshot.forEach((docSnap) => {
-                        const data = docSnap.data();
-                        usersCache[docSnap.id] = { 
-                            password: data.password, 
-                            role: data.role || 'Member',
-                            patrol: data.patrol || 'Unassigned',
-                            badges: data.badges || 0
-                        };
-                        html += `
-                            <div class='list-item'>
-                                <span>👤 <strong>${docSnap.id}</strong></span> 
-                                <div class="badges-container">
-                                    <span class="patrouille-badge">⛺ ${data.patrol || 'Unassigned'}</span>
-                                    <span class="role-badge">${data.role || 'Member'}</span>
-                                </div>
-                            </div>`;
-                    });
-                }
-                const mContainer = document.getElementById('members-list-container');
-                if (mContainer) mContainer.innerHTML = html;
-
-                // Refresh Patrouille section views if active
-                if (currentLoggedInUser) {
-                    renderPatrouilleSectionData();
-                    if (currentLoggedInUser.role === 'Admin' && document.getElementById('admin-section-attendance') && !document.getElementById('admin-section-attendance').classList.contains('hidden')) {
-                        renderAdminAttendanceSection();
-                    } else if (currentLoggedInUser.role === 'Cp' && document.getElementById('cp-section-attendance-manage') && !document.getElementById('cp-section-attendance-manage').classList.contains('hidden')) {
-                        renderCpAttendanceRoster();
-                    }
-                }
-            });
+        function showNotification(title, message, icon = '🎉') {
+            const container = document.getElementById('notification-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.innerHTML = `<strong style="display:block;margin-bottom:5px;font-size:1.1rem;color:var(--dark-green);">${icon} ${title}</strong>
+                               <div style="font-size:0.9rem;color:var(--dark-brown);">${message}</div>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 500);
+            }, 5000);
         }
 
-        // Realtime Patrouilles Synchronization
         function initPatrolsListener() {
             const colRef = collection(db, "patrols");
             onSnapshot(colRef, (snapshot) => {
                 let selectHtml = `<option value="" disabled selected>Select a Patrouille</option>`;
-                selectHtml += `<option value="Staff">Staff (Leadership)</option>`;
-
                 let adminSelectHtml = `<option value="" disabled selected>Select a Patrouille</option>`;
+                let attendanceTargetHtml = `<option value="" disabled selected>Select Patrouille</option>`;
+                selectHtml += `<option value="Staff">Staff (Leadership)</option>`;
                 adminSelectHtml += `<option value="Staff">Staff (Leadership)</option>`;
 
-                let attendanceTargetHtml = `<option value="" disabled selected>Select Patrouille</option>`;
-
+                patrolsCache = {};
                 snapshot.forEach((docSnap) => {
                     const pName = docSnap.id;
+                    const pData = docSnap.data();
+                    patrolsCache[pName] = pData.points || 0;
+
                     if (pName !== "Staff") {
                         selectHtml += `<option value="${pName}">${pName}</option>`;
                         adminSelectHtml += `<option value="${pName}">${pName}</option>`;
@@ -1123,632 +1372,345 @@
                         attendanceTargetHtml += `<option value="Staff">Staff (Leadership)</option>`;
                     }
                 });
-                const mPatrolSel = document.getElementById('new-member-patrol');
-                if (mPatrolSel) mPatrolSel.innerHTML = selectHtml;
 
+                if (document.getElementById('new-member-patrol')) document.getElementById('new-member-patrol').innerHTML = selectHtml;
                 const adminPatrolSel = document.getElementById('admin-target-patrol-select');
-                if (adminPatrolSel) {
-                    const currentVal = adminPatrolSel.value;
-                    adminPatrolSel.innerHTML = adminSelectHtml;
-                    if (currentVal) adminPatrolSel.value = currentVal;
-                }
+                if (adminPatrolSel) { const c = adminPatrolSel.value; adminPatrolSel.innerHTML = adminSelectHtml; if (c) adminPatrolSel.value = c; }
+                const attTarget = document.getElementById('attendance-patrol-target');
+                if (attTarget) { const ca = attTarget.value; attTarget.innerHTML = attendanceTargetHtml; if (ca) attTarget.value = ca; }
 
-                const attendanceTargetSel = document.getElementById('attendance-patrol-target');
-                if (attendanceTargetSel) {
-                    const currAttVal = attendanceTargetSel.value;
-                    attendanceTargetSel.innerHTML = attendanceTargetHtml;
-                    if (currAttVal) attendanceTargetSel.value = currAttVal;
-                }
+                renderPatrolLeaderboard();
             });
         }
 
-        // Realtime Activities Synchronization
-        function initActivitiesListener() {
-            const colRef = collection(db, "activities");
+        function initUsersListener() {
+            const colRef = collection(db, "members");
             onSnapshot(colRef, (snapshot) => {
-                let adminHtml = "";
-                let viewerHtml = "";
+                usersCache = {};
+                let html = "";
+                
                 if (snapshot.empty) {
-                    adminHtml = "<div class='list-item'>No scheduled activities found.</div>";
-                    viewerHtml = "<div class='list-item'>No scheduled activities found.</div>";
+                    html = "<div class='list-item'>No accounts created yet.</div>";
                 } else {
                     snapshot.forEach((docSnap) => {
                         const data = docSnap.data();
-                        const actId = docSnap.id;
-                        const dateStr = new Date(data.date).toLocaleString();
-                        adminHtml += `
+                        const uid = docSnap.id;
+                        usersCache[uid] = { 
+                            password: data.password, 
+                            role: data.role || 'Member',
+                            patrol: data.patrol || 'Unassigned',
+                            badges: data.badges || 0,
+                            xp: data.xp || 0,
+                            challengesCompleted: data.challengesCompleted || 0,
+                            challengesFailed: data.challengesFailed || 0,
+                            currentStreak: data.currentStreak || 0,
+                            bestStreak: data.bestStreak || 0,
+                            lastCompleted: data.lastCompleted || 'None',
+                            timeline: data.timeline || []
+                        };
+
+                        if (currentLoggedInUser && currentLoggedInUser.username === uid) {
+                            updateDigitalProfile();
+                        }
+
+                        let deleteBtn = (uid !== 'chef') ? `<button class="btn-danger" onclick="deleteUserAccount('${uid}')">Delete</button>` : '';
+
+                        html += `
                             <div class='list-item'>
-                                <div><strong>${data.title}</strong><br><small>🕒 ${dateStr}</small></div>
-                                <button class="btn-danger" onclick="deleteActivity('${actId}')">Delete</button>
-                            </div>`;
-                        viewerHtml += `
-                            <div class='list-item'>
-                                <div><strong>${data.title}</strong><br><small>🕒 ${dateStr}</small></div>
+                                <div>👤 <strong>${uid}</strong> <div class="badges-container" style="margin-top:4px;"><span class="patrouille-badge">⛺ ${data.patrol || 'Unassigned'}</span> <span class="role-badge">${data.role || 'Member'}</span></div></div>
+                                ${deleteBtn}
                             </div>`;
                     });
                 }
-                const adminActList = document.getElementById('admin-activities-list');
-                if (adminActList) adminActList.innerHTML = adminHtml;
-                const viewerActList = document.getElementById('viewer-activities-list');
-                if (viewerActList) viewerActList.innerHTML = viewerHtml;
+                const mContainer = document.getElementById('members-list-container');
+                if (mContainer) mContainer.innerHTML = html;
+
+                if (currentLoggedInUser) {
+                    renderPatrouilleSectionData();
+                    if (currentLoggedInUser.role === 'Admin') renderAdminVerificationTable();
+                }
             });
         }
 
-        // Realtime Gallery Synchronization
+        window.deleteUserAccount = async function(uid) {
+            if(confirm(`Are you sure you want to delete account "${uid}"?`)) {
+                await deleteDoc(doc(db, "members", uid));
+            }
+        };
+
+        function initActivitiesListener() {
+            const colRef = collection(db, "activities");
+            onSnapshot(colRef, (snapshot) => {
+                let adminHtml = "", viewerHtml = "";
+                if (snapshot.empty) {
+                    adminHtml = viewerHtml = "<div class='list-item'>No scheduled activities found.</div>";
+                } else {
+                    snapshot.forEach((docSnap) => {
+                        const data = docSnap.data();
+                        const dateStr = new Date(data.date).toLocaleString();
+                        adminHtml += `<div class='list-item'><div><strong>${data.title}</strong><br><small>🕒 ${dateStr}</small></div><button class="btn-danger" onclick="deleteActivity('${docSnap.id}')">Delete</button></div>`;
+                        viewerHtml += `<div class='list-item'><div><strong>${data.title}</strong><br><small>🕒 ${dateStr}</small></div></div>`;
+                    });
+                }
+                if (document.getElementById('admin-activities-list')) document.getElementById('admin-activities-list').innerHTML = adminHtml;
+                if (document.getElementById('viewer-activities-list')) document.getElementById('viewer-activities-list').innerHTML = viewerHtml;
+            });
+        }
+
         function initGalleryListener() {
             const colRef = collection(db, "gallery");
             onSnapshot(colRef, (snapshot) => {
                 let html = "";
-                if (snapshot.empty) {
-                    html = "<div style='grid-column: 1 / -1; font-size: 0.9rem; color: #7f5539;'>No memories added yet.</div>";
-                } else {
+                if (!snapshot.empty) {
                     snapshot.forEach((docSnap) => {
                         const data = docSnap.data();
-                        html += `
-                            <div class='gallery-item'>
-                                <img src="${data.url}" alt="Scout Memory" onclick="openImageModal('${data.url}')" />
-                                <button class="btn-danger" onclick="deletePhoto('${docSnap.id}')">X</button>
-                            </div>`;
+                        html += `<div class='gallery-item'><img src="${data.url}" onclick="openImageModal('${data.url}')" /><button class="btn-danger" onclick="deletePhoto('${docSnap.id}')">X</button></div>`;
                     });
                 }
                 const adminGal = document.getElementById('admin-gallery-grid');
-                if (adminGal) adminGal.innerHTML = html;
-                
+                if (adminGal) adminGal.innerHTML = html || "<div>No memories.</div>";
                 const viewerGal = document.getElementById('viewer-gallery-grid');
-                if (viewerGal) {
-                    let viewerHtml = html.replace(/<button class="btn-danger" onclick="deletePhoto\('[^']+'\)">X<\/button>/g, '');
-                    viewerGal.innerHTML = viewerHtml;
-                }
+                if (viewerGal) viewerGal.innerHTML = (html || "<div>No memories.</div>").replace(/<button class="btn-danger"[^>]*>X<\/button>/g, '');
             });
         }
 
-        // Realtime Ideas Synchronization
         function initIdeasListener() {
             const colRef = collection(db, "ideas");
             onSnapshot(colRef, (snapshot) => {
                 let html = "";
-                if (snapshot.empty) {
-                    html = "<div class='list-item'>No ideas submitted yet.</div>";
-                } else {
+                if (!snapshot.empty) {
                     snapshot.forEach((docSnap) => {
                         const data = docSnap.data();
-                        html += `
-                            <div class='list-item'>
-                                <div><strong>${data.author} (${data.patrol})</strong>: ${data.text}</div>
-                                <button class="btn-danger" onclick="deleteIdea('${docSnap.id}')">Delete</button>
-                            </div>`;
+                        html += `<div class='list-item'><div><strong>${data.author} (${data.patrol})</strong>: ${data.text}</div><button class="btn-danger" onclick="deleteIdea('${docSnap.id}')">Delete</button></div>`;
                     });
                 }
                 const adminIdeas = document.getElementById('admin-ideas-list');
-                if (adminIdeas) adminIdeas.innerHTML = html;
+                if (adminIdeas) adminIdeas.innerHTML = html || "<div class='list-item'>No ideas yet.</div>";
             });
         }
 
-        // ==========================================================================
-        // ATTENDANCE SYSTEM SYNCHRONIZATION & LOGIC
-        // ==========================================================================
         function initAttendanceListener() {
             const colRef = collection(db, "attendance_sessions");
             onSnapshot(colRef, (snapshot) => {
                 attendanceSessionsCache = [];
-                snapshot.forEach((docSnap) => {
-                    attendanceSessionsCache.push({
-                        id: docSnap.id,
-                        ...docSnap.data()
-                    });
-                });
-                // Sort by date descending
+                snapshot.forEach((docSnap) => attendanceSessionsCache.push({ id: docSnap.id, ...docSnap.data() }));
                 attendanceSessionsCache.sort((a, b) => new Date(b.date) - new Date(a.date));
-
                 if (currentLoggedInUser) {
-                    if (currentLoggedInUser.role === 'Admin') {
-                        renderAdminAttendanceSection();
-                    } else if (document.getElementById('viewer-section-attendance') && !document.getElementById('viewer-section-attendance').classList.contains('hidden')) {
-                        renderMemberAttendanceHistory();
-                    }
+                    if (currentLoggedInUser.role === 'Admin') renderAdminAttendanceSection();
+                    else renderMemberAttendanceHistory();
                 }
             });
         }
 
-        // Admin attendance target patrol selector change listener
-        const attendancePatrolTarget = document.getElementById('attendance-patrol-target');
-        if (attendancePatrolTarget) {
-            attendancePatrolTarget.addEventListener('change', (e) => {
-                renderAdminAttendanceRoster(e.target.value);
-            });
-        }
+        function initChallengesListener() {
+            const colRef = collection(db, "weeklyChallenges");
+            onSnapshot(colRef, (snapshot) => {
+                challengesCache = {};
+                activeChallengeId = null;
+                let archiveHtml = "", viewerArchiveHtml = "";
 
-        function renderAdminAttendanceRoster(patrolName) {
-            const rosterContainer = document.getElementById('attendance-marking-roster');
-            if (!rosterContainer) return;
+                if (snapshot.empty) {
+                    archiveHtml = "<div class='list-item'>No challenges created yet.</div>";
+                    viewerArchiveHtml = "<div class='list-item'>No challenges found.</div>";
+                } else {
+                    snapshot.forEach(docSnap => {
+                        const data = docSnap.data();
+                        challengesCache[docSnap.id] = data;
+                        if (data.active) activeChallengeId = docSnap.id;
 
-            let html = "";
-            let memberCount = 0;
-            for (let [username, uData] of Object.entries(usersCache)) {
-                if (uData.patrol === patrolName) {
-                    memberCount++;
-                    html += `
-                        <div class='list-item' style="display: flex; justify-content: space-between; align-items: center;">
-                            <span>👤 <strong>${username}</strong> (${uData.role})</span>
-                            <div style="display: flex; gap: 6px;">
-                                <select class="form-control attendance-status-select" data-member="${username}" style="padding: 6px 10px; font-size: 0.85rem; width: auto;">
-                                    <option value="Present">Present</option>
-                                    <option value="Absent">Absent</option>
-                                    <option value="Excused">Excused</option>
-                                    <option value="Late">Late</option>
-                                </select>
-                            </div>
-                        </div>`;
-                }
-            }
-            if (memberCount === 0) {
-                html = "<div class='list-item'>No members found in this Patrouille.</div>";
-            }
-            rosterContainer.innerHTML = html;
-        }
+                        let statusBadge = data.active ? '<span class="status-badge status-present">Active</span>' : '<span class="status-badge status-absent">Archived</span>';
+                        let actionBtn = data.active 
+                            ? `<button class="btn-danger" onclick="toggleChallengeActive('${docSnap.id}', false)">Archive</button>`
+                            : `<button class="btn-success" onclick="toggleChallengeActive('${docSnap.id}', true)">Set Active</button>`;
 
-        function renderCpAttendanceRoster() {
-            if (!currentLoggedInUser || currentLoggedInUser.role !== 'Cp') return;
-            const patrolName = currentLoggedInUser.patrol;
-            const rosterContainer = document.getElementById('cp-attendance-roster');
-            if (!rosterContainer) return;
-
-            let html = "";
-            let memberCount = 0;
-            for (let [username, uData] of Object.entries(usersCache)) {
-                if (uData.patrol === patrolName) {
-                    memberCount++;
-                    html += `
-                        <div class='list-item' style="display: flex; justify-content: space-between; align-items: center;">
-                            <span>👤 <strong>${username}</strong> (${uData.role})</span>
-                            <div style="display: flex; gap: 6px;">
-                                <select class="form-control cp-attendance-status-select" data-member="${username}" style="padding: 6px 10px; font-size: 0.85rem; width: auto;">
-                                    <option value="Present">Present</option>
-                                    <option value="Absent">Absent</option>
-                                    <option value="Excused">Excused</option>
-                                    <option value="Late">Late</option>
-                                </select>
-                            </div>
-                        </div>`;
-                }
-            }
-            if (memberCount === 0) {
-                html = "<div class='list-item'>No members found in your Patrouille.</div>";
-            }
-            rosterContainer.innerHTML = html;
-        }
-
-        // Save Attendance (Admin)
-        const saveAttendanceBtn = document.getElementById('save-attendance-btn');
-        if (saveAttendanceBtn) {
-            saveAttendanceBtn.addEventListener('click', async () => {
-                const patrol = document.getElementById('attendance-patrol-target').value;
-                const title = document.getElementById('attendance-session-title').value.trim();
-                const date = document.getElementById('attendance-session-date').value;
-                const desc = document.getElementById('attendance-session-desc').value.trim();
-
-                if (!patrol || !title || !date) return showMsg('admin-attendance-err', 'admin-attendance-msg');
-
-                const records = {};
-                document.querySelectorAll('.attendance-status-select').forEach(sel => {
-                    const memberName = sel.getAttribute('data-member');
-                    records[memberName] = sel.value;
-                });
-
-                if (Object.keys(records).length === 0) {
-                    return showMsg('admin-attendance-err', 'admin-attendance-msg');
-                }
-
-                await setDoc(doc(collection(db, "attendance_sessions")), {
-                    patrol,
-                    title,
-                    date,
-                    desc,
-                    records,
-                    createdBy: currentLoggedInUser.username,
-                    created: Date.now()
-                });
-
-                document.getElementById('attendance-session-title').value = '';
-                document.getElementById('attendance-session-date').value = '';
-                document.getElementById('attendance-session-desc').value = '';
-                showMsg('admin-attendance-msg', 'admin-attendance-err');
-            });
-        }
-
-        // Save Attendance (CP)
-        const cpSaveAttendanceBtn = document.getElementById('cp-save-attendance-btn');
-        if (cpSaveAttendanceBtn) {
-            cpSaveAttendanceBtn.addEventListener('click', async () => {
-                if (!currentLoggedInUser || currentLoggedInUser.role !== 'Cp') return;
-                const patrol = currentLoggedInUser.patrol;
-                const title = document.getElementById('cp-attendance-title').value.trim();
-                const date = document.getElementById('cp-attendance-date').value;
-                const desc = document.getElementById('cp-attendance-desc').value.trim();
-
-                if (!title || !date) return showMsg('cp-attendance-err', 'cp-attendance-msg');
-
-                const records = {};
-                document.querySelectorAll('.cp-attendance-status-select').forEach(sel => {
-                    const memberName = sel.getAttribute('data-member');
-                    records[memberName] = sel.value;
-                });
-
-                if (Object.keys(records).length === 0) {
-                    return showMsg('cp-attendance-err', 'cp-attendance-msg');
-                }
-
-                await setDoc(doc(collection(db, "attendance_sessions")), {
-                    patrol,
-                    title,
-                    date,
-                    desc,
-                    records,
-                    createdBy: currentLoggedInUser.username,
-                    created: Date.now()
-                });
-
-                document.getElementById('cp-attendance-title').value = '';
-                document.getElementById('cp-attendance-date').value = '';
-                document.getElementById('cp-attendance-desc').value = '';
-                showMsg('cp-attendance-msg', 'cp-attendance-err');
-            });
-        }
-
-        // Render Admin Attendance Sessions & Statistics
-        function renderAdminAttendanceSection() {
-            const sessionsList = document.getElementById('admin-attendance-sessions-list');
-            const statsContainer = document.getElementById('admin-troop-stats-container');
-            if (!sessionsList || !statsContainer) return;
-
-            let totalSessions = attendanceSessionsCache.length;
-            let totalRecordsCount = 0;
-            let totalPresentCount = 0;
-
-            let sessionsHtml = "";
-            if (totalSessions === 0) {
-                sessionsHtml = "<div class='list-item'>No attendance sessions recorded yet.</div>";
-            } else {
-                attendanceSessionsCache.forEach(sess => {
-                    let recs = sess.records || {};
-                    let sessionPresent = 0;
-                    let sessionTotal = Object.keys(recs).length;
-                    Object.values(recs).forEach(st => {
-                        totalRecordsCount++;
-                        if (st === 'Present' || st === 'Late') {
-                            if (st === 'Present') totalPresentCount++;
-                        }
-                        if (st === 'Present') sessionPresent++;
+                        archiveHtml += `
+                            <div class='list-item' style="align-items:flex-start;">
+                                <div><strong>${data.title}</strong> ${statusBadge}<br><small>XP: ${data.xpReward} | Badge: ${data.badgeReward || 0}</small></div>
+                                <div style="display:flex; flex-direction:column; gap:5px;">${actionBtn}<button class="btn-danger" onclick="deleteChallenge('${docSnap.id}')">Delete</button></div>
+                            </div>`;
+                        viewerArchiveHtml += `<div class='list-item'><div><strong>${data.title}</strong> ${statusBadge}<br><small>XP: ${data.xpReward}</small></div></div>`;
                     });
+                }
+                document.getElementById('admin-challenges-list').innerHTML = archiveHtml;
+                document.getElementById('viewer-challenges-list').innerHTML = viewerArchiveHtml;
+                renderAdminVerificationTable();
+                renderViewerChallengeCard();
+            });
+        }
 
-                    sessionsHtml += `
-                        <div class='list-item' style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <strong>${sess.title}</strong> (${sess.patrol})<br>
-                                <small>📅 ${sess.date} | Present: ${sessionPresent}/${sessionTotal} members</small>
-                            </div>
-                            <button class="btn-danger" onclick="deleteAttendanceSession('${sess.id}')">Delete</button>
-                        </div>`;
-                });
+        function initChallengeResultsListener() {
+            const colRef = collection(db, "challengeResults");
+            onSnapshot(colRef, (snapshot) => {
+                challengeResultsCache = {};
+                snapshot.forEach(docSnap => { challengeResultsCache[docSnap.id] = docSnap.data(); });
+                renderAdminVerificationTable();
+                renderViewerChallengeCard();
+            });
+        }
+
+        document.getElementById('create-challenge-btn')?.addEventListener('click', async () => {
+            const title = document.getElementById('challenge-title').value.trim();
+            const desc = document.getElementById('challenge-desc').value.trim();
+            const xp = parseInt(document.getElementById('challenge-xp').value) || 0;
+            const badge = parseInt(document.getElementById('challenge-badge').value) || 0;
+            const difficulty = document.getElementById('challenge-difficulty').value;
+            const startDate = document.getElementById('challenge-start').value;
+            const endDate = document.getElementById('challenge-end').value;
+            const fileInput = document.getElementById('challenge-img');
+
+            if(!title || !desc || !startDate || !endDate || xp <= 0) return showMsg('challenge-err', 'challenge-msg');
+
+            let imageUrl = "";
+            if (fileInput.files.length > 0) imageUrl = await readFileAsDataURL(fileInput.files[0]);
+
+            await setDoc(doc(collection(db, "weeklyChallenges")), {
+                title, description: desc, xpReward: xp, badgeReward: badge, 
+                difficulty, startDate, endDate, image: imageUrl, active: false, createdAt: Date.now()
+            });
+
+            document.getElementById('challenge-title').value = '';
+            document.getElementById('challenge-desc').value = '';
+            document.getElementById('challenge-xp').value = '';
+            showMsg('challenge-msg', 'challenge-err');
+        });
+
+        window.toggleChallengeActive = async function(id, makeActive) {
+            if (makeActive && activeChallengeId) await updateDoc(doc(db, "weeklyChallenges", activeChallengeId), { active: false });
+            await updateDoc(doc(db, "weeklyChallenges", id), { active: makeActive });
+        };
+        window.deleteChallenge = async function(id) { await deleteDoc(doc(db, "weeklyChallenges", id)); };
+
+        function renderAdminVerificationTable() {
+            const infoDiv = document.getElementById('active-challenge-admin-info');
+            const tbody = document.getElementById('challenge-verification-tbody');
+            if(!infoDiv || !tbody) return;
+
+            if (!activeChallengeId) {
+                infoDiv.innerHTML = "No active challenge currently.";
+                tbody.innerHTML = "<tr><td colspan='4'>No data to display.</td></tr>";
+                return;
             }
-            sessionsList.innerHTML = sessionsHtml;
 
-            let overallPct = totalRecordsCount > 0 ? Math.round((totalPresentCount / totalRecordsCount) * 100) : 0;
-            statsContainer.innerHTML = `
-                <div class="stat-card-grid">
-                    <div class="stat-mini-card">
-                        <h4>Total Sessions</h4>
-                        <div class="stat-val">${totalSessions}</div>
+            const chal = challengesCache[activeChallengeId];
+            infoDiv.innerHTML = `<strong>🏆 ${chal.title}</strong>`;
+
+            let html = "";
+            for (let [uid, uData] of Object.entries(usersCache)) {
+                if (uData.role === 'Admin') continue;
+                let res = challengeResultsCache[`${activeChallengeId}_${uid}`];
+                let status = res ? res.status : 'Pending';
+                let statusSpan = `<span class="status-badge status-${status.toLowerCase()}">${status}</span>`;
+
+                html += `
+                    <tr>
+                        <td><strong>${uid}</strong></td>
+                        <td>${uData.patrol}</td>
+                        <td>${statusSpan}</td>
+                        <td class="action-btns">
+                            <button class="btn-success action-btn" onclick="verifyChallenge('${uid}', 'Completed')">✅</button>
+                            <button class="btn-danger action-btn" onclick="verifyChallenge('${uid}', 'Failed')">❌</button>
+                        </td>
+                    </tr>`;
+            }
+            tbody.innerHTML = html;
+        }
+
+        window.verifyChallenge = async function(username, newStatus) {
+            if (!activeChallengeId || !currentLoggedInUser) return;
+            const chal = challengesCache[activeChallengeId];
+            const resultId = `${activeChallengeId}_${username}`;
+            
+            await setDoc(doc(db, "challengeResults", resultId), {
+                challengeId: activeChallengeId, scoutId: username, status: newStatus, xpAwarded: newStatus === 'Completed' ? chal.xpReward : 0
+            }, { merge: true });
+
+            if (newStatus === 'Completed') {
+                let uData = usersCache[username];
+                let newXp = (uData.xp || 0) + parseInt(chal.xpReward);
+                let comp = (uData.challengesCompleted || 0) + 1;
+                await setDoc(doc(db, "members", username), { xp: newXp, challengesCompleted: comp, lastCompleted: chal.title }, { merge: true });
+                let pName = uData.patrol;
+                if(pName && pName !== 'Unassigned') {
+                    let currPts = patrolsCache[pName] || 0;
+                    await setDoc(doc(db, "patrols", pName), { points: currPts + parseInt(chal.xpReward) }, { merge: true });
+                }
+            }
+        };
+
+        function updateDigitalProfile() {
+            if(!currentLoggedInUser) return;
+            const d = usersCache[currentLoggedInUser.username];
+            if(!d) return;
+            if(document.getElementById('profile-xp')) document.getElementById('profile-xp').innerText = d.xp;
+            if(document.getElementById('profile-badges')) document.getElementById('profile-badges').innerText = d.badges;
+            if(document.getElementById('profile-chal-completed')) document.getElementById('profile-chal-completed').innerText = d.challengesCompleted;
+            if(document.getElementById('profile-chal-failed')) document.getElementById('profile-chal-failed').innerText = d.challengesFailed;
+        }
+
+        function renderPatrolLeaderboard() {
+            if(!currentLoggedInUser) return;
+            const p = currentLoggedInUser.patrol;
+            let rankEl = document.getElementById('viewer-patrol-rank');
+            if(!rankEl || p === 'Staff' || p === 'Unassigned') return;
+
+            let sorted = Object.entries(patrolsCache).filter(([k]) => k !== 'Staff').map(([k, v]) => ({name: k, points: v})).sort((a,b) => b.points - a.points);
+            let rankIndex = sorted.findIndex(x => x.name === p);
+            if(rankIndex !== -1) rankEl.innerText = `#${rankIndex + 1} Place (${sorted[rankIndex].points} pts)`;
+        }
+
+        // Fun Gamified Challenge Card Render & Countdown Timer for Scouts
+        function renderViewerChallengeCard() {
+            const container = document.getElementById('viewer-active-challenge-container');
+            if(!container) return;
+            if(!activeChallengeId) { 
+                container.innerHTML = ""; 
+                if (countdownInterval) clearInterval(countdownInterval);
+                return; 
+            }
+            
+            const chal = challengesCache[activeChallengeId];
+            let imageHtml = chal.image ? `<img src="${chal.image}" alt="Challenge Image" style="width:100%; height:140px; object-fit:cover; border-radius:8px; margin-bottom:12px; cursor:pointer;" onclick="openImageModal('${chal.image}')"/>` : '';
+            
+            container.innerHTML = `
+                <div class="challenge-card">
+                    <div class="challenge-header">
+                        <div class="challenge-title">🔥 ${chal.title}</div>
+                        <span class="status-badge" style="background:var(--gold); color:var(--dark-brown);">⚡ ${chal.difficulty || 'Medium'}</span>
                     </div>
-                    <div class="stat-mini-card">
-                        <h4>Troop Attendance %</h4>
-                        <div class="stat-val">${overallPct}%</div>
+                    ${imageHtml}
+                    <p style="font-size: 0.95rem; line-height: 1.5; margin-bottom: 15px; color: #f8f9fa;">${chal.description}</p>
+                    <div class="challenge-countdown" id="challenge-countdown-timer">⏳ Calculating time remaining...</div>
+                    <div class="challenge-rewards">
+                        <div class="reward-badge">⭐ +${chal.xpReward} XP</div>
+                        ${chal.badgeReward ? `<div class="reward-badge">🏅 +${chal.badgeReward} Badge</div>` : ''}
                     </div>
                 </div>`;
-        }
 
-        window.deleteAttendanceSession = async function(sessionId) {
-            await deleteDoc(doc(db, "attendance_sessions", sessionId));
-        };
-
-        // Render Member Attendance History & Statistics
-        function renderMemberAttendanceHistory() {
-            if (!currentLoggedInUser) return;
-            const username = currentLoggedInUser.username;
-
-            let totalMtg = 0;
-            let presentCount = 0;
-            let absentCount = 0;
-            let excusedCount = 0;
-            let lateCount = 0;
-
-            let historyHtml = "";
-            let relevantSessions = attendanceSessionsCache.filter(sess => sess.records && sess.records[username] !== undefined);
-
-            relevantSessions.forEach(sess => {
-                totalMtg++;
-                let status = sess.records[username];
-                if (status === 'Present') presentCount++;
-                else if (status === 'Absent') absentCount++;
-                else if (status === 'Excused') excusedCount++;
-                else if (status === 'Late') lateCount++;
-
-                let badgeClass = 'status-present';
-                if (status === 'Absent') badgeClass = 'status-absent';
-                else if (status === 'Excused') badgeClass = 'status-excused';
-                else if (status === 'Late') badgeClass = 'status-late';
-
-                historyHtml += `
-                    <div class='list-item' style="display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <strong>${sess.title}</strong><br>
-                            <small>📅 ${sess.date} ${sess.desc ? '| ' + sess.desc : ''}</small>
-                        </div>
-                        <span class="attendance-status-badge ${badgeClass}">${status}</span>
-                    </div>`;
-            });
-
-            if (totalMtg === 0) {
-                historyHtml = "<div class='list-item'>No attendance records found for your account yet.</div>";
-            }
-
-            let attendancePct = totalMtg > 0 ? Math.round(((presentCount + lateCount) / totalMtg) * 100) : 0;
-
-            const statTotal = document.getElementById('stat-total-mtg');
-            const statPct = document.getElementById('stat-pct');
-            const statPresent = document.getElementById('stat-present');
-            const statAel = document.getElementById('stat-ael');
-            const historyList = document.getElementById('member-attendance-history-list');
-
-            if (statTotal) statTotal.innerText = totalMtg;
-            if (statPct) statPct.innerText = attendancePct + '%';
-            if (statPresent) statPresent.innerText = presentCount;
-            if (statAel) statAel.innerText = `${absentCount} / ${excusedCount} / ${lateCount}`;
-            if (historyList) historyList.innerHTML = historyHtml;
-        }
-
-        // ==========================================================================
-        // DEDICATED PATROUILLE SECTION LOGIC & LISTENERS
-        // ==========================================================================
-        let selectedPatrolForAdmin = "Staff";
-
-        window.openMyPatrouilleSection = function() {
-            if (!currentLoggedInUser) return;
-            if (viewerDropdown) viewerDropdown.classList.remove('show');
+            if (countdownInterval) clearInterval(countdownInterval);
             
-            const adminSelectorWrapper = document.getElementById('admin-patrol-selector-wrapper');
-            if (adminSelectorWrapper) adminSelectorWrapper.classList.add('hidden');
-            
-            const secTitle = document.getElementById('patrouille-sec-title');
-            const secSub = document.getElementById('patrouille-sec-subtitle');
-            if (secTitle) secTitle.innerText = `⛺ Patrouille: ${currentLoggedInUser.patrol}`;
-            if (secSub) secSub.innerText = `Role: ${currentLoggedInUser.role}`;
+            function updateTimer() {
+                const timerEl = document.getElementById('challenge-countdown-timer');
+                if (!timerEl) return;
+                const endTime = new Date(chal.endDate + "T23:59:59").getTime();
+                const now = new Date().getTime();
+                const distance = endTime - now;
 
-            const memForm = document.getElementById('patrol-memory-form-wrapper');
-            const actForm = document.getElementById('patrol-activity-form-wrapper');
-
-            // CP and Admin can add memories and activities to their patrouille
-            if (currentLoggedInUser.role === 'Cp' || currentLoggedInUser.role === 'Admin') {
-                if (memForm) memForm.classList.remove('hidden');
-                if (actForm) actForm.classList.remove('hidden');
-            } else {
-                if (memForm) memForm.classList.add('hidden');
-                if (actForm) actForm.classList.add('hidden');
-            }
-
-            switchScreen('patrouilleSectionCard');
-            renderPatrouilleSectionData();
-        };
-
-        window.openPatrouilleSectionForAdmin = function() {
-            if (!currentLoggedInUser || currentLoggedInUser.role !== 'Admin') return;
-            if (adminDropdown) adminDropdown.classList.remove('show');
-            
-            const adminSelectorWrapper = document.getElementById('admin-patrol-selector-wrapper');
-            if (adminSelectorWrapper) adminSelectorWrapper.classList.remove('hidden');
-            
-            const secTitle = document.getElementById('patrouille-sec-title');
-            const secSub = document.getElementById('patrouille-sec-subtitle');
-            if (secTitle) secTitle.innerText = `⛺ Admin Patrouille Management`;
-            if (secSub) secSub.innerText = `Full Authority Across All Patrouilles`;
-
-            const memForm = document.getElementById('patrol-memory-form-wrapper');
-            const actForm = document.getElementById('patrol-activity-form-wrapper');
-            if (memForm) memForm.classList.remove('hidden');
-            if (actForm) actForm.classList.remove('hidden');
-
-            const adminSel = document.getElementById('admin-target-patrol-select');
-            if (adminSel) {
-                if (adminSel.value) {
-                    selectedPatrolForAdmin = adminSel.value;
-                } else {
-                    selectedPatrolForAdmin = "Staff";
-                    adminSel.value = "Staff";
-                }
-            }
-
-            switchScreen('patrouilleSectionCard');
-            renderPatrouilleSectionData();
-        };
-
-        const adminTargetPatrolSelect = document.getElementById('admin-target-patrol-select');
-        if (adminTargetPatrolSelect) {
-            adminTargetPatrolSelect.addEventListener('change', (e) => {
-                selectedPatrolForAdmin = e.target.value;
-                renderPatrouilleSectionData();
-            });
-        }
-
-        function getActiveTargetPatrol() {
-            if (currentLoggedInUser && currentLoggedInUser.role === 'Admin') {
-                return selectedPatrolForAdmin;
-            }
-            return currentLoggedInUser ? currentLoggedInUser.patrol : 'Unassigned';
-        }
-
-        function renderPatrouilleSectionData() {
-            if (!currentLoggedInUser) return;
-            const targetPatrol = getActiveTargetPatrol();
-
-            // 1. Render Members & Badges for target patrol
-            let membersHtml = "";
-            let memberCount = 0;
-            for (let [username, uData] of Object.entries(usersCache)) {
-                if (uData.patrol === targetPatrol) {
-                    memberCount++;
-                    let canManageBadges = (currentLoggedInUser.role === 'Admin' || currentLoggedInUser.role === 'Cp');
-                    
-                    membersHtml += `
-                        <div class='list-item'>
-                            <div>
-                                <span>👤 <strong>${username}</strong></span>
-                                <br><small style="color: var(--brown);">Badges: <strong id="badge-count-${username}">${uData.badges || 0}</strong></small>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span class="role-badge">${uData.role}</span>
-                                ${canManageBadges ? `
-                                    <button class="btn btn-outline" style="padding: 2px 6px; font-size: 0.75rem; width: auto; margin-bottom: 0;" type="button" onclick="updateMemberBadges('${username}', 1)">+ Badge</button>
-                                    <button class="btn btn-outline" style="padding: 2px 6px; font-size: 0.75rem; width: auto; margin-bottom: 0;" type="button" onclick="updateMemberBadges('${username}', -1)">- Badge</button>
-                                ` : ''}
-                            </div>
-                        </div>`;
-                }
-            }
-            if (memberCount === 0) {
-                membersHtml = "<div class='list-item'>No members found in this patrouille.</div>";
-            }
-            const pmbContainer = document.getElementById('patrol-members-badges-container');
-            if (pmbContainer) pmbContainer.innerHTML = membersHtml;
-
-            // 2. Load Patrouille Memories Realtime
-            loadPatrouilleMemories(targetPatrol);
-
-            // 3. Load Patrouille Activities Realtime
-            loadPatrouilleActivities(targetPatrol);
-        }
-
-        // Global Badge Updater
-        window.updateMemberBadges = async function(username, delta) {
-            if (!usersCache[username]) return;
-            let currentBadges = usersCache[username].badges || 0;
-            let newBadges = Math.max(0, currentBadges + delta);
-            await setDoc(doc(db, "members", username), { badges: newBadges }, { merge: true });
-        };
-
-        // Patrouille Memories Listeners
-        function loadPatrouilleMemories(patrolName) {
-            const colRef = collection(db, `patrouilles_data_${patrolName}_memories`);
-            onSnapshot(colRef, (snapshot) => {
-                let html = "";
-                if (snapshot.empty) {
-                    html = "<div style='grid-column: 1 / -1; font-size: 0.9rem; color: #7f5539;'>No memories added for this patrouille yet.</div>";
-                } else {
-                    snapshot.forEach((docSnap) => {
-                        const data = docSnap.data();
-                        let canDelete = (currentLoggedInUser.role === 'Admin' || currentLoggedInUser.role === 'Cp');
-                        html += `
-                            <div class='gallery-item'>
-                                ${data.url ? `<img src="${data.url}" alt="Memory" onclick="openImageModal('${data.url}')" />` : `<div style="height: 40px; background: var(--beige); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: var(--brown);">No Image</div>`}
-                                <div class="gallery-item-info">
-                                    <strong>${data.title}</strong><br><small>${data.date || ''}</small>
-                                </div>
-                                ${canDelete ? `<button class="btn-danger" type="button" onclick="deletePatrolMemory('${patrolName}', '${docSnap.id}')">X</button>` : ''}
-                            </div>`;
-                    });
-                }
-                const grid = document.getElementById('patrol-memories-grid');
-                if (grid) grid.innerHTML = html;
-            });
-        }
-
-        const addPatrolMemoryBtn = document.getElementById('add-patrol-memory-btn');
-        if (addPatrolMemoryBtn) {
-            addPatrolMemoryBtn.addEventListener('click', async () => {
-                const targetPatrol = getActiveTargetPatrol();
-                const title = document.getElementById('patrol-mem-title').value.trim();
-                const desc = document.getElementById('patrol-mem-desc').value.trim();
-                const date = document.getElementById('patrol-mem-date').value;
-                const fileInput = document.getElementById('patrol-mem-file');
-
-                if (!title || !date) return showMsg('patrol-mem-err', 'patrol-mem-msg');
-
-                let imageUrl = "";
-                if (fileInput.files.length > 0) {
-                    const file = fileInput.files[0];
-                    imageUrl = await readFileAsDataURL(file);
+                if (distance < 0) {
+                    timerEl.innerHTML = "🏁 Challenge Ended!";
+                    return;
                 }
 
-                await setDoc(doc(collection(db, `patrouilles_data_${targetPatrol}_memories`)), {
-                    title, desc, date, url: imageUrl, created: Date.now()
-                });
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-                document.getElementById('patrol-mem-title').value = '';
-                document.getElementById('patrol-mem-desc').value = '';
-                document.getElementById('patrol-mem-date').value = '';
-                fileInput.value = '';
-                showMsg('patrol-mem-msg', 'patrol-mem-err');
-            });
+                timerEl.innerHTML = `⏳ Time Left: <strong>${days}d ${hours}h ${minutes}m ${seconds}s</strong>`;
+            }
+
+            updateTimer();
+            countdownInterval = setInterval(updateTimer, 1000);
         }
-
-        window.deletePatrolMemory = async function(patrolName, docId) {
-            await deleteDoc(doc(db, `patrouilles_data_${patrolName}_memories`, docId));
-        };
-
-        // Patrouille Activities Listeners
-        function loadPatrouilleActivities(patrolName) {
-            const colRef = collection(db, `patrouilles_data_${patrolName}_activities`);
-            onSnapshot(colRef, (snapshot) => {
-                let html = "";
-                if (snapshot.empty) {
-                    html = "<div class='list-item'>No planned activities for this patrouille yet.</div>";
-                } else {
-                    snapshot.forEach((docSnap) => {
-                        const data = docSnap.data();
-                        let canDelete = (currentLoggedInUser.role === 'Admin' || currentLoggedInUser.role === 'Cp');
-                        html += `
-                            <div class='list-item'>
-                                <div>
-                                    <strong>${data.title}</strong>
-                                    <br><small>📅 ${data.date || ''} at ${data.time || ''} | 📍 ${data.location || 'TBD'}</small>
-                                    ${data.desc ? `<br><small style="color: var(--brown);">${data.desc}</small>` : ''}
-                                </div>
-                                ${canDelete ? `<button class="btn-danger" type="button" onclick="deletePatrolActivity('${patrolName}', '${docSnap.id}')">Delete</button>` : ''}
-                            </div>`;
-                    });
-                }
-                const list = document.getElementById('patrol-activities-list');
-                if (list) list.innerHTML = html;
-            });
-        }
-
-        const addPatrolActivityBtn = document.getElementById('add-patrol-activity-btn');
-        if (addPatrolActivityBtn) {
-            addPatrolActivityBtn.addEventListener('click', async () => {
-                const targetPatrol = getActiveTargetPatrol();
-                const title = document.getElementById('patrol-act-title').value.trim();
-                const desc = document.getElementById('patrol-act-desc').value.trim();
-                const date = document.getElementById('patrol-act-date').value;
-                const time = document.getElementById('patrol-act-time').value;
-                const location = document.getElementById('patrol-act-location').value.trim();
-
-                if (!title || !date || !time || !location) return showMsg('patrol-act-err', 'patrol-act-msg');
-
-                await setDoc(doc(collection(db, `patrouilles_data_${targetPatrol}_activities`)), {
-                    title, desc, date, time, location, created: Date.now()
-                });
-
-                document.getElementById('patrol-act-title').value = '';
-                document.getElementById('patrol-act-desc').value = '';
-                document.getElementById('patrol-act-date').value = '';
-                document.getElementById('patrol-act-time').value = '';
-                document.getElementById('patrol-act-location').value = '';
-                showMsg('patrol-act-msg', 'patrol-act-err');
-            });
-        }
-
-        window.deletePatrolActivity = async function(patrolName, docId) {
-            await deleteDoc(doc(db, `patrouilles_data_${patrolName}_activities`, docId));
-        };
 
         function readFileAsDataURL(file) {
             return new Promise((resolve) => {
@@ -1758,182 +1720,352 @@
             });
         }
 
-        // Action Functions (Global so inline HTML onclick can access them)
         window.deleteActivity = async function(id) { await deleteDoc(doc(db, "activities", id)); };
         window.deletePhoto = async function(id) { await deleteDoc(doc(db, "gallery", id)); };
         window.deleteIdea = async function(id) { await deleteDoc(doc(db, "ideas", id)); };
 
-        // Admin Actions
-        const createPatrolBtn = document.getElementById('create-patrol-btn');
-        if (createPatrolBtn) {
-            createPatrolBtn.addEventListener('click', async () => {
-                const name = document.getElementById('new-patrol-name').value.trim();
-                if (!name) return showMsg('patrol-err', 'patrol-msg');
-                await setDoc(doc(db, "patrols", name), { created: Date.now() });
-                document.getElementById('new-patrol-name').value = '';
-                showMsg('patrol-msg', 'patrol-err');
-            });
-        }
+        document.getElementById('create-patrol-btn')?.addEventListener('click', async () => {
+            const name = document.getElementById('new-patrol-name').value.trim();
+            if (!name) return showMsg('patrol-err', 'patrol-msg');
+            await setDoc(doc(db, "patrols", name), { created: Date.now(), points: 0 });
+            document.getElementById('new-patrol-name').value = '';
+            showMsg('patrol-msg', 'patrol-err');
+        });
 
-        const createMemberBtn = document.getElementById('create-member-btn');
-        if (createMemberBtn) {
-            createMemberBtn.addEventListener('click', async () => {
-                const user = document.getElementById('new-member-user').value.trim();
-                const pass = document.getElementById('new-member-pass').value.trim();
-                const role = document.getElementById('new-member-role').value;
-                const patrol = document.getElementById('new-member-patrol').value;
+        document.getElementById('create-member-btn')?.addEventListener('click', async () => {
+            const user = document.getElementById('new-member-user').value.trim();
+            const pass = document.getElementById('new-member-pass').value.trim();
+            const role = document.getElementById('new-member-role').value;
+            const patrol = document.getElementById('new-member-patrol').value;
 
-                if (!user || !pass || !patrol) return showMsg('admin-err', 'admin-msg');
-                
-                await setDoc(doc(db, "members", user), { password: pass, role: role, patrol: patrol, badges: 0 });
-                document.getElementById('new-member-user').value = '';
-                document.getElementById('new-member-pass').value = '';
-                showMsg('admin-msg', 'admin-err');
-            });
-        }
+            if (!user || !pass || !patrol) return showMsg('admin-err', 'admin-msg');
+            await setDoc(doc(db, "members", user), { password: pass, role, patrol, badges: 0, xp: 0 });
+            document.getElementById('new-member-user').value = '';
+            document.getElementById('new-member-pass').value = '';
+            showMsg('admin-msg', 'admin-err');
+        });
 
-        const addActivityBtn = document.getElementById('add-activity-btn');
-        if (addActivityBtn) {
-            addActivityBtn.addEventListener('click', async () => {
-                const title = document.getElementById('activity-title').value.trim();
-                const date = document.getElementById('activity-date').value;
-                if (!title || !date) return showMsg('activity-err', 'activity-msg');
-                
-                await setDoc(doc(collection(db, "activities")), { title, date, created: Date.now() });
-                document.getElementById('activity-title').value = '';
-                document.getElementById('activity-date').value = '';
-                showMsg('activity-msg', 'activity-err');
-            });
-        }
+        document.getElementById('add-activity-btn')?.addEventListener('click', async () => {
+            const title = document.getElementById('activity-title').value.trim();
+            const date = document.getElementById('activity-date').value;
+            if (!title || !date) return showMsg('activity-err', 'activity-msg');
+            await setDoc(doc(collection(db, "activities")), { title, date, created: Date.now() });
+            document.getElementById('activity-title').value = ''; document.getElementById('activity-date').value = '';
+            showMsg('activity-msg', 'activity-err');
+        });
 
-        const addPhotoBtn = document.getElementById('add-photo-btn');
-        if (addPhotoBtn) {
-            addPhotoBtn.addEventListener('click', () => {
-                const fileInput = document.getElementById('photo-file');
-                if (fileInput.files.length === 0) return showMsg('photo-err', 'photo-msg');
-                
-                const file = fileInput.files[0];
-                const reader = new FileReader();
-                reader.onload = async function(e) {
-                    const base64Url = e.target.result;
-                    await setDoc(doc(collection(db, "gallery")), { url: base64Url, created: Date.now() });
-                    fileInput.value = '';
-                    showMsg('photo-msg', 'photo-err');
-                };
-                reader.readAsDataURL(file);
-            });
-        }
+        document.getElementById('add-photo-btn')?.addEventListener('click', () => {
+            const fileInput = document.getElementById('photo-file');
+            if (fileInput.files.length === 0) return showMsg('photo-err', 'photo-msg');
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                await setDoc(doc(collection(db, "gallery")), { url: e.target.result, created: Date.now() });
+                fileInput.value = ''; showMsg('photo-msg', 'photo-err');
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        });
 
-        // Viewer Actions
-        const submitIdeaBtn = document.getElementById('submit-idea-btn');
-        if (submitIdeaBtn) {
-            submitIdeaBtn.addEventListener('click', async () => {
-                const text = document.getElementById('idea-text').value.trim();
-                if (!text) return showMsg('idea-err', 'idea-msg');
-                
-                const author = document.getElementById('logged-viewer-name').innerText;
-                const patrolText = document.getElementById('logged-viewer-patrol-text').innerText;
-                const patrol = patrolText.replace('⛺ Patrouille: ', '');
+        document.getElementById('submit-idea-btn')?.addEventListener('click', async () => {
+            const text = document.getElementById('idea-text').value.trim();
+            if (!text) return showMsg('idea-err', 'idea-msg');
+            await setDoc(doc(collection(db, "ideas")), { text, author: currentLoggedInUser.username, patrol: currentLoggedInUser.patrol, created: Date.now() });
+            document.getElementById('idea-text').value = ''; showMsg('idea-msg', 'idea-err');
+        });
 
-                await setDoc(doc(collection(db, "ideas")), { text, author, patrol, created: Date.now() });
-                document.getElementById('idea-text').value = '';
-                showMsg('idea-msg', 'idea-err');
-            });
-        }
+        document.getElementById('login-btn')?.addEventListener('click', () => {
+            const user = document.getElementById('login-user').value.trim();
+            const pass = document.getElementById('login-pass').value.trim();
+            const err = document.getElementById('login-error');
+            
+            if (usersCache[user] && usersCache[user].password === pass) {
+                err.style.display = 'none';
+                currentLoggedInUser = { username: user, role: usersCache[user].role, patrol: usersCache[user].patrol || 'Unassigned' };
 
-        // Login Logic
-        const loginBtn = document.getElementById('login-btn');
-        if (loginBtn) {
-            loginBtn.addEventListener('click', () => {
-                const user = document.getElementById('login-user').value.trim();
-                const pass = document.getElementById('login-pass').value.trim();
-                const err = document.getElementById('login-error');
-                
-                if (usersCache[user] && usersCache[user].password === pass) {
-                    err.style.display = 'none';
-                    const role = usersCache[user].role;
-                    
-                    currentLoggedInUser = {
-                        username: user,
-                        role: role,
-                        patrol: usersCache[user].patrol || 'Unassigned'
-                    };
-
-                    const cpAttendanceManageItem = document.getElementById('cp-menu-attendance-manage');
-                    if (cpAttendanceManageItem) {
-                        if (role === 'Cp') {
-                            cpAttendanceManageItem.classList.remove('hidden');
-                        } else {
-                            cpAttendanceManageItem.classList.add('hidden');
-                        }
-                    }
-
-                    if (role === 'Admin') {
-                        document.getElementById('login-user').value = '';
-                        document.getElementById('login-pass').value = '';
-                        switchScreen('adminDashboard');
-                        switchAdminSection('admin-section-management');
-                    } else {
-                        document.getElementById('logged-viewer-name').innerText = user;
-                        document.getElementById('logged-viewer-role-text').innerText = "🏅 Role: " + role;
-                        document.getElementById('logged-viewer-patrol-text').innerText = "⛺ Patrouille: " + currentLoggedInUser.patrol;
-                        document.getElementById('login-user').value = '';
-                        document.getElementById('login-pass').value = '';
-                        switchScreen('viewerDashboard');
-                        switchViewerSection('viewer-section-welcome');
-                    }
-                } else {
-                    err.style.display = 'block';
+                const cpAttendanceManageItem = document.getElementById('cp-menu-attendance-manage');
+                if (cpAttendanceManageItem) {
+                    if (currentLoggedInUser.role === 'Cp') cpAttendanceManageItem.classList.remove('hidden');
+                    else cpAttendanceManageItem.classList.add('hidden');
                 }
+
+                if (currentLoggedInUser.role === 'Admin') {
+                    switchScreen('adminDashboard'); switchAdminSection('admin-section-management');
+                } else {
+                    document.getElementById('logged-viewer-name').innerText = user;
+                    document.getElementById('logged-viewer-role-text').innerText = "🏅 Role: " + currentLoggedInUser.role;
+                    document.getElementById('logged-viewer-patrol-text').innerText = "⛺ Patrouille: " + currentLoggedInUser.patrol;
+                    updateDigitalProfile();
+                    renderPatrolLeaderboard();
+                    renderViewerChallengeCard();
+                    switchScreen('viewerDashboard'); switchViewerSection('viewer-section-welcome');
+                }
+            } else { err.style.display = 'block'; }
+        });
+
+        document.getElementById('admin-logout-btn')?.addEventListener('click', () => { currentLoggedInUser = null; switchScreen('home'); });
+        document.getElementById('viewer-logout-btn')?.addEventListener('click', () => { currentLoggedInUser = null; switchScreen('home'); });
+
+        // --- ATTENDANCE SYSTEM FIX & ROSTER LOADING ---
+        function renderAdminAttendanceSection() {
+            const sessionsList = document.getElementById('admin-attendance-sessions-list');
+            const statsContainer = document.getElementById('admin-troop-stats-container');
+            if (!sessionsList || !statsContainer) return;
+            let sessionsHtml = attendanceSessionsCache.length === 0 ? "<div class='list-item'>No sessions recorded.</div>" : "";
+            attendanceSessionsCache.forEach(sess => {
+                sessionsHtml += `<div class='list-item'><div><strong>${sess.title}</strong> (${sess.patrol})<br><small>📅 ${sess.date}</small></div><button class="btn-danger" onclick="deleteDoc(doc(db, 'attendance_sessions', '${sess.id}'))">Delete</button></div>`;
             });
+            sessionsList.innerHTML = sessionsHtml;
+            statsContainer.innerHTML = `<div class="stat-card-grid"><div class="stat-mini-card"><h4>Total Sessions</h4><div class="stat-val">${attendanceSessionsCache.length}</div></div></div>`;
         }
 
-        // Logout bindings
-        const adminLogoutBtn = document.getElementById('admin-logout-btn');
-        if (adminLogoutBtn) {
-            adminLogoutBtn.addEventListener('click', () => {
-                currentLoggedInUser = null;
-                switchScreen('home');
-            });
+        function renderCpAttendanceRoster() {
+            const rosterContainer = document.getElementById('cp-attendance-roster');
+            if (!rosterContainer || !currentLoggedInUser) return;
+            const targetPatrol = currentLoggedInUser.patrol;
+            
+            let html = "";
+            let found = false;
+            for (let [uid, uData] of Object.entries(usersCache)) {
+                if (uData.patrol === targetPatrol) {
+                    found = true;
+                    html += `
+                        <div class="list-item" style="justify-content:space-between;">
+                            <span>👤 ${uid}</span>
+                            <select name="cp-att-status" data-username="${uid}" class="form-control" style="width:130px; padding:6px;">
+                                <option value="Present">Present</option>
+                                <option value="Absent">Absent</option>
+                                <option value="Late">Late</option>
+                                <option value="Excused">Excused</option>
+                            </select>
+                        </div>`;
+                }
+            }
+            rosterContainer.innerHTML = found ? html : "<div class='list-item'>No members found in your patrol.</div>";
         }
 
-        const viewerLogoutBtn = document.getElementById('viewer-logout-btn');
-        if (viewerLogoutBtn) {
-            viewerLogoutBtn.addEventListener('click', () => {
-                currentLoggedInUser = null;
-                switchScreen('home');
+        document.getElementById('cp-save-attendance-btn')?.addEventListener('click', async () => {
+            const title = document.getElementById('cp-attendance-title').value.trim();
+            const date = document.getElementById('cp-attendance-date').value;
+            const desc = document.getElementById('cp-attendance-desc').value.trim();
+            if(!title || !date) return showMsg('cp-attendance-err', 'cp-attendance-msg');
+
+            let records = {};
+            document.querySelectorAll('select[name="cp-att-status"]').forEach(sel => {
+                records[sel.getAttribute('data-username')] = sel.value;
             });
+
+            await setDoc(doc(collection(db, "attendance_sessions")), {
+                title, date, desc, patrol: currentLoggedInUser.patrol, records, created: Date.now()
+            });
+
+            document.getElementById('cp-attendance-title').value = '';
+            document.getElementById('cp-attendance-date').value = '';
+            document.getElementById('cp-attendance-desc').value = '';
+            showMsg('cp-attendance-msg', 'cp-attendance-err');
+        });
+
+        function renderMemberAttendanceHistory() {
+            if (!currentLoggedInUser) return;
+            const username = currentLoggedInUser.username;
+            let historyHtml = "";
+            let rel = attendanceSessionsCache.filter(sess => sess.records && sess.records[username]);
+
+            rel.forEach(sess => {
+                let st = sess.records[username];
+                historyHtml += `<div class='list-item'><div><strong>${sess.title}</strong><br><small>📅 ${sess.date}</small></div><span class="status-badge status-${st.toLowerCase()}">${st}</span></div>`;
+            });
+            document.getElementById('member-attendance-history-list').innerHTML = historyHtml || "<div class='list-item'>No records found.</div>";
         }
 
-        // Image Lightbox Modal Handlers
-        const imageModal = document.getElementById('image-modal');
-        const modalImg = document.getElementById('modal-img');
+        let selectedPatrolForAdmin = "Staff";
+        window.openMyPatrouilleSection = function() {
+            if (!currentLoggedInUser) return;
+            document.getElementById('viewer-dropdown')?.classList.remove('show');
+            document.getElementById('admin-patrol-selector-wrapper')?.classList.add('hidden');
+            document.getElementById('patrouille-sec-title').innerText = `⛺ Patrouille: ${currentLoggedInUser.patrol}`;
+            
+            // AUTHORIZE CP & ADMIN TO ADD MEMORIES & ACTIVITIES IN THEIR PATROL AREA
+            if (currentLoggedInUser.role === 'Cp' || currentLoggedInUser.role === 'Admin') {
+                document.getElementById('patrol-memory-form-wrapper')?.classList.remove('hidden');
+                document.getElementById('patrol-activity-form-wrapper')?.classList.remove('hidden');
+            } else {
+                document.getElementById('patrol-memory-form-wrapper')?.classList.add('hidden');
+                document.getElementById('patrol-activity-form-wrapper')?.classList.add('hidden');
+            }
 
-        window.openImageModal = function(url) {
-            if (modalImg && imageModal) {
-                modalImg.src = url;
-                imageModal.classList.add('show');
+            switchScreen('patrouilleSectionCard'); 
+            renderPatrouilleSectionData();
+            loadPatrouilleMemories(currentLoggedInUser.patrol);
+            loadPatrouilleActivities(currentLoggedInUser.patrol);
+        };
+
+        window.openPatrouilleSectionForAdmin = function() {
+            if (!currentLoggedInUser || currentLoggedInUser.role !== 'Admin') return;
+            document.getElementById('admin-dropdown')?.classList.remove('show');
+            document.getElementById('admin-patrol-selector-wrapper')?.classList.remove('hidden');
+            document.getElementById('patrouille-sec-title').innerText = `⛺ Admin Patrouille Management`;
+            
+            // Admins always have authority to add stuff
+            document.getElementById('patrol-memory-form-wrapper')?.classList.remove('hidden');
+            document.getElementById('patrol-activity-form-wrapper')?.classList.remove('hidden');
+
+            switchScreen('patrouilleSectionCard'); 
+            renderPatrouilleSectionData();
+            loadPatrouilleMemories(selectedPatrolForAdmin);
+            loadPatrouilleActivities(selectedPatrolForAdmin);
+        };
+
+        document.getElementById('admin-target-patrol-select')?.addEventListener('change', (e) => { 
+            selectedPatrolForAdmin = e.target.value; 
+            renderPatrouilleSectionData(); 
+            loadPatrouilleMemories(selectedPatrolForAdmin);
+            loadPatrouilleActivities(selectedPatrolForAdmin);
+        });
+
+        function getActiveTargetPatrol() { return currentLoggedInUser && currentLoggedInUser.role === 'Admin' ? selectedPatrolForAdmin : currentLoggedInUser ? currentLoggedInUser.patrol : 'Unassigned'; }
+
+        function renderPatrouilleSectionData() {
+            if (!currentLoggedInUser) return;
+            const targetPatrol = getActiveTargetPatrol();
+            let html = "", c = 0;
+            for (let [uid, d] of Object.entries(usersCache)) {
+                if (d.patrol === targetPatrol) {
+                    c++;
+                    html += `<div class='list-item'><span>👤 <strong>${uid}</strong></span> <span class="role-badge">${d.role}</span></div>`;
+                }
+            }
+            document.getElementById('patrol-members-badges-container').innerHTML = c === 0 ? "<div>No members.</div>" : html;
+        }
+
+        // --- Patrouille Memories Loading & Adding Logic ---
+        window.loadPatrouilleMemories = async function(patrouilleId) {
+            const memoriesContainer = document.getElementById('memories-container');
+            memoriesContainer.innerHTML = '<p class="loading-text">Loading memories...</p>';
+
+            try {
+                const q = query(collection(db, "memories"), where("patrouilleId", "==", patrouilleId));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    memoriesContainer.innerHTML = '<p class="empty-state-text">No memories uploaded yet.</p>';
+                    return;
+                }
+
+                memoriesContainer.innerHTML = '';
+                querySnapshot.forEach((docSnap) => {
+                    const memory = docSnap.data();
+                    const memoryElement = document.createElement('div');
+                    memoryElement.className = 'memory-card gallery-item';
+                    
+                    let deleteBtn = (currentLoggedInUser && (currentLoggedInUser.role === 'Admin' || currentLoggedInUser.role === 'Cp')) 
+                        ? `<button class="btn-danger" onclick="deletePatrouilleMemory('${docSnap.id}', '${patrouilleId}')">X</button>` : '';
+
+                    memoryElement.innerHTML = `
+                        <img src="${memory.imageBase64}" alt="Memory" onclick="openImageModal('${memory.imageBase64}')">
+                        <div class="gallery-item-info"><p>${memory.caption || ''}</p></div>
+                        ${deleteBtn}`;
+                    memoriesContainer.appendChild(memoryElement);
+                });
+            } catch (error) {
+                console.error("Error loading memories: ", error);
+                memoriesContainer.innerHTML = '<p class="error-text">Failed to load memories. Please try again.</p>';
             }
         };
 
-        if (imageModal && modalImg) {
-            imageModal.addEventListener('click', () => {
-                imageModal.classList.remove('show');
-                modalImg.src = '';
+        document.getElementById('add-patrol-memory-btn')?.addEventListener('click', async () => {
+            const title = document.getElementById('patrol-mem-title').value.trim();
+            const fileInput = document.getElementById('patrol-mem-file');
+            const targetPatrol = getActiveTargetPatrol();
+
+            if (!title || fileInput.files.length === 0) return showMsg('patrol-mem-err', 'patrol-msg');
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                await setDoc(doc(collection(db, "memories")), {
+                    patrouilleId: targetPatrol,
+                    caption: title,
+                    imageBase64: e.target.result,
+                    created: Date.now()
+                });
+                document.getElementById('patrol-mem-title').value = '';
+                fileInput.value = '';
+                showMsg('patrol-mem-msg', 'patrol-mem-err');
+                loadPatrouilleMemories(targetPatrol);
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        });
+
+        window.deletePatrouilleMemory = async function(docId, patrouilleId) {
+            if(confirm("Delete this memory?")) {
+                await deleteDoc(doc(db, "memories", docId));
+                loadPatrouilleMemories(patrouilleId);
+            }
+        };
+
+        // --- Patrouille Planned Activities Loading & Adding Logic ---
+        window.loadPatrouilleActivities = async function(patrouilleId) {
+            const activitiesContainer = document.getElementById('activities-container');
+            activitiesContainer.innerHTML = '<p class="loading-text">Loading activities...</p>';
+
+            try {
+                const q = query(collection(db, "patrol_activities"), where("patrouilleId", "==", patrouilleId));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    activitiesContainer.innerHTML = '<p class="empty-state-text">No planned activities at the moment.</p>';
+                    return;
+                }
+
+                activitiesContainer.innerHTML = '';
+                querySnapshot.forEach((docSnap) => {
+                    const activity = docSnap.data();
+                    const activityElement = document.createElement('div');
+                    activityElement.className = 'activity-card list-item';
+
+                    let deleteBtn = (currentLoggedInUser && (currentLoggedInUser.role === 'Admin' || currentLoggedInUser.role === 'Cp')) 
+                        ? `<button class="btn-danger" onclick="deletePatrouilleActivity('${docSnap.id}', '${patrouilleId}')">Delete</button>` : '';
+
+                    activityElement.innerHTML = `
+                        <div><h4>${activity.title}</h4><p><small>🕒 ${activity.date}</small></p></div>
+                        ${deleteBtn}`;
+                    activitiesContainer.appendChild(activityElement);
+                });
+            } catch (error) {
+                console.error("Error loading activities: ", error);
+                activitiesContainer.innerHTML = '<p class="error-text">Failed to load activities. Please try again.</p>';
+            }
+        };
+
+        document.getElementById('add-patrol-activity-btn')?.addEventListener('click', async () => {
+            const title = document.getElementById('patrol-act-title').value.trim();
+            const date = document.getElementById('patrol-act-date').value;
+            const targetPatrol = getActiveTargetPatrol();
+
+            if (!title || !date) return showMsg('patrol-act-err', 'patrol-act-msg');
+
+            await setDoc(doc(collection(db, "patrol_activities")), {
+                patrouilleId: targetPatrol,
+                title,
+                date,
+                created: Date.now()
             });
 
-            modalImg.addEventListener('click', (e) => {
-                e.stopPropagation(); // Prevents closing when clicking directly on the image itself
-            });
-        }
+            document.getElementById('patrol-act-title').value = '';
+            document.getElementById('patrol-act-date').value = '';
+            showMsg('patrol-act-msg', 'patrol-act-err');
+            loadPatrouilleActivities(targetPatrol);
+        });
 
-        function showMsg(showId, hideId) {
-            const showEl = document.getElementById(showId);
-            const hideEl = document.getElementById(hideId);
-            if (showEl) showEl.style.display = 'block';
-            if (hideEl) hideEl.style.display = 'none';
-            setTimeout(() => { if (showEl) showEl.style.display = 'none'; }, 3000);
-        }
+        window.deletePatrouilleActivity = async function(docId, patrouilleId) {
+            if(confirm("Delete this activity?")) {
+                await deleteDoc(doc(db, "patrol_activities", docId));
+                loadPatrouilleActivities(patrouilleId);
+            }
+        };
+
+        const imageModal = document.getElementById('image-modal'); const modalImg = document.getElementById('modal-img');
+        window.openImageModal = function(url) { if (modalImg && imageModal) { modalImg.src = url; imageModal.classList.add('show'); } };
+        if (imageModal && modalImg) { imageModal.addEventListener('click', () => { imageModal.classList.remove('show'); modalImg.src = ''; }); }
+        function showMsg(s, h) { let se = document.getElementById(s), he = document.getElementById(h); if(se) se.style.display='block'; if(he) he.style.display='none'; setTimeout(()=> {if(se) se.style.display='none';}, 3000); }
     </script>
 </body>
 </html>

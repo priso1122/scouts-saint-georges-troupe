@@ -73,6 +73,7 @@
             z-index: 100;
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
             transition: transform 0.3s ease;
+            pointer-events: none; /* Prevents logo from interfering with clicks underneath if overlapping */
         }
 
         .fixed-logo.left { left: 20px; }
@@ -507,12 +508,18 @@
         }
 
         @media (max-width: 600px) {
-            body { padding-top: 100px; }
-            .fixed-logo { height: 60px; top: 15px; }
-            .fixed-logo.left { left: 15px; }
-            .fixed-logo.right { right: 15px; }
-            .header h1 { font-size: 1.5rem; }
-            .card { padding: 24px 18px; }
+            body { 
+                padding-top: 20px; /* Reset body top padding so container doesn't push down incorrectly */
+                align-items: flex-start; /* Allow page to flow naturally from top on mobile */
+            }
+            .container {
+                margin-top: 75px; /* Safely push content down below fixed logos */
+            }
+            .fixed-logo { height: 50px; top: 12px; }
+            .fixed-logo.left { left: 12px; }
+            .fixed-logo.right { right: 12px; }
+            .header h1 { font-size: 1.4rem; }
+            .card { padding: 20px 14px; }
         }
     </style>
 </head>

@@ -62,7 +62,6 @@
             left: 0;
             width: 100%;
             height: 100%;
-            /* Reduced overlay darkness so background faces/details are clearly visible */
             background: rgba(0, 0, 0, 0.35);
             z-index: -1;
         }
@@ -124,7 +123,7 @@
         }
 
         .card {
-            background: rgba(244, 241, 222, 0.95); /* Slight transparency to let background breathe */
+            background: rgba(244, 241, 222, 0.95);
             border-radius: var(--radius);
             padding: 32px 28px;
             box-shadow: var(--shadow);
@@ -199,6 +198,9 @@
             font-weight: 600;
             border-bottom: 1px solid #eee;
             transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .dropdown-item:last-child {
@@ -208,6 +210,17 @@
         .dropdown-item:hover {
             background: var(--beige);
             color: var(--green);
+        }
+
+        .admin-badge {
+            background: #d62828;
+            color: white;
+            border-radius: 12px;
+            padding: 2px 8px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-left: 5px;
+            display: none;
         }
 
         /* ==========================================================================
@@ -699,14 +712,14 @@
             <p>Adventure begins where your comfort zone ends</p>
         </header>
 
-        <!-- WELCOME / HOME SCREEN (Standalone Welcome & Login Button) -->
+        <!-- WELCOME / HOME SCREEN -->
         <main id="home-screen" class="card">
             <h2 style="color: var(--dark-green); margin-bottom: 15px; text-align: center;">Welcome</h2>
             <p style="text-align: center; color: var(--dark-brown); margin-bottom: 20px; font-size: 0.95rem;">Please log in to access your scout dashboard and tracking features.</p>
             <button id="goto-login" class="btn">Login to Account</button>
         </main>
 
-        <!-- SEPARATE ACTIVE PATROLS SECTION (Displayed below home/login card so it scrolls naturally in separate blocks) -->
+        <!-- SEPARATE ACTIVE PATROLS SECTION -->
         <section id="public-patrols-section" class="card" style="border-top-color: var(--gold); border-bottom-color: var(--green);">
             <h3 style="color: var(--dark-green); font-size: 1.2rem; margin-bottom: 12px; text-align: center;">⛺ Active Patrols & Mottos</h3>
             <div id="public-patrols-container" class="list-container" style="margin-bottom: 0;">
@@ -714,7 +727,7 @@
             </div>
         </section>
 
-        <!-- GENERAL LOGIN SCREEN (Standalone view) -->
+        <!-- GENERAL LOGIN SCREEN -->
         <main id="login-screen" class="card hidden">
             <h2 style="color: var(--dark-green); margin-bottom: 20px; text-align: center;">Account Login</h2>
             <div id="login-error" class="error-message">Invalid Username or Password.</div>
@@ -737,13 +750,30 @@
                 <div class="menu-container">
                     <button class="menu-btn" id="admin-menu-toggle" type="button">⋮</button>
                     <div class="dropdown-menu" id="admin-dropdown">
-                        <div class="dropdown-item" onclick="switchAdminSection('admin-section-management')">⚙️ Management</div>
-                        <div class="dropdown-item" onclick="switchAdminSection('admin-section-challenges')">🏆 Weekly Challenges</div>
-                        <div class="dropdown-item" onclick="switchAdminSection('admin-section-activities')">📅 Activities</div>
-                        <div class="dropdown-item" onclick="switchAdminSection('admin-section-memories')">🖼️ Memories</div>
-                        <div class="dropdown-item" onclick="switchAdminSection('admin-section-ideas')">💡 Ideas Review</div>
-                        <div class="dropdown-item" onclick="switchAdminSection('admin-section-attendance')">📊 Attendance Hub</div>
-                        <div class="dropdown-item" onclick="openPatrouilleSectionForAdmin()">⛺ Patrouilles Hub</div>
+                        <div class="dropdown-item" onclick="switchAdminSection('admin-section-management')">
+                            <span>⚙️ Management</span>
+                        </div>
+                        <div class="dropdown-item" onclick="switchAdminSection('admin-section-program')">
+                            <span>📋 Annual Program & Tasks</span> <span id="admin-task-badge" class="admin-badge">0</span>
+                        </div>
+                        <div class="dropdown-item" onclick="switchAdminSection('admin-section-challenges')">
+                            <span>🏆 Weekly Challenges</span>
+                        </div>
+                        <div class="dropdown-item" onclick="switchAdminSection('admin-section-activities')">
+                            <span>📅 Activities</span>
+                        </div>
+                        <div class="dropdown-item" onclick="switchAdminSection('admin-section-memories')">
+                            <span>🖼️ Memories</span>
+                        </div>
+                        <div class="dropdown-item" onclick="switchAdminSection('admin-section-ideas')">
+                            <span>💡 Ideas Review</span>
+                        </div>
+                        <div class="dropdown-item" onclick="switchAdminSection('admin-section-attendance')">
+                            <span>📊 Attendance Hub</span>
+                        </div>
+                        <div class="dropdown-item" onclick="openPatrouilleSectionForAdmin()">
+                            <span>⛺ Patrouilles Hub</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -802,6 +832,67 @@
                         <label style="font-weight: 700; color: var(--dark-brown); margin-bottom: 8px; display: block;">Registered Accounts:</label>
                         <div id="members-list-container" class="list-container">Loading accounts...</div>
                     </div>
+                </div>
+            </div>
+
+            <!-- SUB-SECTION: ANNUAL PROGRAM & TASKS (ADMIN ONLY) -->
+            <div id="admin-section-program" class="admin-tab-content hidden">
+                <div class="section-box">
+                    <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">📅 Admin Annual Program Planner</h3>
+                    <p style="font-size: 0.85rem; color: var(--brown); margin-bottom: 15px;">Plan internal meetings, camps, and training sessions.</p>
+                    <div id="program-msg" class="success-message">Event added to Annual Program!</div>
+                    <div id="program-err" class="error-message">Please fill in title, type, and date.</div>
+                    <div class="form-group">
+                        <label>Event Title</label>
+                        <input type="text" id="program-title" class="form-control" placeholder="e.g., Summer Camp Leadership Meeting" autocomplete="off" />
+                    </div>
+                    <div class="form-group">
+                        <label>Event Type</label>
+                        <select id="program-type" class="form-control">
+                            <option value="Meeting">Meeting</option>
+                            <option value="Camp">Camp</option>
+                            <option value="Training Session">Training Session</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date & Time</label>
+                        <input type="datetime-local" id="program-date" class="form-control" />
+                    </div>
+                    <button id="add-program-btn" class="btn">Add to Program</button>
+                    
+                    <div style="margin-top: 15px;">
+                        <label style="font-weight: 700; color: var(--dark-brown); margin-bottom: 8px; display: block;">Annual Program Calendar:</label>
+                        <div id="admin-program-list" class="list-container" style="max-height: 250px;">Loading program...</div>
+                    </div>
+                </div>
+
+                <div class="section-box" style="margin-bottom: 0;">
+                    <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">📌 Task & Reminder Center</h3>
+                    <div id="task-msg" class="success-message">Task saved!</div>
+                    <div id="task-err" class="error-message">Please enter task details.</div>
+                    <div class="form-group">
+                        <label>Task Description</label>
+                        <input type="text" id="task-desc" class="form-control" placeholder="e.g., Buy supplies for Friday gathering" autocomplete="off" />
+                    </div>
+                    <div class="form-group" style="display:flex; gap:10px;">
+                        <div style="flex:1;">
+                            <label>Priority</label>
+                            <select id="task-priority" class="form-control">
+                                <option value="Low">Low</option>
+                                <option value="Medium">Medium</option>
+                                <option value="High">High</option>
+                            </select>
+                        </div>
+                        <div style="flex:1;">
+                            <label>Due Date</label>
+                            <input type="date" id="task-due" class="form-control" />
+                        </div>
+                    </div>
+                    <button id="add-task-btn" class="btn btn-outline" style="margin-bottom: 15px;">Add Task</button>
+
+                    <label style="font-weight: 700; color: var(--dark-brown); margin-bottom: 8px; display: block;">Pending Administrative Tasks:</label>
+                    <div id="admin-tasks-list" class="list-container" style="margin-bottom: 0; max-height: 250px;">Loading tasks...</div>
                 </div>
             </div>
 
@@ -1228,6 +1319,10 @@
         let challengeResultsCache = {};
         let activeChallengeId = null;
         let countdownInterval = null;
+        
+        // Unsubscribe functions for new Admin Integrations
+        let adminProgramUnsubscribe = null;
+        let adminTasksUnsubscribe = null;
 
         const screens = {
             home: document.getElementById('home-screen'),
@@ -1237,6 +1332,16 @@
             viewerDashboard: document.getElementById('viewer-dashboard'),
             patrouilleSectionCard: document.getElementById('patrouille-section-card')
         };
+
+        function showMsg(showId, hideId) {
+            const s = document.getElementById(showId);
+            const h = document.getElementById(hideId);
+            if(h) h.style.display = 'none';
+            if(s) {
+                s.style.display = 'block';
+                setTimeout(() => { s.style.display = 'none'; }, 3000);
+            }
+        }
 
         function switchScreen(screenName) {
             Object.keys(screens).forEach(key => {
@@ -1439,6 +1544,82 @@
             }
         };
 
+        // NEW: Administrative Program Calendar
+        function initAdminProgramListener() {
+            if (!currentLoggedInUser || currentLoggedInUser.role !== 'Admin') return;
+            const colRef = collection(db, "admin_program");
+            adminProgramUnsubscribe = onSnapshot(colRef, (snapshot) => {
+                let html = "";
+                if (snapshot.empty) {
+                    html = "<div class='list-item'>No program events scheduled.</div>";
+                } else {
+                    let events = [];
+                    snapshot.forEach(docSnap => events.push({ id: docSnap.id, ...docSnap.data() }));
+                    events.sort((a, b) => new Date(a.date) - new Date(b.date));
+                    events.forEach((data) => {
+                        const dateStr = new Date(data.date).toLocaleString();
+                        let badgeColor = data.type === 'Camp' ? '#2a9d8f' : data.type === 'Training Session' ? '#e9c46a' : '#457b9d';
+                        let txtColor = data.type === 'Training Session' ? '#5c3d2e' : 'white';
+                        html += `<div class='list-item' style="align-items:flex-start;">
+                            <div>
+                                <strong>${data.title}</strong> <span class="status-badge" style="background:${badgeColor}; color:${txtColor}; font-size:0.65rem;">${data.type}</span>
+                                <br><small>🕒 ${dateStr}</small>
+                            </div>
+                            <button class="btn-danger" onclick="deleteAdminProgram('${data.id}')">Delete</button>
+                        </div>`;
+                    });
+                }
+                const progList = document.getElementById('admin-program-list');
+                if (progList) progList.innerHTML = html;
+            });
+        }
+
+        // NEW: Administrative Reminders & Task List
+        function initAdminTasksListener() {
+            if (!currentLoggedInUser || currentLoggedInUser.role !== 'Admin') return;
+            const colRef = collection(db, "admin_tasks");
+            adminTasksUnsubscribe = onSnapshot(colRef, (snapshot) => {
+                let html = "";
+                let pendingCount = 0;
+                if (snapshot.empty) {
+                    html = "<div class='list-item'>No pending tasks.</div>";
+                } else {
+                    let tasks = [];
+                    snapshot.forEach(docSnap => tasks.push({ id: docSnap.id, ...docSnap.data() }));
+                    tasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+                    tasks.forEach((data) => {
+                        if (data.status === 'Completed') return;
+                        pendingCount++;
+                        let prioColor = data.priority === 'High' ? '#d62828' : data.priority === 'Medium' ? '#f4a261' : '#2a9d8f';
+                        let dueStr = data.dueDate ? `Due: ${data.dueDate}` : "No Due Date";
+                        html += `<div class='list-item' style="align-items:flex-start;">
+                            <div>
+                                <strong>${data.task}</strong> <span class="status-badge" style="background:${prioColor}; color:white; font-size:0.65rem;">${data.priority}</span>
+                                <br><small>📅 ${dueStr}</small>
+                            </div>
+                            <div style="display:flex; gap:5px;">
+                                <button class="btn-success" onclick="completeAdminTask('${data.id}')">✅</button>
+                                <button class="btn-danger" onclick="deleteAdminTask('${data.id}')">X</button>
+                            </div>
+                        </div>`;
+                    });
+                    if (pendingCount === 0) html = "<div class='list-item'>All tasks completed! 🎉</div>";
+                }
+                const taskList = document.getElementById('admin-tasks-list');
+                if (taskList) taskList.innerHTML = html;
+                
+                const badge = document.getElementById('admin-task-badge');
+                if (badge) {
+                    if (pendingCount > 0) {
+                        badge.innerText = pendingCount;
+                        badge.style.display = 'inline-block';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                }
+            });
+        }
+
         function initActivitiesListener() {
             const colRef = collection(db, "activities");
             onSnapshot(colRef, (snapshot) => {
@@ -1548,6 +1729,34 @@
                 renderViewerChallengeCard();
             });
         }
+
+        // NEW: Create Event for Administrative Calendar
+        document.getElementById('add-program-btn')?.addEventListener('click', async () => {
+            const title = document.getElementById('program-title').value.trim();
+            const type = document.getElementById('program-type').value;
+            const date = document.getElementById('program-date').value;
+            if (!title || !date) return showMsg('program-err', 'program-msg');
+            await setDoc(doc(collection(db, "admin_program")), { title, type, date, created: Date.now() });
+            document.getElementById('program-title').value = ''; 
+            document.getElementById('program-date').value = '';
+            showMsg('program-msg', 'program-err');
+        });
+
+        // NEW: Create Task for Admin Reminder Hub
+        document.getElementById('add-task-btn')?.addEventListener('click', async () => {
+            const task = document.getElementById('task-desc').value.trim();
+            const priority = document.getElementById('task-priority').value;
+            const dueDate = document.getElementById('task-due').value;
+            if (!task) return showMsg('task-err', 'task-msg');
+            await setDoc(doc(collection(db, "admin_tasks")), { task, priority, dueDate, status: 'Pending', created: Date.now() });
+            document.getElementById('task-desc').value = ''; 
+            document.getElementById('task-due').value = '';
+            showMsg('task-msg', 'task-err');
+        });
+
+        window.deleteAdminProgram = async function(id) { await deleteDoc(doc(db, "admin_program", id)); };
+        window.deleteAdminTask = async function(id) { await deleteDoc(doc(db, "admin_tasks", id)); };
+        window.completeAdminTask = async function(id) { await updateDoc(doc(db, "admin_tasks", id), { status: 'Completed' }); };
 
         document.getElementById('create-challenge-btn')?.addEventListener('click', async () => {
             const title = document.getElementById('challenge-title').value.trim();
@@ -1790,6 +1999,9 @@
                 }
 
                 if (currentLoggedInUser.role === 'Admin') {
+                    // NEW: Mount Administrative Views
+                    initAdminProgramListener();
+                    initAdminTasksListener();
                     switchScreen('adminDashboard'); switchAdminSection('admin-section-management');
                 } else {
                     document.getElementById('logged-viewer-name').innerText = user;
@@ -1803,7 +2015,14 @@
             } else { err.style.display = 'block'; }
         });
 
-        document.getElementById('admin-logout-btn')?.addEventListener('click', () => { currentLoggedInUser = null; switchScreen('home'); });
+        document.getElementById('admin-logout-btn')?.addEventListener('click', () => { 
+            currentLoggedInUser = null; 
+            // Unsubscribe administrative listeners
+            if(adminProgramUnsubscribe) { adminProgramUnsubscribe(); adminProgramUnsubscribe = null; }
+            if(adminTasksUnsubscribe) { adminTasksUnsubscribe(); adminTasksUnsubscribe = null; }
+            switchScreen('home'); 
+        });
+        
         document.getElementById('viewer-logout-btn')?.addEventListener('click', () => { currentLoggedInUser = null; switchScreen('home'); });
 
         function renderAdminAttendanceSection() {
@@ -1935,6 +2154,7 @@
             document.getElementById('patrol-members-badges-container').innerHTML = c === 0 ? "<div>No members.</div>" : html;
         }
 
+        // FULLY COMPLETED: Patrouille Specific Retrieval Tools
         window.loadPatrouilleMemories = async function(patrouilleId) {
             const memoriesContainer = document.getElementById('memories-container');
             memoriesContainer.innerHTML = '<p class="loading-text">Loading memories...</p>';
@@ -1948,121 +2168,83 @@
                     return;
                 }
 
-                memoriesContainer.innerHTML = '';
+                let html = "";
                 querySnapshot.forEach((docSnap) => {
-                    const memory = docSnap.data();
-                    const memoryElement = document.createElement('div');
-                    memoryElement.className = 'memory-card gallery-item';
-                    
-                    let deleteBtn = (currentLoggedInUser && (currentLoggedInUser.role === 'Admin' || currentLoggedInUser.role === 'Cp')) 
-                        ? `<button class="btn-danger" onclick="deletePatrouilleMemory('${docSnap.id}', '${patrouilleId}')">X</button>` : '';
-
-                    memoryElement.innerHTML = `
-                        <img src="${memory.imageBase64}" alt="Memory" onclick="openImageModal('${memory.imageBase64}')">
-                        <div class="gallery-item-info"><p>${memory.caption || ''}</p></div>
-                        ${deleteBtn}`;
-                    memoriesContainer.appendChild(memoryElement);
+                    const data = docSnap.data();
+                    html += `<div class='gallery-item'><img src="${data.url}" onclick="openImageModal('${data.url}')" /><button class="btn-danger" onclick="deletePatrouilleMemory('${docSnap.id}')">X</button></div>`;
                 });
-            } catch (error) {
-                console.error("Error loading memories: ", error);
-                memoriesContainer.innerHTML = '<p class="error-text">Failed to load memories.</p>';
+                memoriesContainer.innerHTML = html;
+            } catch(e) {
+                console.error(e);
+                memoriesContainer.innerHTML = '<p class="error-message">Error loading memories.</p>';
             }
         };
 
-        document.getElementById('add-patrol-memory-btn')?.addEventListener('click', async () => {
-            const title = document.getElementById('patrol-mem-title').value.trim();
+        window.loadPatrouilleActivities = async function(patrouilleId) {
+            const actContainer = document.getElementById('activities-container');
+            actContainer.innerHTML = '<p class="loading-text">Loading activities...</p>';
+
+            try {
+                const q = query(collection(db, "patrouilleActivities"), where("patrouilleId", "==", patrouilleId));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    actContainer.innerHTML = '<div class="list-item">No activities planned.</div>';
+                    return;
+                }
+
+                let html = "";
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const dateStr = new Date(data.date).toLocaleString();
+                    html += `<div class='list-item'><div><strong>${data.title}</strong><br><small>🕒 ${dateStr}</small></div><button class="btn-danger" onclick="deletePatrouilleActivity('${docSnap.id}')">Delete</button></div>`;
+                });
+                actContainer.innerHTML = html;
+            } catch(e) {
+                console.error(e);
+                actContainer.innerHTML = '<div class="list-item">Error loading activities.</div>';
+            }
+        };
+
+        window.deletePatrouilleMemory = async function(id) { await deleteDoc(doc(db, "memories", id)); loadPatrouilleMemories(getActiveTargetPatrol()); };
+        window.deletePatrouilleActivity = async function(id) { await deleteDoc(doc(db, "patrouilleActivities", id)); loadPatrouilleActivities(getActiveTargetPatrol()); };
+
+        document.getElementById('add-patrol-memory-btn')?.addEventListener('click', () => {
             const fileInput = document.getElementById('patrol-mem-file');
+            const title = document.getElementById('patrol-mem-title').value.trim();
+            if (fileInput.files.length === 0 || !title) return showMsg('patrol-mem-err', 'patrol-mem-msg');
             const targetPatrol = getActiveTargetPatrol();
-
-            if (!title || fileInput.files.length === 0) return showMsg('patrol-mem-err', 'patrol-msg');
-
+            
             const reader = new FileReader();
             reader.onload = async function(e) {
-                await setDoc(doc(collection(db, "memories")), {
-                    patrouilleId: targetPatrol,
-                    caption: title,
-                    imageBase64: e.target.result,
-                    created: Date.now()
-                });
-                document.getElementById('patrol-mem-title').value = '';
-                fileInput.value = '';
+                await setDoc(doc(collection(db, "memories")), { url: e.target.result, title, patrouilleId: targetPatrol, created: Date.now() });
+                fileInput.value = ''; document.getElementById('patrol-mem-title').value = '';
                 showMsg('patrol-mem-msg', 'patrol-mem-err');
                 loadPatrouilleMemories(targetPatrol);
             };
             reader.readAsDataURL(fileInput.files[0]);
         });
 
-        window.deletePatrouilleMemory = async function(docId, patrouilleId) {
-            if(confirm("Delete this memory?")) {
-                await deleteDoc(doc(db, "memories", docId));
-                loadPatrouilleMemories(patrouilleId);
-            }
-        };
-
-        window.loadPatrouilleActivities = async function(patrouilleId) {
-            const activitiesContainer = document.getElementById('activities-container');
-            activitiesContainer.innerHTML = '<p class="loading-text">Loading activities...</p>';
-
-            try {
-                const q = query(collection(db, "patrol_activities"), where("patrouilleId", "==", patrouilleId));
-                const querySnapshot = await getDocs(q);
-
-                if (querySnapshot.empty) {
-                    activitiesContainer.innerHTML = '<p class="empty-state-text">No planned activities at the moment.</p>';
-                    return;
-                }
-
-                activitiesContainer.innerHTML = '';
-                querySnapshot.forEach((docSnap) => {
-                    const activity = docSnap.data();
-                    const activityElement = document.createElement('div');
-                    activityElement.className = 'activity-card list-item';
-
-                    let deleteBtn = (currentLoggedInUser && (currentLoggedInUser.role === 'Admin' || currentLoggedInUser.role === 'Cp')) 
-                        ? `<button class="btn-danger" onclick="deletePatrouilleActivity('${docSnap.id}', '${patrouilleId}')">Delete</button>` : '';
-
-                    activityElement.innerHTML = `
-                        <div><h4>${activity.title}</h4><p><small>🕒 ${activity.date}</small></p></div>
-                        ${deleteBtn}`;
-                    activitiesContainer.appendChild(activityElement);
-                });
-            } catch (error) {
-                console.error("Error loading activities: ", error);
-                activitiesContainer.innerHTML = '<p class="error-text">Failed to load activities.</p>';
-            }
-        };
-
         document.getElementById('add-patrol-activity-btn')?.addEventListener('click', async () => {
             const title = document.getElementById('patrol-act-title').value.trim();
             const date = document.getElementById('patrol-act-date').value;
-            const targetPatrol = getActiveTargetPatrol();
-
             if (!title || !date) return showMsg('patrol-act-err', 'patrol-act-msg');
-
-            await setDoc(doc(collection(db, "patrol_activities")), {
-                patrouilleId: targetPatrol,
-                title,
-                date,
-                created: Date.now()
-            });
-
-            document.getElementById('patrol-act-title').value = '';
-            document.getElementById('patrol-act-date').value = '';
+            const targetPatrol = getActiveTargetPatrol();
+            
+            await setDoc(doc(collection(db, "patrouilleActivities")), { title, date, patrouilleId: targetPatrol, created: Date.now() });
+            document.getElementById('patrol-act-title').value = ''; document.getElementById('patrol-act-date').value = '';
             showMsg('patrol-act-msg', 'patrol-act-err');
             loadPatrouilleActivities(targetPatrol);
         });
 
-        window.deletePatrouilleActivity = async function(docId, patrouilleId) {
-            if(confirm("Delete this activity?")) {
-                await deleteDoc(doc(db, "patrol_activities", docId));
-                loadPatrouilleActivities(patrouilleId);
-            }
+        window.openImageModal = function(src) {
+            document.getElementById('modal-img').src = src;
+            document.getElementById('image-modal').classList.add('show');
         };
+        document.getElementById('image-modal')?.addEventListener('click', (e) => {
+            if(e.target.id === 'image-modal') document.getElementById('image-modal').classList.remove('show');
+        });
 
-        const imageModal = document.getElementById('image-modal'); const modalImg = document.getElementById('modal-img');
-        window.openImageModal = function(url) { if (modalImg && imageModal) { modalImg.src = url; imageModal.classList.add('show'); } };
-        if (imageModal && modalImg) { imageModal.addEventListener('click', () => { imageModal.classList.remove('show'); modalImg.src = ''; }); }
-        function showMsg(s, h) { let se = document.getElementById(s), he = document.getElementById(h); if(se) se.style.display='block'; if(he) he.style.display='none'; setTimeout(()=> {if(se) se.style.display='none';}, 3000); }
     </script>
 </body>
 </html>

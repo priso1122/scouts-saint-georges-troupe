@@ -753,7 +753,7 @@
                 <p style="margin-bottom: 20px; font-size: 0.9rem; color: var(--brown);">Full structural and member account authority.</p>
                 
                 <div class="section-box">
-                    <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">⛺ Create Patrouille</h3>
+                    <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">⛺ Manage Patrouilles</h3>
                     <div id="patrol-msg" class="success-message">Patrouille created successfully!</div>
                     <div id="patrol-err" class="error-message">Please enter a patrouille name and motto.</div>
                     <div class="form-group" style="margin-bottom: 10px;">
@@ -762,7 +762,10 @@
                     <div class="form-group" style="margin-bottom: 10px;">
                         <input type="text" id="new-patrol-moto" class="form-control" placeholder="Patrol Motto (e.g., Always Ahead)" autocomplete="off" />
                     </div>
-                    <button id="create-patrol-btn" class="btn btn-outline" style="margin-bottom: 0;">Add Patrouille</button>
+                    <button id="create-patrol-btn" class="btn btn-outline" style="margin-bottom: 15px;">Add Patrouille</button>
+                    
+                    <label style="font-weight: 700; color: var(--dark-brown); margin-bottom: 8px; display: block;">Existing Patrouilles:</label>
+                    <div id="admin-patrols-list-container" class="list-container" style="margin-bottom: 0;">Loading patrouilles...</div>
                 </div>
 
                 <div class="section-box">
@@ -1329,9 +1332,11 @@
 
                 patrolsCache = {};
                 let publicPatrolsHtml = "";
+                let adminPatrolsHtml = "";
 
                 if (snapshot.empty) {
                     publicPatrolsHtml = "<div class='list-item'>No patrols available.</div>";
+                    adminPatrolsHtml = "<div class='list-item'>No patrols created yet.</div>";
                 } else {
                     snapshot.forEach((docSnap) => {
                         const pName = docSnap.id;
@@ -1348,6 +1353,12 @@
                                 <div class='list-item'>
                                     <div>⛺ <strong>${pName}</strong><br><small style="color: var(--brown);">Moto: "${moto}"</small></div>
                                 </div>`;
+
+                            adminPatrolsHtml += `
+                                <div class='list-item'>
+                                    <div>⛺ <strong>${pName}</strong><br><small style="color: var(--brown);">Moto: "${moto}"</small></div>
+                                    <button class="btn-danger" onclick="deletePatrol('${pName}')">Delete</button>
+                                </div>`;
                         } else {
                             attendanceTargetHtml += `<option value="Staff">Staff (Leadership)</option>`;
                         }
@@ -1356,6 +1367,9 @@
 
                 const publicPatrolsContainer = document.getElementById('public-patrols-container');
                 if (publicPatrolsContainer) publicPatrolsContainer.innerHTML = publicPatrolsHtml || "<div class='list-item'>No patrols available.</div>";
+
+                const adminPatrolsContainer = document.getElementById('admin-patrols-list-container');
+                if (adminPatrolsContainer) adminPatrolsContainer.innerHTML = adminPatrolsHtml || "<div class='list-item'>No patrols created yet.</div>";
 
                 if (document.getElementById('new-member-patrol')) document.getElementById('new-member-patrol').innerHTML = selectHtml;
                 const adminPatrolSel = document.getElementById('admin-target-patrol-select');
@@ -1366,6 +1380,12 @@
                 renderPatrolLeaderboard();
             });
         }
+
+        window.deletePatrol = async function(pName) {
+            if(confirm(`Are you sure you want to delete patrouille "${pName}"?`)) {
+                await deleteDoc(doc(db, "patrols", pName));
+            }
+        };
 
         function initUsersListener() {
             const colRef = collection(db, "members");

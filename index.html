@@ -9,8 +9,8 @@
            DESIGN & COLOR PALETTE
            ========================================================================== */
         :root {
-            --green: #1d3557; /* Updated from green to blue */
-            --dark-green: #0f172a; /* Updated dark green theme variant to deep blue */
+            --green: #1d3557; 
+            --dark-green: #0f172a; 
             --brown: #7f5539;
             --dark-brown: #5c3d2e;
             --beige: #f4f1de;
@@ -175,7 +175,7 @@
             background: white;
             border-radius: 8px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            width: 200px;
+            width: 220px;
             display: none;
             z-index: 1000;
             border: 1px solid #ddd;
@@ -382,15 +382,26 @@
             position: relative;
             border-radius: 6px;
             overflow: hidden;
-            height: 110px;
+            height: 130px;
             background: #eee;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
         }
 
         .gallery-item img {
             width: 100%;
-            height: 100%;
+            height: 80px;
             object-fit: cover;
+        }
+
+        .gallery-item-info {
+            padding: 4px;
+            font-size: 0.75rem;
+            background: white;
+            flex-grow: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .gallery-item button {
@@ -468,12 +479,13 @@
             <div class="dashboard-nav-bar">
                 <h3 id="admin-panel-title">Admin Control Panel</h3>
                 <div class="menu-container">
-                    <button class="menu-btn" id="admin-menu-toggle">⋮</button>
+                    <button class="menu-btn" id="admin-menu-toggle" type="button">⋮</button>
                     <div class="dropdown-menu" id="admin-dropdown">
                         <div class="dropdown-item" onclick="switchAdminSection('admin-section-management')">⚙️ Management</div>
                         <div class="dropdown-item" onclick="switchAdminSection('admin-section-activities')">📅 Activities</div>
                         <div class="dropdown-item" onclick="switchAdminSection('admin-section-memories')">🖼️ Memories</div>
                         <div class="dropdown-item" onclick="switchAdminSection('admin-section-ideas')">💡 Ideas Review</div>
+                        <div class="dropdown-item" onclick="openPatrouilleSectionForAdmin()">⛺ Patrouilles Hub</div>
                     </div>
                 </div>
             </div>
@@ -591,12 +603,13 @@
                     <small style="color: var(--brown); font-size: 0.8rem;" id="viewer-subtitle"></small>
                 </div>
                 <div class="menu-container">
-                    <button class="menu-btn" id="viewer-menu-toggle">⋮</button>
+                    <button class="menu-btn" id="viewer-menu-toggle" type="button">⋮</button>
                     <div class="dropdown-menu" id="viewer-dropdown">
                         <div class="dropdown-item" onclick="switchViewerSection('viewer-section-welcome')">🏠 Home / Welcome</div>
                         <div class="dropdown-item" onclick="switchViewerSection('viewer-section-activities')">📅 Activities</div>
                         <div class="dropdown-item" onclick="switchViewerSection('viewer-section-memories')">🖼️ Memories</div>
                         <div class="dropdown-item" onclick="switchViewerSection('viewer-section-ideas')">💡 Suggest an Idea</div>
+                        <div class="dropdown-item" onclick="openMyPatrouilleSection()">⛺ My Patrouille</div>
                     </div>
                 </div>
             </div>
@@ -608,7 +621,7 @@
                     <br><small style="color: var(--brown); font-size: 0.85rem;" id="logged-viewer-role-text"></small>
                     <br><small style="color: var(--dark-brown); font-size: 0.85rem;" id="logged-viewer-patrol-text"></small>
                 </div>
-                <p style="text-align: center; color: var(--brown); font-size: 0.95rem;">Use the top-right menu (⋮) to navigate through Activities, Memories, and Ideas.</p>
+                <p style="text-align: center; color: var(--brown); font-size: 0.95rem;">Use the top-right menu (⋮) to navigate through Activities, Memories, Ideas, and your Patrouille area.</p>
             </div>
 
             <!-- VIEWER SUB-SECTION 2: ACTIVITIES -->
@@ -642,6 +655,87 @@
 
             <button id="viewer-logout-btn" class="btn btn-outline" style="margin-top: 25px;">Logout</button>
         </main>
+
+        <!-- DEDICATED PATROUILLE SECTION (ISOLATED PER PATROUILLE) -->
+        <main id="patrouille-section-card" class="card hidden">
+            <div class="dashboard-nav-bar">
+                <div>
+                    <h3 id="patrouille-sec-title">⛺ Patrouille Area</h3>
+                    <small style="color: var(--brown); font-size: 0.8rem;" id="patrouille-sec-subtitle">Isolated Workspace</small>
+                </div>
+                <button id="patrouille-back-btn" class="btn btn-outline" style="width: auto; padding: 6px 12px; margin-bottom: 0; font-size: 0.85rem;" type="button">⬅ Back</button>
+            </div>
+
+            <!-- Admin Patrouille Selector Dropdown (Only visible to Admin) -->
+            <div id="admin-patrol-selector-wrapper" class="form-group hidden" style="background: rgba(255,255,255,0.7); padding: 12px; border-radius: 8px;">
+                <label>Select Patrouille to Manage (Admin View):</label>
+                <select id="admin-target-patrol-select" class="form-control">
+                    <option value="" disabled selected>Select a Patrouille</option>
+                </select>
+            </div>
+
+            <!-- 1. MEMBERS & BADGES -->
+            <div class="section-box">
+                <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">👥 Members & Badges</h3>
+                <div id="patrol-members-badges-container" class="list-container" style="max-height: 220px;">Loading members...</div>
+            </div>
+
+            <!-- 2. PATROUILLE MEMORIES -->
+            <div class="section-box">
+                <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">🖼️ Patrouille Memories</h3>
+                
+                <div id="patrol-memory-form-wrapper" class="hidden" style="background: rgba(255,255,255,0.8); padding: 12px; border-radius: 8px; margin-bottom: 15px;">
+                    <h4 style="font-size: 0.9rem; color: var(--dark-green); margin-bottom: 8px;">Add New Memory</h4>
+                    <div id="patrol-mem-msg" class="success-message">Memory added!</div>
+                    <div id="patrol-mem-err" class="error-message">Please provide a title and date.</div>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <input type="text" id="patrol-mem-title" class="form-control" placeholder="Memory Title" autocomplete="off" />
+                    </div>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <input type="text" id="patrol-mem-desc" class="form-control" placeholder="Description" autocomplete="off" />
+                    </div>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <input type="date" id="patrol-mem-date" class="form-control" />
+                    </div>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label style="font-size: 0.85rem;">Photo (Optional)</label>
+                        <input type="file" id="patrol-mem-file" class="form-control" accept="image/*" />
+                    </div>
+                    <button id="add-patrol-memory-btn" class="btn btn-outline" style="margin-bottom: 0; padding: 10px;">Publish Memory</button>
+                </div>
+
+                <div id="patrol-memories-grid" class="gallery-grid" style="margin-bottom: 0;">Loading memories...</div>
+            </div>
+
+            <!-- 3. PATROUILLE ACTIVITIES -->
+            <div class="section-box" style="margin-bottom: 0;">
+                <h3 style="color: var(--dark-brown); font-size: 1rem; margin-bottom: 10px;">📅 Patrouille Planned Activities</h3>
+                
+                <div id="patrol-activity-form-wrapper" class="hidden" style="background: rgba(255,255,255,0.8); padding: 12px; border-radius: 8px; margin-bottom: 15px;">
+                    <h4 style="font-size: 0.9rem; color: var(--dark-green); margin-bottom: 8px;">Plan New Activity</h4>
+                    <div id="patrol-act-msg" class="success-message">Activity planned!</div>
+                    <div id="patrol-act-err" class="error-message">Please fill in title, date, time and location.</div>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <input type="text" id="patrol-act-title" class="form-control" placeholder="Activity Title" autocomplete="off" />
+                    </div>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <input type="text" id="patrol-act-desc" class="form-control" placeholder="Description / Additional Details" autocomplete="off" />
+                    </div>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <input type="date" id="patrol-act-date" class="form-control" />
+                    </div>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <input type="time" id="patrol-act-time" class="form-control" />
+                    </div>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <input type="text" id="patrol-act-location" class="form-control" placeholder="Location" autocomplete="off" />
+                    </div>
+                    <button id="add-patrol-activity-btn" class="btn btn-outline" style="margin-bottom: 0; padding: 10px;">Schedule Activity</button>
+                </div>
+
+                <div id="patrol-activities-list" class="list-container" style="margin-bottom: 0; max-height: 200px;">Loading activities...</div>
+            </div>
+        </main>
     </div>
 
     <!-- FIREBASE & APP LOGIC -->
@@ -669,13 +763,15 @@
 
         let db = null;
         let usersCache = {};
+        let currentLoggedInUser = null;
 
         // UI Screens
         const screens = {
             home: document.getElementById('home-screen'),
             login: document.getElementById('login-screen'),
             adminDashboard: document.getElementById('admin-dashboard'),
-            viewerDashboard: document.getElementById('viewer-dashboard')
+            viewerDashboard: document.getElementById('viewer-dashboard'),
+            patrouilleSectionCard: document.getElementById('patrouille-section-card')
         };
 
         function switchScreen(screenName) {
@@ -686,38 +782,53 @@
         // Navigation bindings
         document.getElementById('goto-login').addEventListener('click', () => switchScreen('login'));
         document.getElementById('login-back-btn').addEventListener('click', () => switchScreen('home'));
+        document.getElementById('patrouille-back-btn').addEventListener('click', () => {
+            if (currentLoggedInUser && currentLoggedInUser.role === 'Admin') {
+                switchScreen('adminDashboard');
+                switchAdminSection('admin-section-management');
+            } else {
+                switchScreen('viewerDashboard');
+                switchViewerSection('viewer-section-welcome');
+            }
+        });
 
         // Three dots menu toggle handlers
         const adminMenuToggle = document.getElementById('admin-menu-toggle');
         const adminDropdown = document.getElementById('admin-dropdown');
-        adminMenuToggle.addEventListener('click', (e) => {
-            e.stopPropagation();
-            adminDropdown.classList.toggle('show');
-        });
+        if (adminMenuToggle && adminDropdown) {
+            adminMenuToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                adminDropdown.classList.toggle('show');
+            });
+        }
 
         const viewerMenuToggle = document.getElementById('viewer-menu-toggle');
         const viewerDropdown = document.getElementById('viewer-dropdown');
-        viewerMenuToggle.addEventListener('click', (e) => {
-            e.stopPropagation();
-            viewerDropdown.classList.toggle('show');
-        });
+        if (viewerMenuToggle && viewerDropdown) {
+            viewerMenuToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                viewerDropdown.classList.toggle('show');
+            });
+        }
 
         window.addEventListener('click', () => {
-            adminDropdown.classList.remove('show');
-            viewerDropdown.classList.remove('show');
+            if (adminDropdown) adminDropdown.classList.remove('show');
+            if (viewerDropdown) viewerDropdown.classList.remove('show');
         });
 
         // Tab Switchers for Menus
         window.switchAdminSection = function(sectionId) {
             document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById(sectionId).classList.remove('hidden');
-            adminDropdown.classList.remove('show');
+            const targetEl = document.getElementById(sectionId);
+            if (targetEl) targetEl.classList.remove('hidden');
+            if (adminDropdown) adminDropdown.classList.remove('show');
         };
 
         window.switchViewerSection = function(sectionId) {
             document.querySelectorAll('.viewer-tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById(sectionId).classList.remove('hidden');
-            viewerDropdown.classList.remove('show');
+            const targetEl = document.getElementById(sectionId);
+            if (targetEl) targetEl.classList.remove('hidden');
+            if (viewerDropdown) viewerDropdown.classList.remove('show');
         };
 
         // Initialize Firebase
@@ -727,7 +838,7 @@
                 db = getFirestore(app);
                 
                 // Ensure default hardcoded admin account exists in Firestore
-                setDoc(doc(db, "members", "chef"), { password: "chef", role: "Admin", patrol: "Staff" }, { merge: true });
+                setDoc(doc(db, "members", "chef"), { password: "chef", role: "Admin", patrol: "Staff", badges: 0 }, { merge: true });
 
                 initUsersListener();
                 initPatrolsListener();
@@ -755,7 +866,8 @@
                         usersCache[docSnap.id] = { 
                             password: data.password, 
                             role: data.role || 'Member',
-                            patrol: data.patrol || 'Unassigned'
+                            patrol: data.patrol || 'Unassigned',
+                            badges: data.badges || 0
                         };
                         html += `
                             <div class='list-item'>
@@ -767,7 +879,13 @@
                             </div>`;
                     });
                 }
-                document.getElementById('members-list-container').innerHTML = html;
+                const mContainer = document.getElementById('members-list-container');
+                if (mContainer) mContainer.innerHTML = html;
+
+                // Refresh Patrouille section views if active
+                if (currentLoggedInUser) {
+                    renderPatrouilleSectionData();
+                }
             });
         }
 
@@ -778,13 +896,25 @@
                 let selectHtml = `<option value="" disabled selected>Select a Patrouille</option>`;
                 selectHtml += `<option value="Staff">Staff (Leadership)</option>`;
 
+                let adminSelectHtml = `<option value="" disabled selected>Select a Patrouille</option>`;
+                adminSelectHtml += `<option value="Staff">Staff (Leadership)</option>`;
+
                 snapshot.forEach((docSnap) => {
                     const pName = docSnap.id;
                     if (pName !== "Staff") {
                         selectHtml += `<option value="${pName}">${pName}</option>`;
+                        adminSelectHtml += `<option value="${pName}">${pName}</option>`;
                     }
                 });
-                document.getElementById('new-member-patrol').innerHTML = selectHtml;
+                const mPatrolSel = document.getElementById('new-member-patrol');
+                if (mPatrolSel) mPatrolSel.innerHTML = selectHtml;
+
+                const adminPatrolSel = document.getElementById('admin-target-patrol-select');
+                if (adminPatrolSel) {
+                    const currentVal = adminPatrolSel.value;
+                    adminPatrolSel.innerHTML = adminSelectHtml;
+                    if (currentVal) adminPatrolSel.value = currentVal;
+                }
             });
         }
 
@@ -813,8 +943,10 @@
                             </div>`;
                     });
                 }
-                document.getElementById('admin-activities-list').innerHTML = adminHtml;
-                document.getElementById('viewer-activities-list').innerHTML = viewerHtml;
+                const adminActList = document.getElementById('admin-activities-list');
+                if (adminActList) adminActList.innerHTML = adminHtml;
+                const viewerActList = document.getElementById('viewer-activities-list');
+                if (viewerActList) viewerActList.innerHTML = viewerHtml;
             });
         }
 
@@ -835,11 +967,14 @@
                             </div>`;
                     });
                 }
-                document.getElementById('admin-gallery-grid').innerHTML = html;
+                const adminGal = document.getElementById('admin-gallery-grid');
+                if (adminGal) adminGal.innerHTML = html;
                 
-                // For viewers, remove the delete button
-                let viewerHtml = html.replace(/<button class="btn-danger" onclick="deletePhoto\('[^']+'\)">X<\/button>/g, '');
-                document.getElementById('viewer-gallery-grid').innerHTML = viewerHtml;
+                const viewerGal = document.getElementById('viewer-gallery-grid');
+                if (viewerGal) {
+                    let viewerHtml = html.replace(/<button class="btn-danger" onclick="deletePhoto\('[^']+'\)">X<\/button>/g, '');
+                    viewerGal.innerHTML = viewerHtml;
+                }
             });
         }
 
@@ -860,7 +995,259 @@
                             </div>`;
                     });
                 }
-                document.getElementById('admin-ideas-list').innerHTML = html;
+                const adminIdeas = document.getElementById('admin-ideas-list');
+                if (adminIdeas) adminIdeas.innerHTML = html;
+            });
+        }
+
+        // ==========================================================================
+        // DEDICATED PATROUILLE SECTION LOGIC & LISTENERS
+        // ==========================================================================
+        let selectedPatrolForAdmin = "Staff";
+
+        window.openMyPatrouilleSection = function() {
+            if (!currentLoggedInUser) return;
+            if (viewerDropdown) viewerDropdown.classList.remove('show');
+            
+            const adminSelectorWrapper = document.getElementById('admin-patrol-selector-wrapper');
+            if (adminSelectorWrapper) adminSelectorWrapper.classList.add('hidden');
+            
+            const secTitle = document.getElementById('patrouille-sec-title');
+            const secSub = document.getElementById('patrouille-sec-subtitle');
+            if (secTitle) secTitle.innerText = `⛺ Patrouille: ${currentLoggedInUser.patrol}`;
+            if (secSub) secSub.innerText = `Role: ${currentLoggedInUser.role}`;
+
+            const memForm = document.getElementById('patrol-memory-form-wrapper');
+            const actForm = document.getElementById('patrol-activity-form-wrapper');
+
+            // CP and Admin can add memories and activities to their patrouille
+            if (currentLoggedInUser.role === 'Cp' || currentLoggedInUser.role === 'Admin') {
+                if (memForm) memForm.classList.remove('hidden');
+                if (actForm) actForm.classList.remove('hidden');
+            } else {
+                if (memForm) memForm.classList.add('hidden');
+                if (actForm) actForm.classList.add('hidden');
+            }
+
+            switchScreen('patrouilleSectionCard');
+            renderPatrouilleSectionData();
+        };
+
+        window.openPatrouilleSectionForAdmin = function() {
+            if (!currentLoggedInUser || currentLoggedInUser.role !== 'Admin') return;
+            if (adminDropdown) adminDropdown.classList.remove('show');
+            
+            const adminSelectorWrapper = document.getElementById('admin-patrol-selector-wrapper');
+            if (adminSelectorWrapper) adminSelectorWrapper.classList.remove('hidden');
+            
+            const secTitle = document.getElementById('patrouille-sec-title');
+            const secSub = document.getElementById('patrouille-sec-subtitle');
+            if (secTitle) secTitle.innerText = `⛺ Admin Patrouille Management`;
+            if (secSub) secSub.innerText = `Full Authority Across All Patrouilles`;
+
+            const memForm = document.getElementById('patrol-memory-form-wrapper');
+            const actForm = document.getElementById('patrol-activity-form-wrapper');
+            if (memForm) memForm.classList.remove('hidden');
+            if (actForm) actForm.classList.remove('hidden');
+
+            const adminSel = document.getElementById('admin-target-patrol-select');
+            if (adminSel) {
+                if (adminSel.value) {
+                    selectedPatrolForAdmin = adminSel.value;
+                } else {
+                    selectedPatrolForAdmin = "Staff";
+                    adminSel.value = "Staff";
+                }
+            }
+
+            switchScreen('patrouilleSectionCard');
+            renderPatrouilleSectionData();
+        };
+
+        const adminTargetPatrolSelect = document.getElementById('admin-target-patrol-select');
+        if (adminTargetPatrolSelect) {
+            adminTargetPatrolSelect.addEventListener('change', (e) => {
+                selectedPatrolForAdmin = e.target.value;
+                renderPatrouilleSectionData();
+            });
+        }
+
+        function getActiveTargetPatrol() {
+            if (currentLoggedInUser && currentLoggedInUser.role === 'Admin') {
+                return selectedPatrolForAdmin;
+            }
+            return currentLoggedInUser ? currentLoggedInUser.patrol : 'Unassigned';
+        }
+
+        function renderPatrouilleSectionData() {
+            if (!currentLoggedInUser) return;
+            const targetPatrol = getActiveTargetPatrol();
+
+            // 1. Render Members & Badges for target patrol
+            let membersHtml = "";
+            let memberCount = 0;
+            for (let [username, uData] of Object.entries(usersCache)) {
+                if (uData.patrol === targetPatrol) {
+                    memberCount++;
+                    let canManageBadges = (currentLoggedInUser.role === 'Admin' || currentLoggedInUser.role === 'Cp');
+                    
+                    membersHtml += `
+                        <div class='list-item'>
+                            <div>
+                                <span>👤 <strong>${username}</strong></span>
+                                <br><small style="color: var(--brown);">Badges: <strong id="badge-count-${username}">${uData.badges || 0}</strong></small>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span class="role-badge">${uData.role}</span>
+                                ${canManageBadges ? `
+                                    <button class="btn btn-outline" style="padding: 2px 6px; font-size: 0.75rem; width: auto; margin-bottom: 0;" type="button" onclick="updateMemberBadges('${username}', 1)">+ Badge</button>
+                                    <button class="btn btn-outline" style="padding: 2px 6px; font-size: 0.75rem; width: auto; margin-bottom: 0;" type="button" onclick="updateMemberBadges('${username}', -1)">- Badge</button>
+                                ` : ''}
+                            </div>
+                        </div>`;
+                }
+            }
+            if (memberCount === 0) {
+                membersHtml = "<div class='list-item'>No members found in this patrouille.</div>";
+            }
+            const pmbContainer = document.getElementById('patrol-members-badges-container');
+            if (pmbContainer) pmbContainer.innerHTML = membersHtml;
+
+            // 2. Load Patrouille Memories Realtime
+            loadPatrouilleMemories(targetPatrol);
+
+            // 3. Load Patrouille Activities Realtime
+            loadPatrouilleActivities(targetPatrol);
+        }
+
+        // Global Badge Updater
+        window.updateMemberBadges = async function(username, delta) {
+            if (!usersCache[username]) return;
+            let currentBadges = usersCache[username].badges || 0;
+            let newBadges = Math.max(0, currentBadges + delta);
+            await setDoc(doc(db, "members", username), { badges: newBadges }, { merge: true });
+        };
+
+        // Patrouille Memories Listeners
+        function loadPatrouilleMemories(patrolName) {
+            const colRef = collection(db, `patrouilles_data_${patrolName}_memories`);
+            onSnapshot(colRef, (snapshot) => {
+                let html = "";
+                if (snapshot.empty) {
+                    html = "<div style='grid-column: 1 / -1; font-size: 0.9rem; color: #7f5539;'>No memories added for this patrouille yet.</div>";
+                } else {
+                    snapshot.forEach((docSnap) => {
+                        const data = docSnap.data();
+                        let canDelete = (currentLoggedInUser.role === 'Admin' || currentLoggedInUser.role === 'Cp');
+                        html += `
+                            <div class='gallery-item'>
+                                ${data.url ? `<img src="${data.url}" alt="Memory" />` : `<div style="height: 40px; background: var(--beige); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: var(--brown);">No Image</div>`}
+                                <div class="gallery-item-info">
+                                    <strong>${data.title}</strong><br><small>${data.date || ''}</small>
+                                </div>
+                                ${canDelete ? `<button class="btn-danger" type="button" onclick="deletePatrolMemory('${patrolName}', '${docSnap.id}')">X</button>` : ''}
+                            </div>`;
+                    });
+                }
+                const grid = document.getElementById('patrol-memories-grid');
+                if (grid) grid.innerHTML = html;
+            });
+        }
+
+        const addPatrolMemoryBtn = document.getElementById('add-patrol-memory-btn');
+        if (addPatrolMemoryBtn) {
+            addPatrolMemoryBtn.addEventListener('click', async () => {
+                const targetPatrol = getActiveTargetPatrol();
+                const title = document.getElementById('patrol-mem-title').value.trim();
+                const desc = document.getElementById('patrol-mem-desc').value.trim();
+                const date = document.getElementById('patrol-mem-date').value;
+                const fileInput = document.getElementById('patrol-mem-file');
+
+                if (!title || !date) return showMsg('patrol-mem-err', 'patrol-mem-msg');
+
+                let imageUrl = "";
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    imageUrl = await readFileAsDataURL(file);
+                }
+
+                await setDoc(doc(collection(db, `patrouilles_data_${targetPatrol}_memories`)), {
+                    title, desc, date, url: imageUrl, created: Date.now()
+                });
+
+                document.getElementById('patrol-mem-title').value = '';
+                document.getElementById('patrol-mem-desc').value = '';
+                document.getElementById('patrol-mem-date').value = '';
+                fileInput.value = '';
+                showMsg('patrol-mem-msg', 'patrol-mem-err');
+            });
+        }
+
+        window.deletePatrolMemory = async function(patrolName, docId) {
+            await deleteDoc(doc(db, `patrouilles_data_${patrolName}_memories`, docId));
+        };
+
+        // Patrouille Activities Listeners
+        function loadPatrouilleActivities(patrolName) {
+            const colRef = collection(db, `patrouilles_data_${patrolName}_activities`);
+            onSnapshot(colRef, (snapshot) => {
+                let html = "";
+                if (snapshot.empty) {
+                    html = "<div class='list-item'>No planned activities for this patrouille yet.</div>";
+                } else {
+                    snapshot.forEach((docSnap) => {
+                        const data = docSnap.data();
+                        let canDelete = (currentLoggedInUser.role === 'Admin' || currentLoggedInUser.role === 'Cp');
+                        html += `
+                            <div class='list-item'>
+                                <div>
+                                    <strong>${data.title}</strong>
+                                    <br><small>📅 ${data.date || ''} at ${data.time || ''} | 📍 ${data.location || 'TBD'}</small>
+                                    ${data.desc ? `<br><small style="color: var(--brown);">${data.desc}</small>` : ''}
+                                </div>
+                                ${canDelete ? `<button class="btn-danger" type="button" onclick="deletePatrolActivity('${patrolName}', '${docSnap.id}')">Delete</button>` : ''}
+                            </div>`;
+                    });
+                }
+                const list = document.getElementById('patrol-activities-list');
+                if (list) list.innerHTML = html;
+            });
+        }
+
+        const addPatrolActivityBtn = document.getElementById('add-patrol-activity-btn');
+        if (addPatrolActivityBtn) {
+            addPatrolActivityBtn.addEventListener('click', async () => {
+                const targetPatrol = getActiveTargetPatrol();
+                const title = document.getElementById('patrol-act-title').value.trim();
+                const desc = document.getElementById('patrol-act-desc').value.trim();
+                const date = document.getElementById('patrol-act-date').value;
+                const time = document.getElementById('patrol-act-time').value;
+                const location = document.getElementById('patrol-act-location').value.trim();
+
+                if (!title || !date || !time || !location) return showMsg('patrol-act-err', 'patrol-act-msg');
+
+                await setDoc(doc(collection(db, `patrouilles_data_${targetPatrol}_activities`)), {
+                    title, desc, date, time, location, created: Date.now()
+                });
+
+                document.getElementById('patrol-act-title').value = '';
+                document.getElementById('patrol-act-desc').value = '';
+                document.getElementById('patrol-act-date').value = '';
+                document.getElementById('patrol-act-time').value = '';
+                document.getElementById('patrol-act-location').value = '';
+                showMsg('patrol-act-msg', 'patrol-act-err');
+            });
+        }
+
+        window.deletePatrolActivity = async function(patrolName, docId) {
+            await deleteDoc(doc(db, `patrouilles_data_${patrolName}_activities`, docId));
+        };
+
+        function readFileAsDataURL(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.readAsDataURL(file);
             });
         }
 
@@ -870,105 +1257,144 @@
         window.deleteIdea = async function(id) { await deleteDoc(doc(db, "ideas", id)); };
 
         // Admin Actions
-        document.getElementById('create-patrol-btn').addEventListener('click', async () => {
-            const name = document.getElementById('new-patrol-name').value.trim();
-            if (!name) return showMsg('patrol-err', 'patrol-msg');
-            await setDoc(doc(db, "patrols", name), { created: Date.now() });
-            document.getElementById('new-patrol-name').value = '';
-            showMsg('patrol-msg', 'patrol-err');
-        });
+        const createPatrolBtn = document.getElementById('create-patrol-btn');
+        if (createPatrolBtn) {
+            createPatrolBtn.addEventListener('click', async () => {
+                const name = document.getElementById('new-patrol-name').value.trim();
+                if (!name) return showMsg('patrol-err', 'patrol-msg');
+                await setDoc(doc(db, "patrols", name), { created: Date.now() });
+                document.getElementById('new-patrol-name').value = '';
+                showMsg('patrol-msg', 'patrol-err');
+            });
+        }
 
-        document.getElementById('create-member-btn').addEventListener('click', async () => {
-            const user = document.getElementById('new-member-user').value.trim();
-            const pass = document.getElementById('new-member-pass').value.trim();
-            const role = document.getElementById('new-member-role').value;
-            const patrol = document.getElementById('new-member-patrol').value;
+        const createMemberBtn = document.getElementById('create-member-btn');
+        if (createMemberBtn) {
+            createMemberBtn.addEventListener('click', async () => {
+                const user = document.getElementById('new-member-user').value.trim();
+                const pass = document.getElementById('new-member-pass').value.trim();
+                const role = document.getElementById('new-member-role').value;
+                const patrol = document.getElementById('new-member-patrol').value;
 
-            if (!user || !pass || !patrol) return showMsg('admin-err', 'admin-msg');
-            
-            await setDoc(doc(db, "members", user), { password: pass, role: role, patrol: patrol });
-            document.getElementById('new-member-user').value = '';
-            document.getElementById('new-member-pass').value = '';
-            showMsg('admin-msg', 'admin-err');
-        });
+                if (!user || !pass || !patrol) return showMsg('admin-err', 'admin-msg');
+                
+                await setDoc(doc(db, "members", user), { password: pass, role: role, patrol: patrol, badges: 0 });
+                document.getElementById('new-member-user').value = '';
+                document.getElementById('new-member-pass').value = '';
+                showMsg('admin-msg', 'admin-err');
+            });
+        }
 
-        document.getElementById('add-activity-btn').addEventListener('click', async () => {
-            const title = document.getElementById('activity-title').value.trim();
-            const date = document.getElementById('activity-date').value;
-            if (!title || !date) return showMsg('activity-err', 'activity-msg');
-            
-            await setDoc(doc(collection(db, "activities")), { title, date, created: Date.now() });
-            document.getElementById('activity-title').value = '';
-            document.getElementById('activity-date').value = '';
-            showMsg('activity-msg', 'activity-err');
-        });
+        const addActivityBtn = document.getElementById('add-activity-btn');
+        if (addActivityBtn) {
+            addActivityBtn.addEventListener('click', async () => {
+                const title = document.getElementById('activity-title').value.trim();
+                const date = document.getElementById('activity-date').value;
+                if (!title || !date) return showMsg('activity-err', 'activity-msg');
+                
+                await setDoc(doc(collection(db, "activities")), { title, date, created: Date.now() });
+                document.getElementById('activity-title').value = '';
+                document.getElementById('activity-date').value = '';
+                showMsg('activity-msg', 'activity-err');
+            });
+        }
 
-        document.getElementById('add-photo-btn').addEventListener('click', () => {
-            const fileInput = document.getElementById('photo-file');
-            if (fileInput.files.length === 0) return showMsg('photo-err', 'photo-msg');
-            
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                const base64Url = e.target.result;
-                await setDoc(doc(collection(db, "gallery")), { url: base64Url, created: Date.now() });
-                fileInput.value = '';
-                showMsg('photo-msg', 'photo-err');
-            };
-            reader.readAsDataURL(file);
-        });
+        const addPhotoBtn = document.getElementById('add-photo-btn');
+        if (addPhotoBtn) {
+            addPhotoBtn.addEventListener('click', () => {
+                const fileInput = document.getElementById('photo-file');
+                if (fileInput.files.length === 0) return showMsg('photo-err', 'photo-msg');
+                
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    const base64Url = e.target.result;
+                    await setDoc(doc(collection(db, "gallery")), { url: base64Url, created: Date.now() });
+                    fileInput.value = '';
+                    showMsg('photo-msg', 'photo-err');
+                };
+                reader.readAsDataURL(file);
+            });
+        }
 
         // Viewer Actions
-        document.getElementById('submit-idea-btn').addEventListener('click', async () => {
-            const text = document.getElementById('idea-text').value.trim();
-            if (!text) return showMsg('idea-err', 'idea-msg');
-            
-            const author = document.getElementById('logged-viewer-name').innerText;
-            const patrolText = document.getElementById('logged-viewer-patrol-text').innerText;
-            const patrol = patrolText.replace('⛺ Patrouille: ', '');
+        const submitIdeaBtn = document.getElementById('submit-idea-btn');
+        if (submitIdeaBtn) {
+            submitIdeaBtn.addEventListener('click', async () => {
+                const text = document.getElementById('idea-text').value.trim();
+                if (!text) return showMsg('idea-err', 'idea-msg');
+                
+                const author = document.getElementById('logged-viewer-name').innerText;
+                const patrolText = document.getElementById('logged-viewer-patrol-text').innerText;
+                const patrol = patrolText.replace('⛺ Patrouille: ', '');
 
-            await setDoc(doc(collection(db, "ideas")), { text, author, patrol, created: Date.now() });
-            document.getElementById('idea-text').value = '';
-            showMsg('idea-msg', 'idea-err');
-        });
+                await setDoc(doc(collection(db, "ideas")), { text, author, patrol, created: Date.now() });
+                document.getElementById('idea-text').value = '';
+                showMsg('idea-msg', 'idea-err');
+            });
+        }
 
         // Login Logic
-        document.getElementById('login-btn').addEventListener('click', () => {
-            const user = document.getElementById('login-user').value.trim();
-            const pass = document.getElementById('login-pass').value.trim();
-            const err = document.getElementById('login-error');
-            
-            if (usersCache[user] && usersCache[user].password === pass) {
-                err.style.display = 'none';
-                const role = usersCache[user].role;
+        const loginBtn = document.getElementById('login-btn');
+        if (loginBtn) {
+            loginBtn.addEventListener('click', () => {
+                const user = document.getElementById('login-user').value.trim();
+                const pass = document.getElementById('login-pass').value.trim();
+                const err = document.getElementById('login-error');
                 
-                if (role === 'Admin') {
-                    document.getElementById('login-user').value = '';
-                    document.getElementById('login-pass').value = '';
-                    switchScreen('adminDashboard');
-                    switchAdminSection('admin-section-management');
+                if (usersCache[user] && usersCache[user].password === pass) {
+                    err.style.display = 'none';
+                    const role = usersCache[user].role;
+                    
+                    currentLoggedInUser = {
+                        username: user,
+                        role: role,
+                        patrol: usersCache[user].patrol || 'Unassigned'
+                    };
+
+                    if (role === 'Admin') {
+                        document.getElementById('login-user').value = '';
+                        document.getElementById('login-pass').value = '';
+                        switchScreen('adminDashboard');
+                        switchAdminSection('admin-section-management');
+                    } else {
+                        document.getElementById('logged-viewer-name').innerText = user;
+                        document.getElementById('logged-viewer-role-text').innerText = "🏅 Role: " + role;
+                        document.getElementById('logged-viewer-patrol-text').innerText = "⛺ Patrouille: " + currentLoggedInUser.patrol;
+                        document.getElementById('login-user').value = '';
+                        document.getElementById('login-pass').value = '';
+                        switchScreen('viewerDashboard');
+                        switchViewerSection('viewer-section-welcome');
+                    }
                 } else {
-                    document.getElementById('logged-viewer-name').innerText = user;
-                    document.getElementById('logged-viewer-role-text').innerText = "🏅 Role: " + role;
-                    document.getElementById('logged-viewer-patrol-text').innerText = "⛺ Patrouille: " + usersCache[user].patrol;
-                    document.getElementById('login-user').value = '';
-                    document.getElementById('login-pass').value = '';
-                    switchScreen('viewerDashboard');
-                    switchViewerSection('viewer-section-welcome');
+                    err.style.display = 'square' === 'circle' ? '' : 'block';
                 }
-            } else {
-                err.style.display = 'block';
-            }
-        });
+            });
+        }
 
         // Logout bindings
-        document.getElementById('admin-logout-btn').addEventListener('click', () => switchScreen('home'));
-        document.getElementById('viewer-logout-btn').addEventListener('click', () => switchScreen('home'));
+        const adminLogoutBtn = document.getElementById('admin-logout-btn');
+        if (adminLogoutBtn) {
+            adminLogoutBtn.addEventListener('click', () => {
+                currentLoggedInUser = null;
+                switchScreen('home');
+            });
+        }
+
+        const viewerLogoutBtn = document.getElementById('viewer-logout-btn');
+        if (viewerLogoutBtn) {
+            viewerLogoutBtn.addEventListener('click', () => {
+                currentLoggedInUser = null;
+                switchScreen('home');
+            });
+        }
 
         function showMsg(showId, hideId) {
-            document.getElementById(showId).style.display = 'block';
-            document.getElementById(hideId).style.display = 'none';
-            setTimeout(() => { document.getElementById(showId).style.display = 'none'; }, 3000);
+            const showEl = document.getElementById(showId);
+            const hideEl = document.getElementById(hideId);
+            if (showEl) showEl.style.display = 'block';
+            if (hideEl) hideEl.style.display = 'none';
+            setTimeout(() => { if (showEl) showEl.style.display = 'none'; }, 3000);
         }
     </script>
 </body>
